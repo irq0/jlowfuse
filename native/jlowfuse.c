@@ -20,12 +20,14 @@ struct jlowfuse_method_ids {
 } method_ids;
 
 jobject opts_object;
+JNIEnv *jni_env; /* this only works with a _single_ java thread */
 
 
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
 {
+        jobject result;
         
-        result = (*env)->CallObjectMethod(env, opts_object, method_ids.init,
+        result = (*jni_env)->CallObjectMethod(jni_env, opts_object, method_ids.init,
                                           NULL);
         
         printf("yeeeeeehaa! - C");        
@@ -71,7 +73,7 @@ static struct fuse_lowlevel_ops jlowfuse_opts = {
 };
 
 
-JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, job obj,
+JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, jobject obj,
                                          jobject opts_obj) 
 {
         struct fuse_chan *chan;
@@ -81,7 +83,10 @@ JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, job obj,
         int multi_threaded = -1;
         int foreground = -1;
         int err = -1;
- 
+
+        jni_env = env;
+        
+        
 //        /* parse commandline options */
 //        if (fuse_parse_cmdline(&args, &mount_point,
 //                               &multi_threaded, &foreground) != 0) {
@@ -96,21 +101,20 @@ JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, job obj,
         
 
         // get methodID for fuse operations
-        jobject result;
         jclass opts_class = (*env)->GetObjectClass(env, opts_obj);
 
         method_ids.init =
           (*env)->GetMethodID(env, opts_class, "init",
                   "(Ljava/nio/ByteBuffer;)Lorg/irq0/jlowfuse/reply/Reply;");
         
-        if (mid_init == NULL) {
+        if (method_ids.init == NULL) {
                 return;
         }
     
         
         chan = fuse_mount(mount_point, NULL);
-        sess = fuse_lowlevel_new(NULL, &jlowfuse_ops,
-                                 sizeof(jlowfuse_ops), NULL);
+        sess = fuse_lowlevel_new(NULL, &jlowfuse_opts,
+                                 sizeof(jlowfuse_opts), NULL);
         
         printf("chan=%p sess=%p\n", chan, sess);
         
@@ -127,7 +131,7 @@ JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, job obj,
         
         fuse_unmount(mount_point, chan);
         
-        fuse_opt_free_args(&args);
+//        fuse_opt_free_args(&args);
         
         return err;
 }
