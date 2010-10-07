@@ -26,11 +26,16 @@ JNIEnv *jni_env; /* this only works with a _single_ java thread */
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
 {
         jobject result;
+
+        printf("enter init\n");
+        
         
         result = (*jni_env)->CallObjectMethod(jni_env, opts_object, method_ids.init,
                                           NULL);
         
-        printf("yeeeeeehaa! - C");        
+        printf("yeeeeeehaa! - C\n");
+        printf("result: %i\n", result);
+        
 }
 
 static struct fuse_lowlevel_ops jlowfuse_opts = {
@@ -72,34 +77,37 @@ static struct fuse_lowlevel_ops jlowfuse_opts = {
           /* .poll        = NULL, */
 };
 
-
-JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, jobject obj,
-                                         jobject opts_obj) 
+JNIEXPORT jint JNICALL Java_org_irq0_jlowfuse_JLowFuse_init
+(JNIEnv *env, jobject obj, jobject opts_obj) 
 {
         struct fuse_chan *chan;
-//        struct fuse_args args = FUSE_ARGS_INIT(argc, argv);
+        struct fuse_args args = FUSE_ARGS_INIT(0, NULL);
         struct fuse_session *sess; 
-        char *mount_point = "/mnt1";
+        char *mount_point;
         int multi_threaded = -1;
         int foreground = -1;
         int err = -1;
 
         jni_env = env;
         
+        fuse_opt_add_arg(&args, "-d");
+        fuse_opt_add_arg(&args, "/mnt1");
         
-//        /* parse commandline options */
-//        if (fuse_parse_cmdline(&args, &mount_point,
-//                               &multi_threaded, &foreground) != 0) {
-//                //    printf("cannot parse commandline :(");
-//                return 2;
-//        }
-
-//        if (!mount_point) {
-//                printf("specify mountpoint\n");
-//                return 2;
-//        }
+        /* parse commandline options */
+        if (fuse_parse_cmdline(&args, &mount_point,
+                               &multi_threaded, &foreground) != 0) {
+                //    printf("cannot parse commandline :(");
+                return 2;
+        }
         
-
+        if (!mount_point) {
+                printf("specify mountpoint\n");
+                return 2;
+        }
+        
+        printf("multi: %i\n", multi_threaded);
+        
+        
         // get methodID for fuse operations
         jclass opts_class = (*env)->GetObjectClass(env, opts_obj);
 
@@ -110,7 +118,9 @@ JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, jobject obj,
         if (method_ids.init == NULL) {
                 return;
         }
-    
+
+        opts_object = opts_obj;
+        
         
         chan = fuse_mount(mount_point, NULL);
         sess = fuse_lowlevel_new(NULL, &jlowfuse_opts,
@@ -118,7 +128,7 @@ JNIEXPORT int JNICALL Java_JLowFuse_init(JNIEnv *env, jobject obj,
         
         printf("chan=%p sess=%p\n", chan, sess);
         
-        fuse_set_signal_handlers(sess);
+//        fuse_set_signal_handlers(sess);
         
         fuse_session_add_chan(sess, chan);
         err = fuse_session_loop(sess);
