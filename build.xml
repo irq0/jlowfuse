@@ -1,0 +1,69 @@
+<project name="jlowfuse" default="dist" basedir="." 
+	 xmlns:cpptasks="antlib:net.sf.antcontrib.cpptasks">
+  <description>
+    Java wrapper for the FUSE lowlevel API
+  </description>
+  <property name="native-src" location="native"/>
+  <property name="java-src" location="java"/>
+  <property name="build" location="build"/>
+  <property name="dist" location="dist"/>
+  <property name="libjlowfuse" value="/dev/null"/>
+
+  <target name="init">
+    <tstamp/>
+    <mkdir dir="${build}"/>
+    <mkdir dir="${dist}"/>
+    <mkdir dir="${build}/native"/>
+    <mkdir dir="${build}/java"/>
+  </target>
+
+  <target name="compile" depends="init" 
+	  description="compile all java source">
+    <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false" />
+  </target>
+
+  <target name="compile-native" depends="init">
+    <cpptasks:cc link="shared" outtype="shared" 
+		 runtime="static"
+		 outfile="${build}/jlowfuse" objdir="${build}/native"
+		 outputfileproperty="libjlowfuse">
+      <includepath>
+	<path path="/usr/include/fuse"/>
+	<path path="/lib"/>
+      </includepath>
+
+      <linkerarg value="-lfuse"/> <!-- fuse -->
+      <linkerarg value="-lrt"/> <!-- fuse -->
+      <linkerarg value="-ldl"/> <!-- fuse -->
+      <linkerarg value="-lc"/>
+
+      <compilerarg value="-Wall"/>
+      <compilerarg value="-pthread"/> <!-- fuse -->
+      <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->      
+
+      <fileset dir="${native-src}" includes="jlowfuse.c"/>
+    </cpptasks:cc>
+  </target>
+
+  <target name="dist" depends="compile,compile-native"
+	  description="generate jar file">
+
+    <copy todir="${dist}">
+      <fileset file="${libjlowfuse}"/>
+    </copy>    
+
+    <jar jarfile="${dist}/jlowfuse.jar" basedir="${build}/java"/>
+
+    <!-- run with: java -jar testfs.jar -Djava.library.path=. -->
+    <jar jarfile="${dist}/testfs.jar" basedir="${build}/java">
+      <manifest>
+	<attribute name="Main-Class" value="org.irq0.jlowfuse.testfs.TestFs"/>
+      </manifest>
+    </jar>      
+  </target>
+
+  <target name="clean">
+    <delete dir="${build}"/>
+    <delete dir="${dist}"/>
+  </target>
+</project>
