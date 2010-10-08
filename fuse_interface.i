@@ -9,13 +9,55 @@
 #include <fcntl.h>
 %}
 
-%pointer_functions(fuse_req_t, fuse_req);
-
-/* This causes swig to map uint64_t to BigInteger */
+/* Help SWIG with types */
 typedef unsigned long long int uint64_t;
+typedef struct { int __val[2]; } __fsid_t;
+typedef unsigned long fuse_ino_t;
+
 %apply unsigned long long { uint64_t }
 %apply unsigned long long int { __fsblkcnt64_t }
 %apply unsigned long long int { __fsfilcnt64_t }
+%apply unsigned long long int { __off64_t }
+%apply unsigned long long int { __dev_t }
+%apply unsigned int { __mode_t }
+%apply unsigned int { __uid_t }
+%apply unsigned int { __gid_t }
+%apply unsigned int { __nlink_t }
+%apply long int { __blksize_t }
+%apply long long int { __blkcnt64_t }
+
+%apply fuse_ino_t { __ino_t }
+%apply fuse_ino_t { __ino64_t }
+%apply unsigned long { fuse_ino_t } 
+
+%apply long int { __time_t }
+
+%include "various.i"
+
+
+/* FUSE session functions */
+extern void fuse_session_add_chan(struct fuse_session *se, struct fuse_chan *ch);
+extern void fuse_session_remove_chan(struct fuse_chan *ch);
+extern struct fuse_chan *fuse_session_next_chan(struct fuse_session *se,
+                                                struct fuse_chan *ch);
+extern void fuse_session_exit(struct fuse_session *se);
+extern void fuse_session_reset(struct fuse_session *se);
+extern int fuse_session_exited(struct fuse_session *se);
+extern int fuse_session_loop(struct fuse_session *se);
+extern int fuse_session_loop_mt(struct fuse_session *se);
+
+extern struct fuse_session *fuse_lowlevel_new(struct fuse_args *args,
+                                       const struct fuse_lowlevel_ops *op,
+                                       size_t op_size, void *userdata);
+
+
+/* FUSE common functions */
+extern struct fuse_chan *fuse_mount(const char *mountpoint, struct fuse_args *args);
+extern void fuse_unmount(const char *mountpoint, struct fuse_chan *ch);
+extern int fuse_set_signal_handlers(struct fuse_session *se);
+extern void fuse_remove_signal_handlers(struct fuse_session *se);
+extern int fuse_version(void);
+
 
 /* FUSE reply functions */
 extern int fuse_reply_err(fuse_req_t req, int err);
@@ -54,11 +96,8 @@ struct statvfs
     __fsfilcnt64_t f_files;
     __fsfilcnt64_t f_ffree;
     __fsfilcnt64_t f_favail;
-
     unsigned long int f_fsid;
-
 //    int __f_unused;
-
     unsigned long int f_flag;
     unsigned long int f_namemax;
 //    int __f_spare[6];
@@ -95,46 +134,62 @@ enum
 
 /* FUSE: fuse_file_info */
 struct fuse_file_info {
-        /** Open flags.  Available in open() and release() */
         int flags;
-
-        /** Old file handle, don't use */
         unsigned long fh_old;
-
-        /** In case of a write operation indicates if this was caused by a
-            writepage */
         int writepage;
-
-        /** Can be filled in by open, to use direct I/O on this file.
-            Introduced in version 2.4 */
         unsigned int direct_io : 1;
-
-        /** Can be filled in by open, to indicate, that cached file data
-            need not be invalidated.  Introduced in version 2.4 */
         unsigned int keep_cache : 1;
-
-        /** Indicates a flush operation.  Set in flush operation, also
-            maybe set in highlevel lock operation and lowlevel release
-            operation.  Introduced in version 2.6 */
         unsigned int flush : 1;
-
-        /** Can be filled in by open, to indicate that the file is not
-            seekable.  Introduced in version 2.9 */
         unsigned int nonseekable : 1;
-
-        /** Padding.  Do not use*/
         unsigned int padding : 28;
-
-        /** File handle.  May be filled in by filesystem in open().
-            Available in all other file operations */
         uint64_t fh;
-
-        /** Lock owner id.  Available in locking operations and flush */
         uint64_t lock_owner;
 };
 
+/* stat (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/stat.h] */
+struct stat
+  {
+    __dev_t st_dev;
+    unsigned short int __pad1;
+    __ino_t __st_ino;
+    __mode_t st_mode;
+    __nlink_t st_nlink;
+    __uid_t st_uid;
+    __gid_t st_gid;
+    __dev_t st_rdev;
+    unsigned short int __pad2;
+    __off64_t st_size;
+    __blksize_t st_blksize;
+    __blkcnt64_t st_blocks;
+    struct timespec st_atim;
+    struct timespec st_mtim;
+    struct timespec st_ctim;
+    __ino64_t st_ino;
+  };
+
+/* timespect (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/time.h] */
+struct timespec
+  {
+    __time_t tv_sec;            /* Seconds.  */
+    long int tv_nsec;           /* Nanoseconds.  */
+  };
 
 
+/* iovec (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/uio.h] */
+struct iovec
+  {
+    void *iov_base;
+    size_t iov_len;
+  };
 
+struct fuse_args {
+        /** Argument count */
+        int argc;
 
+        /** Argument vector.  NULL terminated */
+        %apply char **STRING_ARRAY { char **argv };
+        char **argv;
 
+        /** Is 'argv' allocated? */
+        int allocated;
+};
