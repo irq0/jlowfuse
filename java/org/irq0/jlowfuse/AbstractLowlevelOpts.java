@@ -7,18 +7,18 @@
 
 package org.irq0.jlowfuse;
 
-import org.irq0.jlowfuse.reply.Reply;
+import org.irq0.jlowfuse.reply.*;
 
 import java.nio.ByteBuffer;
 
 
 public abstract class AbstractLowlevelOpts {
-    Reply init(ByteBuffer data) {
-        return null;
+    public void init(ByteBuffer data) {
+        return;
     }
 
-    Reply destroy(ByteBuffer data) {
-        return null;
+    void destroy(ByteBuffer data) {
+        return;
     }
 
     Reply lookup(long parent, String name) {
@@ -109,7 +109,7 @@ public abstract class AbstractLowlevelOpts {
         return null;
     }
 
-    Reply statfs(long ino) {
+    public Reply statfs(long ino) {
         return null;
     }
 
