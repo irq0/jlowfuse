@@ -1,7 +1,7 @@
-package org.irq0.jlowfuse.testfs;
+package jlowfuse.testfs;
 
-import org.irq0.jlowfuse.*;
-import org.irq0.jlowfuse.reply.*;
+import jlowfuse.*;
+import jlowfuse.reply.*;
 import java.nio.ByteBuffer;
 
 class TestFsOpts extends AbstractLowlevelOpts {

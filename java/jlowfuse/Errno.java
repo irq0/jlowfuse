@@ -1,4 +1,4 @@
-package org.irq0.jlowfuse;
+package jlowfuse;
 
 public class Errno {
     // unix errno.h tanken from FreeBSD 8.1

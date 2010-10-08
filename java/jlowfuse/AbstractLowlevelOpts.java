@@ -5,9 +5,9 @@
  * 
  */ 
 
-package org.irq0.jlowfuse;
+package jlowfuse;
 
-import org.irq0.jlowfuse.reply.*;
+import jlowfuse.reply.*;
 
 import java.nio.ByteBuffer;
 

@@ -1,6 +1,6 @@
-package org.irq0.jlowfuse.testfs;
+package jlowfuse.testfs;
 
-import org.irq0.jlowfuse.*;
+import jlowfuse.*;
 import java.util.*;
 
 public class TestFs {

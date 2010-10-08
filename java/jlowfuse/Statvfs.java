@@ -1,4 +1,4 @@
-package org.irq0.jlowfuse.reply;
+package jlowfuse;
 
 public class Statvfs {
     // taken from freebsds sys/statvfs.h

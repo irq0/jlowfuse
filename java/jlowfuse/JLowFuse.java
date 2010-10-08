@@ -1,4 +1,4 @@
-package org.irq0.jlowfuse;
+package jlowfuse;
 
 public class JLowFuse {
         public native int init(Object opts);
