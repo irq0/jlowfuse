@@ -82,25 +82,31 @@ void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino)
         jlongArray jarr;
         jlong* statarr;
         jboolean isCopy;
+        jint len;
 
         result = (*jni_env)->CallObjectMethod(jni_env, objects.fs_opts,
                                               method_ids.statfs,
                                               NULL);
-
         if((*jni_env)->IsInstanceOf(jni_env, result, classes.error)) {
                 err = (*jni_env)->CallIntMethod(jni_env, result,
                                                 method_ids.getErr,
                                                 NULL);
                 fuse_reply_err(req, err);
-                
+
         } else if((*jni_env)->IsInstanceOf(jni_env, result, classes.statvfs)) {
                 jarr = (*jni_env)->CallObjectMethod(jni_env, result,
                                                     method_ids.statvfs_getArray,
                                                     NULL);
+                len = (*jni_env)->GetArrayLength(jni_env, jarr);
+                printf("len: %i\n", len);
                 
-                statarr = (*jni_env)->GetLongArrayElements(jarr, 0, &isCopy);
+                statarr = calloc(sizeof(jlong), len);
+                (*jni_env)->GetLongArrayRegion(jni_env, jarr, 0, len, statarr);
 
-                stat->f_bavail = statarr[0];
+                printf("elem %li\n", statarr[0]);
+
+                
+                stat->f_bavail = (long) statarr[0];
                 stat->f_bfree = statarr[1];
                 stat->f_blocks = statarr[2];
                 stat->f_favail = statarr[3];
@@ -112,12 +118,10 @@ void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino)
                 stat->f_fsid = statarr[9];
                 stat->f_namemax = statarr[10];
 
-                (*jni_env)->ReleaseLongArrayElements(jni_env, jarr, statarr, 0);
-                
+                (*jni_env)->DeleteLocalRef(jni_env, jarr);
+              
                 fuse_reply_statfs(req, stat);
         }
-                
-        
         printf("init: C\n");
         
         
@@ -196,7 +200,7 @@ JNIEXPORT jint JNICALL Java_org_irq0_jlowfuse_JLowFuse_init
         objects.fs_opts = opts_obj;
 
         find_java_class_or_die(&classes.error,
-                               "org/irq0/jlowfuse/reply/Error");
+                               "org/irq0/jlowfuse/reply/FsError");
         find_java_class_or_die(&classes.reply,
                                "org/irq0/jlowfuse/reply/Reply");
         find_java_class_or_die(&classes.statvfs,
