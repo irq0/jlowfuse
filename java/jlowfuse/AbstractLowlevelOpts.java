@@ -7,8 +7,6 @@
 
 package jlowfuse;
 
-import jlowfuse.reply.*;
-
 import java.nio.ByteBuffer;
 
 
@@ -21,156 +19,141 @@ public abstract class AbstractLowlevelOpts {
         return;
     }
 
-    Reply lookup(long parent, String name) {
-        return null;
+    void lookup(long parent, String name) {
+        return;
     }
 
-    Reply forget(long ino, long nlookup) {
-        return null;
+    void forget(long ino, long nlookup) {
+        return;
     }
 
-    Reply getattr(long ino) {
-        return null;
+    void getattr(long ino) {
+        return;
     }
 
-    Reply setattr(long ino, Stat stat, int to_set) {
-        return null;
+    void setattr(long ino, Stat stat, int to_set) {
+        return;
     }
 
-    Reply readlink(long ino) {
-        return null;
+    void readlink(long ino) {
+        return;
     }
 
-    Reply mknod(long parent, String name, short mode, short rdev) {
-        return null;
+    void mknod(long parent, String name, short mode, short rdev) {
+        return;
     }
 
-    Reply mkdir(long parent, String name, short mode) {
-        return null;
+    void mkdir(long parent, String name, short mode) {
+        return;
     }
 
-    Reply unlink(long parent, String name) {
-        return null;
+    void unlink(long parent, String name) {
+        return;
     }
 
-    Reply rmdir(long parent, String name) {
-        return null;
+    void rmdir(long parent, String name) {
+        return;
     }
 
-    Reply symlink(String link, long parent, String name) {
-        return null;
+    void symlink(String link, long parent, String name) {
+        return;
     }
 
-    Reply rename(long parent, String name, long newparent, String newname) {
-        return null;
+    void rename(long parent, String name, long newparent, String newname) {
+        return;
     }
 
-    Reply link(long ino, long newparent, String newname) {
-        return null;
+    void link(long ino, long newparent, String newname) {
+        return;
     }
 
-    Reply open(long ino) {
-        return null;
+    void open(long ino) {
+        return;
     }
 
-    Reply read(long ino, int size, int off) {
-        return null;
+    void read(long ino, int size, int off) {
+        return;
     }
 
-    Reply write(long ino, ByteBuffer buf, int size, int off) {
-        return null;
+    void write(long ino, ByteBuffer buf, int size, int off) {
+        return;
     }
 
-    Reply flush(long ino) {
-        return null;
+    void flush(long ino) {
+        return;
     }
 
-    Reply release(long ino) {
-        return null;
+    void release(long ino) {
+        return;
     }
 
-    Reply fsync(long ino, int datasync) {
-        return null;
+    void fsync(long ino, int datasync) {
+        return;
     }
 
-    Reply opendir(long ino) {
-        return null;
+    void opendir(long ino) {
+        return;
     }
 
-    Reply readdir(long ino, int size, int off) {
-        return null;
+    void readdir(long ino, int size, int off) {
+        return;
     }
 
-    Reply releasedir(long ino) {
-        return null;
+    void releasedir(long ino) {
+        return;
     }
 
-    Reply fsyncdir(long ino, int datasync) {
-        return null;
+    void fsyncdir(long ino, int datasync) {
+        return;
     }
 
-    public Reply statfs(long ino) {
-        return null;
+    public void statfs(long ino) {
+        return;
     }
 
-    Reply setxattr(long ino, String name, ByteBuffer value, int size,
+    void setxattr(long ino, String name, ByteBuffer value, int size,
                    int flags) {
-        return null;
+        return;
     }
 
-    Reply getxattr(long ino, String name, int size) {
-        return null;
+    void getxattr(long ino, String name, int size) {
+        return;
     }
 
-    Reply listxattr(long ino, int size) {
-        return null;
+    void listxattr(long ino, int size) {
+        return;
     }
 
-    Reply removexattr(long ino, String name) {
-        return null;
+    void removexattr(long ino, String name) {
+        return;
     }
 
-    Reply access(long ino, int mask) {
-        return null;
+    void access(long ino, int mask) {
+        return;
     }
 
-    Reply create(long parent, String name, short mode) {
-        return null;
+    void create(long parent, String name, short mode) {
+        return;
     }
 
     /*    
-    Reply getlk(long ino, Flock lock) {
+    void getlk(long ino, Flock lock) {
     }
 
-    Reply setlk(long ino, Flock lock, int sleep) {
+    void setlk(long ino, Flock lock, int sleep) {
     }
     */
 
-    Reply bmap(long ino, int blocksize, long idx) {
-        return null;
+    void bmap(long ino, int blocksize, long idx) {
+        return;
     }
 
     /*
-    Reply ioctl(long ino, int cmd, ByteBuffer arg,
+    void ioctl(long ino, int cmd, ByteBuffer arg,
     */
 
     /*
-    Reply poll(long ino, PollHandle ph) {
+    void poll(long ino, PollHandle ph) {
     }
     */
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -1,7 +1,6 @@
 package jlowfuse.testfs;
 
 import jlowfuse.*;
-import jlowfuse.reply.*;
 import java.nio.ByteBuffer;
 
 class TestFsOpts extends AbstractLowlevelOpts {
@@ -9,13 +8,12 @@ class TestFsOpts extends AbstractLowlevelOpts {
         System.out.println("init: JAVA");
     }
 
-    public Reply statfs(long ino) {
+    public void statfs(long ino) {
         //        return new FsError(Errno.ENOSYS);
         
         Statvfs stat = new Statvfs();
         stat.setBlocksAvail(23);
 
-        return stat;
         
     }
 }
