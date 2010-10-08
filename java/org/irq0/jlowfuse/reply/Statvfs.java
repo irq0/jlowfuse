@@ -28,5 +28,12 @@ public class Statvfs extends Reply {
     public void setNameMax(long val) { this.arr[F_NAMEMAX] = val; }
 
     public long[] getArray() { return this.arr; }
+
+    public Statvfs() {
+        for (int i=0; i<arr.length; i++) {
+            arr[i] = 0;
+        }
+    }
+
     
 }
