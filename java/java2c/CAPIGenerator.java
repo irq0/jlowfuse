@@ -24,16 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fuse.FuseContext;
-import fuse.FuseDirHandle;
-import fuse.FuseDirOpen;
-import fuse.FuseFS;
-import fuse.FuseFSDirEnt;
-import fuse.FuseGetattr;
-import fuse.FuseOpen;
-import fuse.FuseSize;
-import fuse.FuseStatfs;
 
+/* add imports here */
 
 public class CAPIGenerator
 {
@@ -474,7 +466,7 @@ public class CAPIGenerator
             "#include \"" + hIncluded.getPath() + "\"\n" +
             "\n"
          );
-
+         /*
          new CAPIGenerator(FuseGetattr.class).generateClassAPI(hOut, cOut, false, false);
          new CAPIGenerator(FuseFSDirEnt.class).generateClassAPI(hOut, cOut, false, false);
          new CAPIGenerator(FuseDirHandle.class).generateClassAPI(hOut, cOut, false, false);
@@ -485,6 +477,7 @@ public class CAPIGenerator
          new CAPIGenerator(FuseContext.class).generateClassAPI(hOut, cOut, false, false);
          new CAPIGenerator(FuseFS.class).generateClassAPI(hOut, cOut, false, false);
          new CAPIGenerator(ByteBuffer.class).generateClassAPI(hOut, cOut, false, false);
+         */
        }
       catch (IOException e)
       {
