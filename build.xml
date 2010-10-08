@@ -8,6 +8,10 @@
   <property name="build" location="build"/>
   <property name="dist" location="dist"/>
   <property name="libjlowfuse" value="/dev/null"/>
+  <property name="swig-package" value="fuse"/>
+  <property name="swig-dst" value="${java-src}/fuse"/>
+  <property name="swig-src" value="swig"/>
+
 
   <target name="init">
     <tstamp/>
@@ -15,6 +19,7 @@
     <mkdir dir="${dist}"/>
     <mkdir dir="${build}/native"/>
     <mkdir dir="${build}/java"/>
+    <mkdir dir="${swig-dst}"/>
   </target>
 
   <target name="compile" depends="init" 
@@ -45,6 +50,18 @@
     </cpptasks:cc>
   </target>
 
+
+  <target name="swig" depends="init">
+    <exec executable="swig">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="${swig-src}/fuse_interface.i"/>
+    </exec>
+  </target>
+
   <target name="dist" depends="compile,compile-native"
 	  description="generate jar file">
 
@@ -65,5 +82,6 @@
   <target name="clean">
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
+    <delete dir="${swig-dst}"/>
   </target>
 </project>
