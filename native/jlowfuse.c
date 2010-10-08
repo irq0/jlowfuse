@@ -1,3 +1,12 @@
+/*
+ * jlowfuse.c - java FUSE lowlevel api wapper
+ *
+ * NOTE: this only works with a _single_ java thread.
+ * No mapping of native to java threads
+ * 
+ */
+
+
 #define FUSE_USE_VERSION 26
 
 #include <jni.h>
@@ -15,28 +24,105 @@
 
 struct jlowfuse_method_ids {
         jmethodID init;
+        jmethodID statfs;
         jmethodID destroy;
         jmethodID lookup;
+        jmethodID getErr;
+        jmethodID statvfs_getArray;
 } method_ids;
 
-jobject opts_object;
-JNIEnv *jni_env; /* this only works with a _single_ java thread */
+struct jlowfuse_jclasses {
+        jclass error;
+        jclass reply;
+        jclass fs_opts;
+        jclass statvfs;
+} classes;
 
+struct jlowfuse_jobjects {
+        jobject fs_opts;
+} objects;
+
+JNIEnv *jni_env; 
+
+
+void find_java_methodid_or_die(jmethodID *dst, jclass class, char* name, char* sig)
+{
+        *dst = (*jni_env)->GetMethodID(jni_env, class, name, sig);           
+        if (*dst == NULL) {
+                fprintf(stderr, "cannot find methodid for: %s signature: %s\n",
+                        name, sig);
+                exit(23);
+        }
+}
+
+void find_java_class_or_die(jclass *dst, char* sig)
+{
+        *dst = (*jni_env)->FindClass(jni_env, sig);
+        
+        if (*dst == NULL) {
+                fprintf(stderr, "cannot find class %s.. exiting\n", sig);
+                exit(23);
+        }
+}
 
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
 {
-        jobject result;
+        (*jni_env)->CallVoidMethod(jni_env, objects.fs_opts,
+                                   method_ids.init,
+                                   NULL);
+        printf("init: C\n");
+}
 
-        printf("enter init\n");
+
+void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino) 
+{
+        jobject result;
+        jint err;
+        struct statvfs *stat = calloc(sizeof(struct statvfs), 1);
+        jlongArray jarr;
+        jlong* statarr;
+        jboolean isCopy;
+
+        result = (*jni_env)->CallObjectMethod(jni_env, objects.fs_opts,
+                                              method_ids.statfs,
+                                              NULL);
+
+        if((*jni_env)->IsInstanceOf(jni_env, result, classes.error)) {
+                err = (*jni_env)->CallIntMethod(jni_env, result,
+                                                method_ids.getErr,
+                                                NULL);
+                fuse_reply_err(req, err);
+                
+        } else if((*jni_env)->IsInstanceOf(jni_env, result, classes.statvfs)) {
+                jarr = (*jni_env)->CallObjectMethod(jni_env, result,
+                                                    method_ids.statvfs_getArray,
+                                                    NULL);
+                
+                statarr = (*jni_env)->GetLongArrayElements(jarr, 0, &isCopy);
+
+                stat->f_bavail = statarr[0];
+                stat->f_bfree = statarr[1];
+                stat->f_blocks = statarr[2];
+                stat->f_favail = statarr[3];
+                stat->f_ffree = statarr[4];
+                stat->f_files = statarr[5];
+                stat->f_bsize = statarr[6];
+                stat->f_flag = statarr[7];
+                stat->f_frsize = statarr[8];
+                stat->f_fsid = statarr[9];
+                stat->f_namemax = statarr[10];
+
+                (*jni_env)->ReleaseLongArrayElements(jni_env, jarr, statarr, 0);
+                
+                fuse_reply_statfs(req, stat);
+        }
+                
         
+        printf("init: C\n");
         
-        result = (*jni_env)->CallObjectMethod(jni_env, opts_object, method_ids.init,
-                                          NULL);
-        
-        printf("yeeeeeehaa! - C\n");
-        printf("result: %i\n", result);
         
 }
+
 
 static struct fuse_lowlevel_ops jlowfuse_opts = {
           .init        = jlowfuse_init,
@@ -63,7 +149,7 @@ static struct fuse_lowlevel_ops jlowfuse_opts = {
           .readdir     = NULL,
           .releasedir  = NULL,
           .fsyncdir    = NULL,
-          .statfs      = NULL,
+          .statfs      = jlowfuse_statfs,
           .setxattr    = NULL,
           .getxattr    = NULL,
           .listxattr   = NULL,
@@ -104,22 +190,26 @@ JNIEXPORT jint JNICALL Java_org_irq0_jlowfuse_JLowFuse_init
                 printf("specify mountpoint\n");
                 return 2;
         }
-        
-        printf("multi: %i\n", multi_threaded);
-        
-        
-        // get methodID for fuse operations
-        jclass opts_class = (*env)->GetObjectClass(env, opts_obj);
 
-        method_ids.init =
-          (*env)->GetMethodID(env, opts_class, "init",
-                  "(Ljava/nio/ByteBuffer;)Lorg/irq0/jlowfuse/reply/Reply;");
-        
-        if (method_ids.init == NULL) {
-                return;
-        }
+        // precache classes, methodIDs
+        classes.fs_opts = (*env)->GetObjectClass(env, opts_obj);
+        objects.fs_opts = opts_obj;
 
-        opts_object = opts_obj;
+        find_java_class_or_die(&classes.error,
+                               "org/irq0/jlowfuse/reply/Error");
+        find_java_class_or_die(&classes.reply,
+                               "org/irq0/jlowfuse/reply/Reply");
+        find_java_class_or_die(&classes.statvfs,
+                               "org/irq0/jlowfuse/reply/Statvfs");
+        find_java_methodid_or_die(&method_ids.getErr, classes.error, "getErr", "()I");
+        find_java_methodid_or_die(&method_ids.init, classes.fs_opts, "init",
+                           "(Ljava/nio/ByteBuffer;)V");
+        find_java_methodid_or_die(&method_ids.statfs, classes.fs_opts, "statfs",
+                                  "(J)Lorg/irq0/jlowfuse/reply/Reply;");
+        find_java_methodid_or_die(&method_ids.statvfs_getArray,
+                                  classes.statvfs, "getArray",
+                                  "()[J");
+        
         
         
         chan = fuse_mount(mount_point, NULL);
@@ -145,5 +235,4 @@ JNIEXPORT jint JNICALL Java_org_irq0_jlowfuse_JLowFuse_init
         
         return err;
 }
-
 
