@@ -1,6 +1,6 @@
 package org.irq0.jlowfuse.reply;
 
-public class Statvfs {
+public class Statvfs extends Reply {
     // taken from freebsds sys/statvfs.h
     public static int F_BAVAIL = 0;       /* Number of blocks */
     public static int F_BFREE = 1;
@@ -14,7 +14,7 @@ public class Statvfs {
     public static int F_FSID = 9;         /* Not meaningful */
     public static int F_NAMEMAX = 10;      /* Same as pathconf(_PC_NAME_MAX) */
 
-    private long[] arr;
+    private long[] arr = new long[11];
 
     public void setBlocksAvail(long val) { this.arr[F_BAVAIL] = val; }
     public void setBlocksFree(long val) { this.arr[F_BFREE] = val; }
@@ -26,4 +26,7 @@ public class Statvfs {
     public void setFlag(long val) { this.arr[F_FLAG] = val; }
     public void setFrSize(long val) { this.arr[F_FRSIZE] = val; }
     public void setNameMax(long val) { this.arr[F_NAMEMAX] = val; }
+
+    public long[] getArray() { return this.arr; }
+    
 }
