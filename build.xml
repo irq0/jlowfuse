@@ -11,7 +11,7 @@
   <property name="swig-package" value="fuse"/>
   <property name="swig-dst" value="${java-src}/fuse"/>
   <property name="swig-src" value="swig"/>
-
+  <property name="swig-input" value="fuse_interface"/>
 
   <target name="init">
     <tstamp/>
@@ -27,7 +27,7 @@
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false" />
   </target>
 
-  <target name="compile-native" depends="init">
+  <target name="compile-native" depends="init,swig">
     <cpptasks:cc link="shared" outtype="shared" 
 		 runtime="static"
 		 outfile="${build}/jlowfuse" objdir="${build}/native"
@@ -47,6 +47,7 @@
       <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->      
 
       <fileset dir="${native-src}" includes="jlowfuse.c"/>
+      <fileset dir="${build}" includes="{$swig-input}_wrap.c"/>
     </cpptasks:cc>
   </target>
 
@@ -58,8 +59,9 @@
       <arg value="${swig-package}"/>
       <arg value="-outdir"/>
       <arg value="${swig-dst}"/>
-      <arg value="${swig-src}/fuse_interface.i"/>
+      <arg value="${swig-src}/${swig-input}.i"/>
     </exec>
+    <move file="${swig-src}/${swig-input}_wrap.c" todir="${build}"/>
   </target>
 
   <target name="dist" depends="compile,compile-native"
