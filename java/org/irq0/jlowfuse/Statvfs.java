@@ -1,6 +1,6 @@
 package org.irq0.jlowfuse.reply;
 
-public class Statvfs extends Reply {
+public class Statvfs {
     // taken from freebsds sys/statvfs.h
     public static int F_BAVAIL = 0;       /* Number of blocks */
     public static int F_BFREE = 1;
