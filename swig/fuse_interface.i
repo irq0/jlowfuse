@@ -34,6 +34,9 @@ typedef unsigned long fuse_ino_t;
 
 %include "various.i"
 
+%include "buffers.i"
+%apply int* BUFF {int* buffer}
+%apply char* CBUFF {char* buffer}
 
 /* FUSE session functions */
 extern void fuse_session_add_chan(struct fuse_session *se, struct fuse_chan *ch);
@@ -46,6 +49,7 @@ extern int fuse_session_exited(struct fuse_session *se);
 extern int fuse_session_loop(struct fuse_session *se);
 extern int fuse_session_loop_mt(struct fuse_session *se);
 
+%apply void* BUFF {void* userdata}
 extern struct fuse_session *fuse_lowlevel_new(struct fuse_args *args,
                                        const struct fuse_lowlevel_ops *op,
                                        size_t op_size, void *userdata);
@@ -79,6 +83,7 @@ extern int fuse_reply_bmap(fuse_req_t req, uint64_t idx);
 extern int fuse_reply_ioctl_retry(fuse_req_t req,
                                   const struct iovec *in_iov, size_t in_count,
               			  const struct iovec *out_iov, size_t out_count);
+%apply void* BUFF {void* buf}
 extern int fuse_reply_ioctl(fuse_req_t req, int result, const void *buf, size_t size);
 extern int fuse_reply_ioctl_iov(fuse_req_t req, int result, const struct iovec *iov,
 			        int count);
@@ -176,6 +181,7 @@ struct timespec
 
 
 /* iovec (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/uio.h] */
+%apply void* BUFF {void* iov_base}
 struct iovec
   {
     void *iov_base;
