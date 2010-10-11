@@ -466,6 +466,10 @@ public class CAPIGenerator
             "#include \"" + hIncluded.getPath() + "\"\n" +
             "\n"
          );
+
+         new CAPIGenerator(jlowfuse.AbstractLowlevelOpts.class).generateClassAPI(hOut, cOut, false, false);
+
+         
          /*
          new CAPIGenerator(FuseGetattr.class).generateClassAPI(hOut, cOut, false, false);
          new CAPIGenerator(FuseFSDirEnt.class).generateClassAPI(hOut, cOut, false, false);
