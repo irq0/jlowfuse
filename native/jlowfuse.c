@@ -9,6 +9,8 @@
 
 #define FUSE_USE_VERSION 26
 
+#include "jlowfuse.h"
+
 #include <jni.h>
 
 #include <fuse_lowlevel.h>
@@ -21,110 +23,159 @@
 #include <string.h>
 #include <errno.h>
 #include <fcntl.h>
-
-struct jlowfuse_method_ids {
-        jmethodID init;
-        jmethodID statfs;
-        jmethodID destroy;
-        jmethodID lookup;
-        jmethodID getErr;
-        jmethodID statvfs_getArray;
-} method_ids;
-
-struct jlowfuse_jclasses {
-        jclass error;
-        jclass reply;
-        jclass fs_opts;
-        jclass statvfs;
-} classes;
-
-struct jlowfuse_jobjects {
-        jobject fs_opts;
-} objects;
+#include <assert.h>
 
 JNIEnv *jni_env; 
 
 
-void find_java_methodid_or_die(jmethodID *dst, jclass class, char* name, char* sig)
-{
-        *dst = (*jni_env)->GetMethodID(jni_env, class, name, sig);           
-        if (*dst == NULL) {
-                fprintf(stderr, "cannot find methodid for: %s signature: %s\n",
-                        name, sig);
-                exit(23);
-        }
-}
 
-void find_java_class_or_die(jclass *dst, char* sig)
+struct class_lowlevel_opts *alloc_class_lowlevel_opts(JNIEnv *env)
 {
-        *dst = (*jni_env)->FindClass(jni_env, sig);
+        struct class_lowlevel_opts *result;
+
+        result = calloc(1, sizeof(struct class_lowlevel_opts));
+        assert(result != NULL);
+
+        return result;
+}
         
-        if (*dst == NULL) {
-                fprintf(stderr, "cannot find class %s.. exiting\n", sig);
-                exit(23);
+void free_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *ptr)
+{
+        if (ptr->class != NULL) {
+                (*env)->DeleteGlobalRef(env, ptr->class);
         }
+        free(ptr);
 }
 
+void populate_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *dst,
+                                  jobject obj)
+{
+        jclass class;
+
+        class = (*env)->GetObjectClass(env, obj);
+        assert(class != NULL);
+        if ((*env)->ExceptionCheck(env)) goto exception;
+
+        dst->class = class;
+        dst->object = obj;
+        
+        dst->method.link = (*env)->GetMethodID(env, class, "link", SIGNATURE_LINK);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.symlink = (*env)->GetMethodID(env, class, "symlink", SIGNATURE_SYMLINK);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.forget = (*env)->GetMethodID(env, class, "forget", SIGNATURE_FORGET);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.getattr = (*env)->GetMethodID(env, class, "getattr", SIGNATURE_GETATTR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.setattr = (*env)->GetMethodID(env, class, "setattr", SIGNATURE_SETATTR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.readlink = (*env)->GetMethodID(env, class, "readlink", SIGNATURE_READLINK);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.mknod = (*env)->GetMethodID(env, class, "mknod", SIGNATURE_MKNOD);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.unlink = (*env)->GetMethodID(env, class, "unlink", SIGNATURE_UNLINK);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.rmdir = (*env)->GetMethodID(env, class, "rmdir", SIGNATURE_RMDIR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.fsync = (*env)->GetMethodID(env, class, "fsync", SIGNATURE_FSYNC);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.opendir = (*env)->GetMethodID(env, class, "opendir", SIGNATURE_OPENDIR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.readdir = (*env)->GetMethodID(env, class, "readdir", SIGNATURE_READDIR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.releasedir = (*env)->GetMethodID(env, class, "releasedir", SIGNATURE_RELEASEDIR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.fsyncdir = (*env)->GetMethodID(env, class, "fsyncdir", SIGNATURE_FSYNCDIR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.statfs = (*env)->GetMethodID(env, class, "statfs", SIGNATURE_STATFS);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.getxattr = (*env)->GetMethodID(env, class, "getxattr", SIGNATURE_GETXATTR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.setxattr = (*env)->GetMethodID(env, class, "setxattr", SIGNATURE_SETXATTR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.listxattr = (*env)->GetMethodID(env, class, "listxattr", SIGNATURE_LISTXATTR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.removexattr = (*env)->GetMethodID(env, class, "removexattr", SIGNATURE_REMOVEXATTR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.bmap = (*env)->GetMethodID(env, class, "bmap", SIGNATURE_BMAP);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.init = (*env)->GetMethodID(env, class, "init", SIGNATURE_INIT);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.write = (*env)->GetMethodID(env, class, "write", SIGNATURE_WRITE);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.destroy = (*env)->GetMethodID(env, class, "destroy", SIGNATURE_DESTROY);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.flush = (*env)->GetMethodID(env, class, "flush", SIGNATURE_FLUSH);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.lookup = (*env)->GetMethodID(env, class, "lookup", SIGNATURE_LOOKUP);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.read = (*env)->GetMethodID(env, class, "read", SIGNATURE_READ);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.create = (*env)->GetMethodID(env, class, "create", SIGNATURE_CREATE);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.mkdir = (*env)->GetMethodID(env, class, "mkdir", SIGNATURE_MKDIR);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.rename = (*env)->GetMethodID(env, class, "rename", SIGNATURE_RENAME);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.release = (*env)->GetMethodID(env, class, "release", SIGNATURE_RELEASE);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.open = (*env)->GetMethodID(env, class, "open", SIGNATURE_OPEN);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+
+        dst->method.access = (*env)->GetMethodID(env, class, "access", SIGNATURE_ACCESS);
+        if ((*env)-ExceptionCheck(env)) goto exception;
+        
+        return;
+        
+exception:
+        fprintf(stderr, "Exception occured in populate_class_lowlevel_opts\n");
+        (*env)->ExceptionDescribe(env);
+        (*env)->ExceptionClear(env);
+        exit(23);
+}
+
+        
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
 {
-        (*jni_env)->CallVoidMethod(jni_env, objects.fs_opts,
-                                   method_ids.init,
-                                   NULL);
+//        (*jni_env)->CallVoidMethod(jni_env, objects.fs_opts,
+//                                   method_ids.init,
+//                                   NULL);
         printf("init: C\n");
 }
 
 
 void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino) 
 {
-        jobject result;
-        jint err;
-        struct statvfs *stat = calloc(sizeof(struct statvfs), 1);
-        jlongArray jarr;
-        jlong* statarr;
-        jboolean isCopy;
-        jint len;
-
-        result = (*jni_env)->CallObjectMethod(jni_env, objects.fs_opts,
-                                              method_ids.statfs,
-                                              NULL);
-        if((*jni_env)->IsInstanceOf(jni_env, result, classes.error)) {
-                err = (*jni_env)->CallIntMethod(jni_env, result,
-                                                method_ids.getErr,
-                                                NULL);
-                fuse_reply_err(req, err);
-
-        } else if((*jni_env)->IsInstanceOf(jni_env, result, classes.statvfs)) {
-                jarr = (*jni_env)->CallObjectMethod(jni_env, result,
-                                                    method_ids.statvfs_getArray,
-                                                    NULL);
-                len = (*jni_env)->GetArrayLength(jni_env, jarr);
-                printf("len: %i\n", len);
-                
-                statarr = calloc(sizeof(jlong), len);
-                (*jni_env)->GetLongArrayRegion(jni_env, jarr, 0, len, statarr);
-
-                printf("elem %li\n", statarr[0]);
-
-                
-                stat->f_bavail = (long) statarr[0];
-                stat->f_bfree = statarr[1];
-                stat->f_blocks = statarr[2];
-                stat->f_favail = statarr[3];
-                stat->f_ffree = statarr[4];
-                stat->f_files = statarr[5];
-                stat->f_bsize = statarr[6];
-                stat->f_flag = statarr[7];
-                stat->f_frsize = statarr[8];
-                stat->f_fsid = statarr[9];
-                stat->f_namemax = statarr[10];
-
-                (*jni_env)->DeleteLocalRef(jni_env, jarr);
-              
-                fuse_reply_statfs(req, stat);
-        }
-        printf("init: C\n");
-        
-        
 }
 
 
@@ -167,6 +218,25 @@ static struct fuse_lowlevel_ops jlowfuse_opts = {
           /* .poll        = NULL, */
 };
 
+
+JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOpsObject
+(JNIEnv *env, jobject obj, jobject ops_obj)
+{
+        jlong jresult = 0;
+        struct fuse_lowlevel_ops *result = 0;
+        
+        struct class_lowlevel_opts *clops;
+        clops = alloc_class_lowlevel_opts(env);
+        
+        populate_class_lowlevel_opts(env, clops, ops_obj);
+
+        result = &jlowfuse_opts;
+
+        *(struct fuse_lowlevel_ops**)&jresult = result;
+        return jresult;
+        
+}
+
 JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
 (JNIEnv *env, jobject obj, jobject opts_obj) 
 {
@@ -194,27 +264,6 @@ JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
                 printf("specify mountpoint\n");
                 return 2;
         }
-
-        // precache classes, methodIDs
-        classes.fs_opts = (*env)->GetObjectClass(env, opts_obj);
-        objects.fs_opts = opts_obj;
-
-        find_java_class_or_die(&classes.error,
-                               "org/irq0/jlowfuse/reply/FsError");
-        find_java_class_or_die(&classes.reply,
-                               "org/irq0/jlowfuse/reply/Reply");
-        find_java_class_or_die(&classes.statvfs,
-                               "org/irq0/jlowfuse/reply/Statvfs");
-        find_java_methodid_or_die(&method_ids.getErr, classes.error, "getErr", "()I");
-        find_java_methodid_or_die(&method_ids.init, classes.fs_opts, "init",
-                           "(Ljava/nio/ByteBuffer;)V");
-        find_java_methodid_or_die(&method_ids.statfs, classes.fs_opts, "statfs",
-                                  "(J)Lorg/irq0/jlowfuse/reply/Reply;");
-        find_java_methodid_or_die(&method_ids.statvfs_getArray,
-                                  classes.statvfs, "getArray",
-                                  "()[J");
-        
-        
         
         chan = fuse_mount(mount_point, NULL);
         sess = fuse_lowlevel_new(NULL, &jlowfuse_opts,
