@@ -58,8 +58,8 @@
       <classpath>
 	<pathelement location="${build}/java"/>
       </classpath>
-      <arg value="${build}/java_api.c"/>
       <arg value="${build}/java_api.h"/>
+      <arg value="${build}/java_api.c"/>
       <arg value="jlowfuse.h"/>
     </java>
   </target>
