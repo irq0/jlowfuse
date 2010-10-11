@@ -46,8 +46,8 @@ public class CAPIGenerator
 
       // split all public fields into static and instance fields
       Field[] fields = clazz.getFields();
-      List staticFieldsList = new ArrayList();
-      List instanceFieldsList = new ArrayList();
+      List<Field> staticFieldsList = new ArrayList<Field>();
+      List<Field> instanceFieldsList = new ArrayList<Field>();
       for (int i = 0; i < fields.length; i++)
       {
          Field field = fields[i];
@@ -65,8 +65,8 @@ public class CAPIGenerator
 
       // obtain all public constructors and give them C names
       Constructor[] constructors = clazz.getConstructors();
-      List constructorsList = new ArrayList();
-      Map constructor2name = new HashMap();
+      List<Constructor> constructorsList = new ArrayList<Constructor>();
+      Map<Constructor,String> constructor2name = new HashMap<Constructor,String>();
       for (int i = 0; i < constructors.length; i++)
       {
          Constructor constructor = constructors[i];
@@ -80,9 +80,9 @@ public class CAPIGenerator
 
       // split all public methods into static and instance methods and give them C names
       Method[] methods = clazz.getMethods();
-      List staticMethodsList = new ArrayList();
-      List instanceMethodsList = new ArrayList();
-      Map method2name = new HashMap();
+      List<Method> staticMethodsList = new ArrayList<Method>();
+      List<Method> instanceMethodsList = new ArrayList<Method>();
+      Map<Method,String> method2name = new HashMap<Method,String>();
       for (int i = 0; i < methods.length; i++)
       {
          Method method = methods[i];
