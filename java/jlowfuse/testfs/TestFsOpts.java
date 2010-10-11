@@ -9,11 +9,5 @@ class TestFsOpts extends AbstractLowlevelOpts {
     }
 
     public void statfs(long ino) {
-        //        return new FsError(Errno.ENOSYS);
-        
-        Statvfs stat = new Statvfs();
-        stat.setBlocksAvail(23);
-
-        
     }
 }

@@ -167,7 +167,7 @@ static struct fuse_lowlevel_ops jlowfuse_opts = {
           /* .poll        = NULL, */
 };
 
-JNIEXPORT jint JNICALL Java_org_irq0_jlowfuse_JLowFuse_init
+JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
 (JNIEnv *env, jobject obj, jobject opts_obj) 
 {
         struct fuse_chan *chan;

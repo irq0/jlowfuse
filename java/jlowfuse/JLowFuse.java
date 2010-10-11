@@ -1,9 +1,12 @@
 package jlowfuse;
 
-public class JLowFuse {
-        public native int init(Object opts);
+import fuse.*;
 
-        static {
-                System.loadLibrary("jlowfuse");
-        }
+public class JLowFuse {
+    public native int init(Object opts);
+    
+    static {
+        System.loadLibrary("jlowfuse");
+    }
+    
 } 
