@@ -51,7 +51,7 @@
     </cpptasks:cc>
   </target>
 
-  <target name="java2c" depends="compile"
+  <target name="java2c" depends="init,compile,swig"
 	  description="Generate C - Java bindings to easily access methodIDs
 		       jclasss and jobjects in c code">
     <java classname="java2c.CAPIGenerator">
