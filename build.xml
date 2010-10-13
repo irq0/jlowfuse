@@ -22,7 +22,7 @@
     <mkdir dir="${swig-dst}"/>
   </target>
 
-  <target name="compile" depends="init" 
+  <target name="compile" depends="init,swig" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false" />
   </target>
