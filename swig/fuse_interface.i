@@ -11,7 +11,6 @@
 
 /* Help SWIG with types */
 typedef unsigned long long int uint64_t;
-typedef struct { int __val[2]; } __fsid_t;
 typedef unsigned long fuse_ino_t;
 
 %apply unsigned long long { uint64_t }
@@ -91,50 +90,48 @@ extern int fuse_reply_poll(fuse_req_t req, unsigned revents);
 
 
 /* statvfs (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/statvfs.h] */
-struct statvfs
-  {
-    unsigned long int f_bsize;
-    unsigned long int f_frsize;
-    __fsblkcnt64_t f_blocks;
-    __fsblkcnt64_t f_bfree;
-    __fsblkcnt64_t f_bavail;
-    __fsfilcnt64_t f_files;
-    __fsfilcnt64_t f_ffree;
-    __fsfilcnt64_t f_favail;
-    unsigned long int f_fsid;
-//    int __f_unused;
-    unsigned long int f_flag;
-    unsigned long int f_namemax;
+struct statvfs {
+        %rename(bsize) f_bsize;
+        unsigned long int f_bsize;
+        %rename(frsize) f_frsize;
+        unsigned long int f_frsize;
+        %rename(blocks) f_blocks;
+        __fsblkcnt64_t f_blocks;
+        %rename(bfree) f_bfree;
+        __fsblkcnt64_t f_bfree;
+        %rename(bavail) f_bavail;
+        __fsblkcnt64_t f_bavail;
+        %rename(files) f_files;
+        __fsfilcnt64_t f_files;
+        %rename(ffree) f_ffress;
+        __fsfilcnt64_t f_ffree;
+        %rename(favail) f_favail;
+        __fsfilcnt64_t f_favail;
+        /* man statfs: "Nobody knows what f_fsid is supposed to contain" */
+//        %rename(fsid) f_fsid; 
+//        unsigned long int f_fsid;
+//        //    int __f_unused;
+        %rename(flag) f_flag;
+        unsigned long int f_flag;
+        %rename(namemax) f_namemax;
+        unsigned long int f_namemax;
 //    int __f_spare[6];
-  };
+};
   
 /* Definitions for the flag in `f_flag' (GNU C Library) */
-enum
-{
-  ST_RDONLY = 1,                /* Mount read-only.  */
-#define ST_RDONLY       ST_RDONLY
-  ST_NOSUID = 2,                /* Ignore suid and sgid bits.  */
-#define ST_NOSUID       ST_NOSUID
-  ST_NODEV = 4,                 /* Disallow access to device special files.  */
-# define ST_NODEV       ST_NODEV
-  ST_NOEXEC = 8,                /* Disallow program execution.  */
-# define ST_NOEXEC      ST_NOEXEC
-  ST_SYNCHRONOUS = 16,          /* Writes are synced at once.  */
-# define ST_SYNCHRONOUS ST_SYNCHRONOUS
-  ST_MANDLOCK = 64,             /* Allow mandatory locks on an FS.  */
-# define ST_MANDLOCK    ST_MANDLOCK
-  ST_WRITE = 128,               /* Write on file/directory/symlink.  */
-# define ST_WRITE       ST_WRITE
-  ST_APPEND = 256,              /* Append-only file.  */
-# define ST_APPEND      ST_APPEND
-  ST_IMMUTABLE = 512,           /* Immutable file.  */
-# define ST_IMMUTABLE   ST_IMMUTABLE
-  ST_NOATIME = 1024,            /* Do not update access times.  */
-# define ST_NOATIME     ST_NOATIME
-  ST_NODIRATIME = 2048,         /* Do not update directory access times.  */
-# define ST_NODIRATIME  ST_NODIRATIME
-  ST_RELATIME = 4096            /* Update atime relative to mtime/ctime.  */
-# define ST_RELATIME    ST_RELATIME
+enum {
+        ST_RDONLY      = 1,     /* Mount read-only.  */
+        ST_NOSUID      = 2,     /* Ignore suid and sgid bits.  */
+        ST_NODEV       = 4,     /* Disallow access to device special files.  */
+        ST_NOEXEC      = 8,     /* Disallow program execution.  */
+        ST_SYNCHRONOUS = 16,    /* Writes are synced at once.  */
+        ST_MANDLOCK    = 64,    /* Allow mandatory locks on an FS.  */
+        ST_WRITE       = 128,   /* Write on file/directory/symlink.  */
+        ST_APPEND      = 256,   /* Append-only file.  */
+        ST_IMMUTABLE   = 512,   /* Immutable file.  */
+        ST_NOATIME     = 1024,  /* Do not update access times.  */
+        ST_NODIRATIME  = 2048,  /* Do not update directory access times.  */
+        ST_RELATIME    = 4096   /* Update atime relative to mtime/ctime.  */
 };
 
 /* FUSE: fuse_file_info */
@@ -152,41 +149,56 @@ struct fuse_file_info {
 };
 
 /* stat (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/stat.h] */
-struct stat
-  {
-    __dev_t st_dev;
-    unsigned short int __pad1;
-    __ino_t __st_ino;
-    __mode_t st_mode;
-    __nlink_t st_nlink;
-    __uid_t st_uid;
-    __gid_t st_gid;
-    __dev_t st_rdev;
-    unsigned short int __pad2;
-    __off64_t st_size;
-    __blksize_t st_blksize;
-    __blkcnt64_t st_blocks;
-    struct timespec st_atim;
-    struct timespec st_mtim;
-    struct timespec st_ctim;
-    __ino64_t st_ino;
-  };
+struct stat {
+        %rename(dev) st_dev;
+        __dev_t st_dev;
+//          unsigned short int __pad1;
+        %rename(_ino) __st_ino;
+        __ino_t __st_ino;
+        %rename(mode) st_mode;
+        __mode_t st_mode;
+        %rename(nlink) st_nlink;
+        __nlink_t st_nlink;
+        %rename(uid) st_uid;
+        __uid_t st_uid;
+        %rename(gid) st_gid;
+        __gid_t st_gid;
+        %rename(rdev) st_rdev;
+        __dev_t st_rdev;
+//        unsigned short int __pad2;
+        %rename(size) st_size;
+        __off64_t st_size;
+        %rename(blksize) st_blksize;
+        __blksize_t st_blksize;
+        %rename(blocks) st_blocks;
+        __blkcnt64_t st_blocks;
+        %rename(atim) st_atim;
+        struct timespec st_atim;
+        %rename(mtim) st_mtim;
+        struct timespec st_mtim;
+        %rename(ctim) st_ctim;
+        struct timespec st_ctim;
+        %rename(ino) st_ino;
+          __ino64_t st_ino;
+};
 
 /* timespect (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/time.h] */
-struct timespec
-  {
-    __time_t tv_sec;            /* Seconds.  */
-    long int tv_nsec;           /* Nanoseconds.  */
-  };
+struct timespec {
+        %rename(sec) tv_sec;
+        __time_t tv_sec;            /* Seconds.  */
+        %rename(nsec) tv_nsec;
+        long int tv_nsec;           /* Nanoseconds.  */
+};
 
 
 /* iovec (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/uio.h] */
 %apply void* BUFF {void* iov_base}
-struct iovec
-  {
-    void *iov_base;
-    size_t iov_len;
-  };
+struct iovec {
+        %rename(base) iov_base;
+        void *iov_base;
+        %rename(len) iov_len;
+        size_t iov_len;
+};
 
 struct fuse_args {
         /** Argument count */
@@ -199,3 +211,4 @@ struct fuse_args {
         /** Is 'argv' allocated? */
         int allocated;
 };
+
