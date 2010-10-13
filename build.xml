@@ -90,7 +90,7 @@
     <!-- run with: java -jar testfs.jar -Djava.library.path=. -->
     <jar jarfile="${dist}/testfs.jar" basedir="${build}/java">
       <manifest>
-	<attribute name="Main-Class" value="org.irq0.jlowfuse.testfs.TestFs"/>
+	<attribute name="Main-Class" value="jlowfuse.testfs.TestFs"/>
       </manifest>
     </jar>      
   </target>
