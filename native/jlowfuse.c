@@ -25,21 +25,27 @@
 #include <fcntl.h>
 #include <assert.h>
 
-JNIEnv *jni_env; 
+#include <err.h>
+
+JavaVM *jvm;
+jobject thread_group;  /* attached java threads */
+
+/* cached class, object, methodids */
+struct class_lowlevel_ops *cl_low_ops;
 
 
 
-struct class_lowlevel_opts *alloc_class_lowlevel_opts(JNIEnv *env)
+struct class_lowlevel_ops *alloc_class_lowlevel_ops(JNIEnv *env)
 {
-        struct class_lowlevel_opts *result;
+        struct class_lowlevel_ops *result;
 
-        result = calloc(1, sizeof(struct class_lowlevel_opts));
+        result = calloc(1, sizeof(struct class_lowlevel_ops));
         assert(result != NULL);
 
         return result;
 }
         
-void free_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *ptr)
+void free_class_lowlevel_ops(JNIEnv *env, struct class_lowlevel_ops *ptr)
 {
         if (ptr->class != NULL) {
                 (*env)->DeleteGlobalRef(env, ptr->class);
@@ -47,7 +53,7 @@ void free_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *ptr)
         free(ptr);
 }
 
-void populate_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *dst,
+void populate_class_lowlevel_ops(JNIEnv *env, struct class_lowlevel_ops *dst,
                                   jobject obj)
 {
         jclass class;
@@ -158,18 +164,73 @@ void populate_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *dst,
         return;
         
 exception:
-        fprintf(stderr, "Exception occured in populate_class_lowlevel_opts\n");
         (*env)->ExceptionDescribe(env);
         (*env)->ExceptionClear(env);
-        exit(23);
+        errx(16, "Exception occured in populate_class_lowlevel_ops");
 }
+
+
+/* attach native thread to java vm */
+static JNIEnv *attach_native_thread()
+{
+	JNIEnv *env;
+	JavaVMAttachArgs args;
+        int res;
+                
+	args.version = JNI_VERSION_1_6;
+	args.name = NULL;
+	args.group = thread_group;
+
+	res = (*jvm)->GetEnv(jvm, (void**) &env, args.version);
+
+        if (res == JNI_EDETACHED) {
+                (*jvm)->AttachCurrentThreadAsDaemon(jvm,
+                                                    (void**) &env,
+                                                    (void*) &args);
+        } else { /* should not happen */
+                errx(16, "should not happen.. GetEnv result: %i", res);
+        }
+        
+        return env;
+}
+
+/* detach native thread from java vm */
+static void detach_native_thread()
+{
+        int res;
+
+        res = (*jvm)->DetachCurrentThread(jvm);
+        assert(res == JNI_OK);
+}        
+
+
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
+{
+        JNIEnv *env;
+        int ret;
+        
+        jvm = ljvm;
+
+        ret = (*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_2);
+        assert(ret != JNI_EVERSION);
+
+        return JNI_VERSION_1_6;
+}
+
 
         
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
 {
-//        (*jni_env)->CallVoidMethod(jni_env, objects.fs_opts,
-//                                   method_ids.init,
-//                                   NULL);
+
+        JNIEnv *env;
+
+        env = attach_native_thread();
+        
+        (*env)->CallVoidMethod(env,
+                               cl_low_ops->object,
+                               cl_low_ops->method.init,
+                               NULL);
         printf("init: C\n");
 }
 
@@ -179,7 +240,7 @@ void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino)
 }
 
 
-static struct fuse_lowlevel_ops jlowfuse_opts = {
+static struct fuse_lowlevel_ops jlowfuse_ops = {
           .init        = jlowfuse_init,
           .destroy     = NULL,
           .lookup      = NULL,
@@ -225,12 +286,11 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOpsObject
         jlong jresult = 0;
         struct fuse_lowlevel_ops *result = 0;
         
-        struct class_lowlevel_opts *clops;
-        clops = alloc_class_lowlevel_opts(env);
+        cl_low_ops = alloc_class_lowlevel_ops(env);
         
-        populate_class_lowlevel_opts(env, clops, ops_obj);
+        populate_class_lowlevel_ops(env, cl_low_ops, ops_obj);
 
-        result = &jlowfuse_opts;
+        result = &jlowfuse_ops;
 
         *(struct fuse_lowlevel_ops**)&jresult = result;
         return jresult;
@@ -238,7 +298,7 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOpsObject
 }
 
 JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
-(JNIEnv *env, jobject obj, jobject opts_obj) 
+(JNIEnv *env, jobject obj, jobject ops_obj) 
 {
         struct fuse_chan *chan;
         struct fuse_args args = FUSE_ARGS_INIT(0, NULL);
@@ -248,8 +308,6 @@ JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
         int foreground = -1;
         int err = -1;
 
-        jni_env = env;
-        
         fuse_opt_add_arg(&args, "-d");
         fuse_opt_add_arg(&args, "/mnt1");
         
@@ -266,8 +324,8 @@ JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
         }
         
         chan = fuse_mount(mount_point, NULL);
-        sess = fuse_lowlevel_new(NULL, &jlowfuse_opts,
-                                 sizeof(jlowfuse_opts), NULL);
+        sess = fuse_lowlevel_new(NULL, &jlowfuse_ops,
+                                 sizeof(jlowfuse_ops), NULL);
         
         printf("chan=%p sess=%p\n", chan, sess);
         

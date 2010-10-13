@@ -34,8 +34,8 @@
 #define SIGNATURE_ACCESS      "(Ljlowfuse/FuseReq;JI)V"
 
 
-/* struct to represent java class AbstractLowlevelOpts and decendents */
-struct class_lowlevel_opts {
+/* struct to represent java class AbstractLowlevelOps and decendents */
+struct class_lowlevel_ops {
         jclass class;
 
         jobject object;
@@ -77,7 +77,7 @@ struct class_lowlevel_opts {
 
 };
 
-struct class_lowlevel_opts *alloc_class_lowlevel_opts(JNIEnv *env);
-void free_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *ptr);
-void populate_class_lowlevel_opts(JNIEnv *env, struct class_lowlevel_opts *dst,
+struct class_lowlevel_ops *alloc_class_lowlevel_ops(JNIEnv *env);
+void free_class_lowlevel_ops(JNIEnv *env, struct class_lowlevel_ops *ptr);
+void populate_class_lowlevel_ops(JNIEnv *env, struct class_lowlevel_ops *dst,
                                   jobject obj);
