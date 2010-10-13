@@ -6,12 +6,13 @@ public class JLowFuse {
     public native int init(Object opts);
     private native long setOps(AbstractLowlevelOpts ops);
 
-    public Session lowlevelNew(AbstractLowlevelOpts ops) {
-        long ops_p;
+    public Session lowlevelNew(AbstractLowlevelOpts ops_object) {
+        long ops_l;
+        ops_l = setOps(ops_object);
 
-        ops_p = setOps(ops);
+        FuseLowlevelOps ops = new FuseLowlevelOps(ops_l);
 
-        //        fuse_lowlevel_new(null, ops_p, sizeof(ops_p), null); // will not work :(
+        fuse.fuse_lowlevel_new(null, ops, 34 , null); /* 34 = # fuse ops */
         return null;
     }
     
