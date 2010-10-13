@@ -7,7 +7,7 @@ public class TestFs {
     public static void main(String args[]) {
         JLowFuse f = new JLowFuse();
 
-        f.init(new TestFsOpts());
+        f.lowlevelNew(new TestFsOpts());
     }
       
 }
