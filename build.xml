@@ -46,8 +46,10 @@
       <compilerarg value="-pthread"/> <!-- fuse -->
       <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->      
 
-      <fileset dir="${native-src}" includes="jlowfuse.c"/>
-      <fileset dir="${build}" includes="{$swig-input}_wrap.c"/>
+      <fileset dir="${native-src}">
+	<include name="${swig-input}_wrap.c"/>
+	<include name="jlowfuse.c"/>
+      </fileset>
     </cpptasks:cc>
   </target>
 
@@ -75,7 +77,7 @@
       <arg value="${swig-dst}"/>
       <arg value="${swig-src}/${swig-input}.i"/>
     </exec>
-    <move file="${swig-src}/${swig-input}_wrap.c" todir="${build}"/>
+    <move file="${swig-src}/${swig-input}_wrap.c" todir="${native-src}"/>
   </target>
 
   <target name="dist" depends="compile,compile-native"
