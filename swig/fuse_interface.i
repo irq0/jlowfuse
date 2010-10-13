@@ -1,5 +1,6 @@
 %module fuse
 %{
+#define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
 #include <sys/statvfs.h>
@@ -119,6 +120,8 @@ struct statvfs {
 };
   
 /* Definitions for the flag in `f_flag' (GNU C Library) */
+%include "enums.swg"
+%javaconst(1);
 enum {
         ST_RDONLY      = 1,     /* Mount read-only.  */
         ST_NOSUID      = 2,     /* Ignore suid and sgid bits.  */
