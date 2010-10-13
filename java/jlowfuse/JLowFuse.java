@@ -4,14 +4,15 @@ import fuse.*;
 
 public class JLowFuse {
     public native int init(Object opts);
-    private native SWIGTYPE_p_fuse_lowlevel_ops setOpsObject(AbstractLowlevelOpts ops);
+    private native long setOps(AbstractLowlevelOpts ops);
 
     public Session lowlevelNew(AbstractLowlevelOpts ops) {
-        SWIGTYPE_p_fuse_lowlevel_ops ops_p;
+        long ops_p;
 
-        ops_p = setOpsObject(ops);
+        ops_p = setOps(ops);
 
-        fuse_lowlevel_new(null, ops_p, sizeof(ops_p), null); // will not work :(
+        //        fuse_lowlevel_new(null, ops_p, sizeof(ops_p), null); // will not work :(
+        return null;
     }
     
     static {
