@@ -1,8 +1,5 @@
 package jlowfuse;
 
-import java.nio.CharBuffer;
-import java.nio.ByteBuffer;
-
 import fuse.*;
 
 public class FuseArgs extends fuse_args {
