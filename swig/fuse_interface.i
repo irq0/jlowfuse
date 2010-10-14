@@ -42,6 +42,7 @@ extern void fuse_session_remove_chan(struct fuse_chan *ch);
 extern struct fuse_chan *fuse_session_next_chan(struct fuse_session *se,
                                                 struct fuse_chan *ch);
 extern void fuse_session_exit(struct fuse_session *se);
+extern void fuse_session_destroy(struct fuse_session *se);
 extern void fuse_session_reset(struct fuse_session *se);
 extern int fuse_session_exited(struct fuse_session *se);
 extern int fuse_session_loop(struct fuse_session *se);
@@ -217,8 +218,8 @@ struct fuse_args {
 
 
 
-extern void fuse_opt_free_args(struct fuse_args *args);
-extern int fuse_opt_add_arg(struct fuse_args *args, const char *arg);
+//extern void fuse_opt_free_args(struct fuse_args *args);
+//extern int fuse_opt_add_arg(struct fuse_args *args, const char *arg);
 
 //%apply char **STRING_ARRAY { char *mountpoint };
 //extern int fuse_parse_cmdline(struct fuse_args *args, char **mountpoint,
