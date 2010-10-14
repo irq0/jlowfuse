@@ -47,9 +47,13 @@ struct class_lowlevel_ops *alloc_class_lowlevel_ops(JNIEnv *env)
         
 void free_class_lowlevel_ops(JNIEnv *env, struct class_lowlevel_ops *ptr)
 {
-        if (ptr->class != NULL) {
-                (*env)->DeleteGlobalRef(env, ptr->class);
-        }
+        assert(ptr         != NULL &&
+               ptr->class  != NULL &&
+               ptr->object != NULL);
+        
+        (*env)->DeleteGlobalRef(env, ptr->class);
+        (*env)->DeleteGlobalRef(env, ptr->object);
+        
         free(ptr);
 }
 
@@ -62,8 +66,8 @@ void populate_class_lowlevel_ops(JNIEnv *env, struct class_lowlevel_ops *dst,
         assert(class != NULL);
         if ((*env)->ExceptionCheck(env)) goto exception;
 
-        dst->class = class;
-        dst->object = obj;
+        dst->class = (*env)->NewGlobalRef(env, class);
+        dst->object = (*env)->NewGlobalRef(env, obj);
         
         dst->method.link = (*env)->GetMethodID(env, class, "link", SIGNATURE_LINK);
         if ((*env)->ExceptionCheck(env)) goto exception;
@@ -198,7 +202,7 @@ static JNIEnv *attach_native_thread()
 static void detach_native_thread()
 {
         int res;
-
+        return;
         res = (*jvm)->DetachCurrentThread(jvm);
         assert(res == JNI_OK);
 }        
@@ -226,11 +230,14 @@ void jlowfuse_init(void *userdata, struct fuse_conn_info *conn)
         JNIEnv *env;
 
         env = attach_native_thread();
+        printf("env: %p\n", env);
+
+        
+        printf("obj %p init: %li\n", cl_low_ops->object, cl_low_ops->method.init);
         
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
-                               cl_low_ops->method.init,
-                               NULL);
+                               cl_low_ops->method.init);
         printf("init: C\n");
 }
 
@@ -240,7 +247,7 @@ void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino)
 }
 
 
-static struct fuse_lowlevel_ops jlowfuse_ops = {
+struct fuse_lowlevel_ops jlowfuse_ops = {
           .init        = jlowfuse_init,
           .destroy     = NULL,
           .lookup      = NULL,
@@ -285,15 +292,15 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 {
         jlong jresult = 0;
         struct fuse_lowlevel_ops *result = 0;
+
+        printf("env: %p\n", env);
         
-        cl_low_ops = alloc_class_lowlevel_ops(env);
-        
+        cl_low_ops = alloc_class_lowlevel_ops(env);        
         populate_class_lowlevel_ops(env, cl_low_ops, ops_obj);
 
-        result = &jlowfuse_ops;
+        printf("obj: %p\n", ops_obj);
 
-        *(struct fuse_lowlevel_ops**)&jresult = result;
-        return jresult;
+        return (long)&jlowfuse_ops;
 }
 
 JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
