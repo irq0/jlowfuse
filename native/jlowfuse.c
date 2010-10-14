@@ -230,20 +230,30 @@ void jlowfuse_init(void *userdata, struct fuse_conn_info *conn)
         JNIEnv *env;
 
         env = attach_native_thread();
-        printf("env: %p\n", env);
-
-        
-        printf("obj %p init: %li\n", cl_low_ops->object, cl_low_ops->method.init);
         
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.init);
-        printf("init: C\n");
 }
 
 
 void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino) 
 {
+        JNIEnv *env = attach_native_thread();
+        
+        printf("[statfs] req: %p %li \n", req, req);
+        
+        (*env)->CallVoidMethod(env,
+                               cl_low_ops->object,
+                               cl_low_ops->method.statfs,
+                               req,
+                               ino);
+        
+        if ((*env)->ExceptionCheck(env)) {
+                (*env)->ExceptionDescribe(env);
+                (*env)->ExceptionClear(env);
+        }
+        printf("[statfs] return: %i \n");
 }
 
 
@@ -288,7 +298,7 @@ struct fuse_lowlevel_ops jlowfuse_ops = {
 
 
 JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
-(JNIEnv *env, jobject obj, jobject ops_obj)
+(JNIEnv *env, jclass cls, jobject ops_obj)
 {
         jlong jresult = 0;
         struct fuse_lowlevel_ops *result = 0;
@@ -302,6 +312,45 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 
         return (long)&jlowfuse_ops;
 }
+
+
+JNIEXPORT jlong JNICALL Java_jlowfuse_FuseArgs_makeFuseArgs
+(JNIEnv *env, jclass cls, jobjectArray jstrarr)
+{
+        jsize len;
+        jstring jstr;
+        
+        int i;
+        struct fuse_args *args;
+        char *str;
+        char *mount_point;
+        int multi_threaded = -1;
+        int foreground = -1;
+        
+        args = calloc(1, sizeof(struct fuse_args));
+        
+        len = (*env)->GetArrayLength(env, jstrarr);
+
+        for(i=0; i<len; i++) {
+                jstr = (*env)->GetObjectArrayElement(env, jstrarr, i);
+                str = (*env)->GetStringUTFChars(env, jstr, NULL);
+                assert(str != NULL);
+
+                fuse_opt_add_arg(args, str);
+
+                (*env)->ReleaseStringUTFChars(env, jstr, str);
+                (*env)->DeleteLocalRef(env, jstr);
+                
+        }
+
+        if (fuse_parse_cmdline(args, &mount_point,
+                               &multi_threaded, &foreground) != 0) {
+                errx(2, "Commandline error");
+        }
+
+        return (long)args;        
+}
+
 
 JNIEXPORT jint JNICALL Java_jlowfuse_JLowFuse_init
 (JNIEnv *env, jobject obj, jobject ops_obj) 

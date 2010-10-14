@@ -3,18 +3,25 @@ package jlowfuse;
 import fuse.*;
 
 public class FuseArgs extends fuse_args {
-    /*    public FuseArgs(String[] args) {
-        addArgs(args);
+    private static native long makeFuseArgs(String[] args);
+    public static FuseArgs parseCommandline(String[] args) {
+        long args_l = FuseArgs.makeFuseArgs(args);
+        return new FuseArgs(args_l);
     }
 
-    public void addArg(String arg) {
-        fuse.fuse_opt_add_arg(this, arg);
+    public FuseArgs(long ptr) {
+        super(ptr, true);
     }
-    
-    public void addArgs(String[] args) {
-        for (String s: args) {
-            addArg(s);
-        }
+    public FuseArgs() {
+        super();
     }
-    */
+
+    public String toString() {
+        return "lowlevel args ptr:" + super.getCPtr(this);
+    }
+
+    static {
+        System.loadLibrary("jlowfuse");
+    }
+
 }
