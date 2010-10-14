@@ -1,6 +1,7 @@
 package jlowfuse;
 
 import fuse.*;
+import java.nio.ByteBuffer;
 
 public class JLowFuse {
     public native int init(Object opts);
@@ -12,7 +13,8 @@ public class JLowFuse {
 
         FuseLowlevelOps ops = new FuseLowlevelOps(ops_l);
 
-        fuse.fuse_lowlevel_new(null, ops, 34 , null); /* 34 = # fuse ops */
+        fuse.fuse_lowlevel_new(new FuseArgs(),
+                               ops, 34*4 , null); /* 34 = # fuse ops */
         return null;
     }
     

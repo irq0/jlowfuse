@@ -35,8 +35,6 @@ typedef unsigned long fuse_ino_t;
 %include "various.i"
 
 %include "buffers.i"
-%apply int* BUFF {int* buffer}
-%apply char* CBUFF {char* buffer}
 
 /* FUSE session functions */
 extern void fuse_session_add_chan(struct fuse_session *se, struct fuse_chan *ch);
@@ -49,7 +47,7 @@ extern int fuse_session_exited(struct fuse_session *se);
 extern int fuse_session_loop(struct fuse_session *se);
 extern int fuse_session_loop_mt(struct fuse_session *se);
 
-%apply void* BUFF {void* userdata}
+//%apply void* BUFF {void* userdata}
 extern struct fuse_session *fuse_lowlevel_new(struct fuse_args *args,
                                        const struct fuse_lowlevel_ops *op,
                                        size_t op_size, void *userdata);
@@ -203,15 +201,27 @@ struct iovec {
         size_t iov_len;
 };
 
-struct fuse_args {
-        /** Argument count */
-        int argc;
 
-        /** Argument vector.  NULL terminated */
-        %apply char **STRING_ARRAY { char **argv };
+
+struct fuse_args {
+        /* Argument count */
+        int argc;
+        
+        /* Argument vector.  NULL terminated */
+//        %apply char* CBUFF {char** argv};
         char **argv;
 
-        /** Is 'argv' allocated? */
+        /* Is 'argv' allocated? */
         int allocated;
 };
+
+
+
+extern void fuse_opt_free_args(struct fuse_args *args);
+extern int fuse_opt_add_arg(struct fuse_args *args, const char *arg);
+
+//%apply char **STRING_ARRAY { char *mountpoint };
+//extern int fuse_parse_cmdline(struct fuse_args *args, char **mountpoint,
+//                              int *multithreaded, int *foreground);
+
 
