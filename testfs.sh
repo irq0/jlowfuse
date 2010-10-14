@@ -2,7 +2,7 @@
 (
     cd dist
     echo "Mounting..."
-    java -Djava.library.path=. -jar testfs.jar
+    java -Djava.library.path=. -jar testfs.jar -osubtype=bla -d
     ret=$?
     echo
     echo "Return code: $ret"
