@@ -101,5 +101,6 @@
     <delete dir="${build}"/>
     <delete dir="${dist}"/>
     <delete dir="${swig-dst}"/>
+    <delete file="${native-src}/${swig-input}_wrap.c"/>
   </target>
 </project>
