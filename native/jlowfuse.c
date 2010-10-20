@@ -10,7 +10,7 @@
 #define FUSE_USE_VERSION 26
 
 #include "jlowfuse.h"
-#include "jlowfuse_java_LowlevelOps.h"
+#include "jlowfuse_java_LowlevelOpsProxy.h"
 
 #include <jni.h>
 
@@ -34,9 +34,8 @@ jobject thread_group;  /* attached java threads */
 /* cached class, object, methodids */
 struct class_lowlevel_ops *cl_low_ops;
 
-
 /* attach native thread to java vm */
-static JNIEnv *attach_native_thread()
+JNIEnv *attach_native_thread()
 {
 	JNIEnv *env;
 	JavaVMAttachArgs args;
@@ -60,7 +59,7 @@ static JNIEnv *attach_native_thread()
 }
 
 /* detach native thread from java vm */
-static void detach_native_thread()
+void detach_native_thread()
 {
         int res;
         return;
@@ -82,41 +81,6 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
 
         return JNI_VERSION_1_6;
 }
-
-
-        
-void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
-{
-
-        JNIEnv *env;
-
-        env = attach_native_thread();
-        
-        (*env)->CallVoidMethod(env,
-                               cl_low_ops->object,
-                               cl_low_ops->method.init);
-}
-
-
-void jlowfuse_statfs(fuse_req_t req, fuse_ino_t ino) 
-{
-        JNIEnv *env = attach_native_thread();
-        
-        printf("[statfs] req: %p %li \n", req, req);
-        
-        (*env)->CallVoidMethod(env,
-                               cl_low_ops->object,
-                               cl_low_ops->method.statfs,
-                               req,
-                               ino);
-        
-        if ((*env)->ExceptionCheck(env)) {
-                (*env)->ExceptionDescribe(env);
-                (*env)->ExceptionClear(env);
-        }
-        printf("[statfs] return: %i \n");
-}
-
 
 struct fuse_lowlevel_ops jlowfuse_ops = {
           .init        = jlowfuse_init,
@@ -157,7 +121,7 @@ struct fuse_lowlevel_ops jlowfuse_ops = {
           /* .poll        = NULL, */
 };
 
-
+/* register JLowFuseProxy methods */
 JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 (JNIEnv *env, jclass cls, jobject ops_obj)
 {
@@ -174,7 +138,7 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
         return (long)&jlowfuse_ops;
 }
 
-
+/* parse fuse commandline from java string array */
 JNIEXPORT jlong JNICALL Java_jlowfuse_FuseArgs_makeFuseArgs
 (JNIEnv *env, jclass cls, jobjectArray jstrarr)
 {
