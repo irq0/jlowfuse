@@ -12,10 +12,10 @@ package jlowfuse;
 import fuse.stat;
 import java.nio.ByteBuffer;
 
-public abstract class LowlevelOpsProxy {
+public class LowlevelOpsProxy {
     private LowlevelOps ops = null;
     
-    public void registerLowlevelOpts(LowlevelOps ops) {
+    public void register(LowlevelOps ops) {
         this.ops = ops;
     }
     
