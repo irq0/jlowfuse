@@ -8,135 +8,133 @@
 package jlowfuse;
 
 import fuse.stat;
-
+import fuse.fuse;
 import java.nio.ByteBuffer;
 
 
 public abstract class AbstractLowlevelOps {
     public void init() {
-        return;
     }
 
     public void destroy() {
-        return;
     }
 
     public void lookup(FuseReq req, long parent, String name) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void forget(FuseReq req, long ino, long nlookup) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void getattr(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void setattr(FuseReq req, long ino, stat attr, int to_set) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void readlink(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void mknod(FuseReq req, long parent, String name, short mode, short rdev) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void mkdir(FuseReq req, long parent, String name, short mode) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void unlink(FuseReq req, long parent, String name) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void rmdir(FuseReq req, long parent, String name) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void symlink(FuseReq req, String link, long parent, String name) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void rename(FuseReq req, long parent, String name,
                 long newparent, String newname) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void link(FuseReq req, long ino, long newparent, String newname) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void open(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void read(FuseReq req, long ino, int size, int off) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void write(FuseReq req, long ino, ByteBuffer buf, int off) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void flush(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void release(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void fsync(FuseReq req, long ino, int datasync) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void opendir(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void readdir(FuseReq req, long ino, int size, int off) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void releasedir(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void fsyncdir(FuseReq req, long ino, int datasync) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void statfs(FuseReq req, long ino) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void setxattr(FuseReq req, long ino, String name,
                   ByteBuffer value, int flags) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void getxattr(FuseReq req, long ino, String name, int size) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void listxattr(FuseReq req, long ino, int size) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void removexattr(FuseReq req, long ino, String name) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void access(FuseReq req, long ino, int mask) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     public void create(FuseReq req, long parent, String name, short mode) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     /*    
@@ -148,7 +146,7 @@ public abstract class AbstractLowlevelOps {
     */
 
     public void bmap(FuseReq req, long ino, int blocksize, long idx) {
-        return;
+        fuse.fuse_reply_err(req, Errno.ENOSYS);
     }
 
     /*
