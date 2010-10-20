@@ -12,12 +12,12 @@ import fuse.stat;
 import java.nio.ByteBuffer;
 
 
-public abstract class AbstractLowlevelOpts {
-    public void init(ByteBuffer data) {
+public abstract class AbstractLowlevelOps {
+    public void init() {
         return;
     }
 
-    public void destroy(ByteBuffer data) {
+    public void destroy() {
         return;
     }
 
@@ -33,7 +33,7 @@ public abstract class AbstractLowlevelOpts {
         return;
     }
 
-    public void setattr(FuseReq req, long ino, stat stat, int to_set) {
+    public void setattr(FuseReq req, long ino, stat attr, int to_set) {
         return;
     }
 
@@ -78,7 +78,7 @@ public abstract class AbstractLowlevelOpts {
         return;
     }
 
-    public void write(FuseReq req, long ino, ByteBuffer buf, int size, int off) {
+    public void write(FuseReq req, long ino, ByteBuffer buf, int off) {
         return;
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractLowlevelOpts {
     }
 
     public void setxattr(FuseReq req, long ino, String name,
-                  ByteBuffer value, int size, int flags) {
+                  ByteBuffer value, int flags) {
         return;
     }
 
