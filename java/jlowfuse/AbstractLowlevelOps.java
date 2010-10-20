@@ -12,7 +12,7 @@ import fuse.fuse;
 import java.nio.ByteBuffer;
 
 
-public abstract class AbstractLowlevelOps {
+public abstract class AbstractLowlevelOps implements LowlevelOps {
     public void init() {
     }
 

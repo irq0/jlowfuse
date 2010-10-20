@@ -1,7 +1,7 @@
 /**
  * Proxy class for FUSE Operations
  * The c ops functions call this methods which then perform type wrapping and
- * call the methods in the `AbstractLowlevelOps` subclass.
+ * call the methods in the `LowlevelOps` class.
  *
  * @author Marcel Lauhoff <ml@irq0.org>
  * 
@@ -13,9 +13,9 @@ import fuse.stat;
 import java.nio.ByteBuffer;
 
 public abstract class LowlevelOpsProxy {
-    private AbstractLowlevelOps ops = null;
+    private LowlevelOps ops = null;
     
-    public void registerLowlevelOpts(AbstractLowlevelOps ops) {
+    public void registerLowlevelOpts(LowlevelOps ops) {
         this.ops = ops;
     }
     
