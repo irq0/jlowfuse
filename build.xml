@@ -49,6 +49,8 @@
       <fileset dir="${native-src}">
 	<include name="${swig-input}_wrap.c"/>
 	<include name="jlowfuse.c"/>
+	<include name="jlowfuse_java_LowlevelOps.c"/>
+	<include name="jlowfuse_ops.c"/>
       </fileset>
     </cpptasks:cc>
   </target>
