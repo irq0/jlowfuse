@@ -73,7 +73,7 @@ extern int fuse_reply_attr(fuse_req_t req, const struct stat *attr,
 extern int fuse_reply_readlink(fuse_req_t req, const char *link);
 extern int fuse_reply_open(fuse_req_t req, const struct fuse_file_info *fi);
 extern int fuse_reply_write(fuse_req_t req, size_t count);
-extern int fuse_reply_buf(fuse_req_t req, const char *buf, size_t size);
+extern int fuse_reply_buf(fuse_req_t req, const void *dirbuf, size_t size);
 extern int fuse_reply_iov(fuse_req_t req, const struct iovec *iov, int count);
 extern int fuse_reply_statfs(fuse_req_t req, const struct statvfs *stbuf);
 extern int fuse_reply_xattr(fuse_req_t req, size_t count);
@@ -225,6 +225,21 @@ struct fuse_args {
 //%apply char **STRING_ARRAY { char *mountpoint };
 //extern int fuse_parse_cmdline(struct fuse_args *args, char **mountpoint,
 //                              int *multithreaded, int *foreground);
+
+/* file mode bits from stat.h */
+#define S_IFDIR       0040000 /* Directory.  */
+#define S_IFCHR       0020000 /* Character device.  */
+#define S_IFBLK       0060000 /* Block device.  */
+#define S_IFREG       0100000 /* Regular file.  */
+#define S_IFIFO       0010000 /* FIFO.  */
+#define S_IFLNK       0120000 /* Symbolic link.  */
+#define S_IFSOCK      0140000 /* Socket.  */
+#define S_ISUID       04000   /* Set user ID on execution.  */
+#define S_ISGID       02000   /* Set group ID on execution.  */
+#define S_ISVTX       01000   /* Save swapped text after use (sticky).  */
+#define S_IREAD       0400    /* Read by owner.  */
+#define S_IWRITE      0200    /* Write by owner.  */
+#define S_IEXEC       0100    /* Execute by owner.  */
 
 /* errno.h (linux) [asm-generic/errno.h] */
 
