@@ -6,7 +6,7 @@
 #include <assert.h>
 #include <err.h>
 
-#include "jlowfuse_java_LowlevelOps.h"
+#include "jlowfuse_java_LowlevelOpsProxy.h"
 
 struct class_lowlevel_ops *alloc_class_lowlevel_ops(JNIEnv *env)
 {

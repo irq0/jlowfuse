@@ -84,39 +84,39 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
 
 struct fuse_lowlevel_ops jlowfuse_ops = {
           .init        = jlowfuse_init,
-          .destroy     = NULL,
-          .lookup      = NULL,
-          .forget      = NULL,
-          .getattr     = NULL,
-          .setattr     = NULL,
-          .readlink    = NULL,
-          .mknod       = NULL,
-          .mkdir       = NULL,
-          .unlink      = NULL,
-          .rmdir       = NULL,
-          .symlink     = NULL,
-          .rename      = NULL,
-          .link        = NULL,
-          .open        = NULL,
-          .read        = NULL,
-          .write       = NULL,
-          .flush       = NULL,
-          .release     = NULL,
-          .fsync       = NULL,
-          .opendir     = NULL,
-          .readdir     = NULL,
-          .releasedir  = NULL,
-          .fsyncdir    = NULL,
+          .destroy     = jlowfuse_destroy,
+          .lookup      = jlowfuse_lookup,
+          .forget      = jlowfuse_forget,
+          .getattr     = jlowfuse_getattr,
+          .setattr     = jlowfuse_setattr,
+          .readlink    = jlowfuse_readlink,
+          .mknod       = jlowfuse_mknod,
+          .mkdir       = jlowfuse_mkdir,
+          .unlink      = jlowfuse_unlink,
+          .rmdir       = jlowfuse_rmdir,
+          .symlink     = jlowfuse_symlink,
+          .rename      = jlowfuse_rename,
+          .link        = jlowfuse_link,
+          .open        = jlowfuse_open,
+          .read        = jlowfuse_read,
+          .write       = jlowfuse_write,
+          .flush       = jlowfuse_flush,
+          .release     = jlowfuse_release,
+          .fsync       = jlowfuse_fsync,
+          .opendir     = jlowfuse_opendir,
+          .readdir     = jlowfuse_readdir,
+          .releasedir  = jlowfuse_releasedir,
+          .fsyncdir    = jlowfuse_fsyncdir,
           .statfs      = jlowfuse_statfs,
-          .setxattr    = NULL,
-          .getxattr    = NULL,
-          .listxattr   = NULL,
-          .removexattr = NULL,
-          .access      = NULL,
-          .create      = NULL,
+          .setxattr    = jlowfuse_setxattr,
+          .getxattr    = jlowfuse_getxattr,
+          .listxattr   = jlowfuse_listxattr,
+          .removexattr = jlowfuse_removexattr,
+          .access      = jlowfuse_access,
+          .create      = jlowfuse_create,
           .getlk       = NULL,
           .setlk       = NULL,
-          .bmap        = NULL,
+          .bmap        = jlowfuse_bmap
           /* .ioctl       = NULL,*/
           /* .poll        = NULL, */
 };
@@ -125,9 +125,6 @@ struct fuse_lowlevel_ops jlowfuse_ops = {
 JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 (JNIEnv *env, jclass cls, jobject ops_obj)
 {
-        jlong jresult = 0;
-        struct fuse_lowlevel_ops *result = 0;
-
         printf("env: %p\n", env);
         
         cl_low_ops = alloc_class_lowlevel_ops(env);        
@@ -135,7 +132,7 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 
         printf("obj: %p\n", ops_obj);
 
-        return (long)&jlowfuse_ops;
+        return (jlong)&jlowfuse_ops;
 }
 
 /* parse fuse commandline from java string array */
