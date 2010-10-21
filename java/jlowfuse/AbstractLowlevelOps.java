@@ -8,6 +8,7 @@
 package jlowfuse;
 
 import fuse.stat;
+import fuse.statvfs;
 import fuse.fuse;
 import fuse.fuseConstants;
 import fuse.fuse_file_info;
@@ -26,7 +27,7 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
     }
 
     public void forget(FuseReq req, long ino, long nlookup) {
-        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
+        fuse.fuse_reply_none(req);
     }
 
     public void getattr(FuseReq req, long ino, fuse_file_info fi) {
@@ -72,7 +73,7 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
     }
 
     public void open(FuseReq req, long ino, fuse_file_info fi) {
-        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
+        fuse.fuse_reply_open(req, fi);
     }
 
     public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
@@ -89,7 +90,7 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
     }
 
     public void release(FuseReq req, long ino, fuse_file_info fi) {
-        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
+        fuse.fuse_reply_err(req, 0);
     }
 
     public void fsync(FuseReq req, long ino, int datasync, fuse_file_info fi) {
@@ -105,7 +106,7 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
     }
 
     public void releasedir(FuseReq req, long ino, fuse_file_info fi) {
-        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
+        fuse.fuse_reply_err(req, 0);
     }
 
     public void fsyncdir(FuseReq req, long ino, int datasync,
@@ -114,7 +115,11 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
     }
 
     public void statfs(FuseReq req, long ino) {
-        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
+        statvfs stat = new statvfs();
+        stat.setNamemax(255);
+        stat.setBsize(512);
+
+        fuse.fuse_reply_statfs(req, stat);
     }
 
     public void setxattr(FuseReq req, long ino, String name,
