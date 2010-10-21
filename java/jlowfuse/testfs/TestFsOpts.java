@@ -25,7 +25,7 @@ class TestFsOps extends AbstractLowlevelOps {
         
         fuse.fuse_reply_statfs(req, stat);
          
-        //        fuse.fuse_reply_err(req, Errno.ENOSYS);
+        //        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 }
 
