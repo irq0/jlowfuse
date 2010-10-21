@@ -14,7 +14,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
         inode_table.put(1L, root);
     }
 
-    public void readdir(FuseReq req, long ino, int size, int off) {
+    public void readdir(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
         Inode inode = inode_table.get(ino);
         Directory dir = new Directory();
 
@@ -43,7 +43,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
 
 
-    public void getattr(FuseReq req, long ino) {
+    public void getattr(FuseReq req, long ino, fuse_file_info fi) {
         Inode inode = inode_table.get(ino);
 
         

@@ -10,6 +10,7 @@ package jlowfuse;
 import fuse.stat;
 import fuse.fuse;
 import fuse.fuseConstants;
+import fuse.fuse_file_info;
 import java.nio.ByteBuffer;
 
 
@@ -28,11 +29,12 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void getattr(FuseReq req, long ino) {
+    public void getattr(FuseReq req, long ino, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void setattr(FuseReq req, long ino, stat attr, int to_set) {
+    public void setattr(FuseReq req, long ino, stat attr, int to_set,
+                        fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
@@ -69,43 +71,45 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void open(FuseReq req, long ino) {
+    public void open(FuseReq req, long ino, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void read(FuseReq req, long ino, int size, int off) {
+    public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void write(FuseReq req, long ino, ByteBuffer buf, int off) {
+    public void write(FuseReq req, long ino, ByteBuffer buf, int off,
+                      fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void flush(FuseReq req, long ino) {
+    public void flush(FuseReq req, long ino, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void release(FuseReq req, long ino) {
+    public void release(FuseReq req, long ino, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void fsync(FuseReq req, long ino, int datasync) {
+    public void fsync(FuseReq req, long ino, int datasync, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void opendir(FuseReq req, long ino) {
+    public void opendir(FuseReq req, long ino, fuse_file_info fi) {
+        fuse.fuse_reply_open(req, fi);
+    }
+
+    public void readdir(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void readdir(FuseReq req, long ino, int size, int off) {
+    public void releasedir(FuseReq req, long ino, fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
-    public void releasedir(FuseReq req, long ino) {
-        fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
-    }
-
-    public void fsyncdir(FuseReq req, long ino, int datasync) {
+    public void fsyncdir(FuseReq req, long ino, int datasync,
+                         fuse_file_info fi) {
         fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
     }
 
