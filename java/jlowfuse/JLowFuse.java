@@ -25,7 +25,6 @@ public class JLowFuse {
                                       ops_f, 144 , null); /* 144 = sizeof(fuse ops) */
     }
 
-    
     static {
         System.loadLibrary("jlowfuse");
     }

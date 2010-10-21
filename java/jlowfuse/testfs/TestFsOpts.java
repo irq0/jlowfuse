@@ -14,7 +14,6 @@ class TestFsOps extends AbstractLowlevelOps {
         System.out.println("STATFS:"  + req + " ino: " + ino);
 
         
-        
         statvfs stat = new statvfs();
         
         stat.setBsize(1024);
