@@ -172,3 +172,67 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_FuseArgs_makeFuseArgs
 
         return (long)args;        
 }
+
+struct dirbuf {
+	char *p;
+	size_t size;
+};
+
+/* TODO: wrap
+static int reply_buff_limited(fuse_req_t req, const char *buf, size_t bufsize,
+			     off_t off, size_t maxsize)
+{
+	if (off < bufsize)
+		return fuse_reply_buf(req, buf + off,
+				      min(bufsize - off, maxsize));
+	else
+		return fuse_reply_buf(req, NULL, 0);
+}
+*/
+
+JNIEXPORT jlong JNICALL Java_jlowfuse_Directory_dirbufNew
+(JNIEnv *env, jclass cls)
+{
+        struct dirbuf *buf;
+
+        buf = calloc(1, sizeof(struct dirbuf));
+        if (buf == NULL) {
+                errx(3, "dirbuf_new: calloc returned NULL");
+        }
+
+        return (jlong)buf;
+}
+
+JNIEXPORT void JNICALL Java_jlowfuse_Directory_dirbufDelete
+(JNIEnv *env, jclass cls, jlong jptr)
+{
+        free((struct dirbuf*)jptr);
+}
+
+JNIEXPORT void JNICALL Java_jlowfuse_Directory_dirbufAdd
+(JNIEnv *env, jclass cls, jlong jreq, jlong jdir, jstring jname, jlong ino)
+{
+        char* name;
+        struct stat stbuf;
+        struct dirbuf *dir;
+        fuse_req_t req;
+
+        req = (fuse_req_t)jreq;
+        dir = (struct dirbuf*)jdir;
+
+        name = (*env)->GetStringUTFChars(env, jname, NULL);
+        assert(name != NULL);
+        
+        size_t oldsize = dir->size;
+        dir->size += fuse_add_direntry(req, NULL, 0, name, NULL, 0);
+        dir->p = (char *) realloc(dir->p, dir->size);
+
+        memset(&stbuf, 0, sizeof(struct stat));
+        stbuf.st_ino = ino;
+
+        fuse_add_direntry(req, dir->p + oldsize, dir->size - oldsize,
+                          name, &stbuf, dir->size);
+        
+        (*env)->ReleaseStringUTFChars(env, jname, name);
+        (*env)->DeleteLocalRef(env, jname);
+}

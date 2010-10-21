@@ -7,6 +7,8 @@ public class FuseReq extends SWIGTYPE_p_fuse_req_t {
         super(ptr, false);
     }
 
+    long getCPtr() { return FuseReq.getCPtr(this); }
+
     public String toString() {
         return "fuse_req_t: ptr=0x" + Long.toHexString(getCPtr(this));
     }
