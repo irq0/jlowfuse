@@ -123,14 +123,12 @@ struct fuse_lowlevel_ops jlowfuse_ops = {
 
 /* register JLowFuseProxy methods */
 JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
-(JNIEnv *env, jclass cls, jobject ops_obj)
+(JNIEnv *env, jclass cls, jobject ops_obj, jobject tgroup)
 {
-        printf("env: %p\n", env);
-        
         cl_low_ops = alloc_class_lowlevel_ops(env);        
         populate_class_lowlevel_ops(env, cl_low_ops, ops_obj);
 
-        printf("obj: %p\n", ops_obj);
+        thread_group = tgroup;
 
         return (jlong)&jlowfuse_ops;
 }

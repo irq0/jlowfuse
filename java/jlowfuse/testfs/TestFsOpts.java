@@ -12,13 +12,12 @@ class TestFsOps extends AbstractLowlevelOps {
 
     public void statfs(FuseReq req, long ino) {
         System.out.println("STATFS:"  + req + " ino: " + ino);
-
         
         statvfs stat = new statvfs();
         
         stat.setBsize(1024);
         stat.setFrsize(1024);
-        stat.setBfree(new BigInteger("23"));
+        stat.setBfree(new BigInteger("19"));
         stat.setBlocks(new BigInteger("42"));
         stat.setFiles(new BigInteger("23"));
         stat.setFavail(new BigInteger("5"));
