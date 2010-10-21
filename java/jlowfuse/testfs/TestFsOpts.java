@@ -5,13 +5,15 @@ import jlowfuse.*;
 import java.nio.ByteBuffer;
 import java.math.BigInteger;
 
-class TestFsOpts extends AbstractLowlevelOpts {
-    public void init(FuseReq req, ByteBuffer data) {
+class TestFsOps extends AbstractLowlevelOps {
+    public void init() {
         System.out.println("init: JAVA");
     }
 
     public void statfs(FuseReq req, long ino) {
-        System.out.println("STATFS: java");
+        System.out.println("STATFS:"  + req + " ino: " + ino);
+
+        
         
         statvfs stat = new statvfs();
         
