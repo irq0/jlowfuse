@@ -4,13 +4,10 @@ import fuse.*;
 
 public class FuseReq extends SWIGTYPE_p_fuse_req_t {
     public FuseReq(long ptr) {
-        super(ptr, true);
-    }
-    public FuseReq() {
-        super();
+        super(ptr, false);
     }
 
     public String toString() {
-        return "fuse_req_t: ptr=" + getCPtr(this);
+        return "fuse_req_t: ptr=0x" + Long.toHexString(getCPtr(this));
     }
 }                            
