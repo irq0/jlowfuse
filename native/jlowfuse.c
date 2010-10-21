@@ -79,6 +79,8 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
         ret = (*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_2);
         assert(ret != JNI_EVERSION);
 
+        assert(sizeof(void *) <= sizeof(jlong));
+
         return JNI_VERSION_1_6;
 }
 

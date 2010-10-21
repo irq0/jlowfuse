@@ -43,6 +43,7 @@
       <linkerarg value="-lc"/>
 
       <compilerarg value="-Wall"/>
+      <compilerarg value="-std=gnu99"/>
       <compilerarg value="-pthread"/> <!-- fuse -->
       <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->      
 
