@@ -98,6 +98,14 @@
 	<attribute name="Main-Class" value="jlowfuse.testfs.TestFs"/>
       </manifest>
     </jar>      
+
+    <jar jarfile="${dist}/objectfs.jar" basedir="${build}/java">
+      <manifest>
+	<attribute name="Main-Class" value="objectfs.ObjectFs"/>
+      </manifest>
+    </jar>      
+
+
   </target>
 
   <target name="clean">
