@@ -198,6 +198,17 @@ struct fuse_args {
         int allocated;
 };
 
+struct fuse_entry_param {
+        fuse_ino_t ino;
+        unsigned long generation;
+        struct stat attr;
+        double attr_timeout;
+        double entry_timeout;
+};
+
+
+
+
 
 
 //extern void fuse_opt_free_args(struct fuse_args *args);
