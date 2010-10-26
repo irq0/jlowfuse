@@ -11,6 +11,8 @@
 #include "fuse_extra.c"
 %}
 
+%include "fuse_types.i"
+
 struct dirbuf {
 	void *p;
 	size_t size;
