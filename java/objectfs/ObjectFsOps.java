@@ -9,7 +9,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     Inode root;
     Hashtable<Long, Inode> inode_table = new Hashtable<Long, Inode>();
     public void init() {
-        root = new Inode(null, "root");
+        root = new Inode(null, "");
         root.setParent(root);
         inode_table.put(1L, root);
 
@@ -35,7 +35,10 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
     private void wireInode(Inode inode) {
         inode_table.put(inode.getIno(), inode);
-        inode.getParent().addChild(inode);
+
+        Inode p = inode.getParent();
+        p.addChild(inode);
+        p.getStat().setNlink(p.getStat().getNlink() + 1);
     }
 
     private Inode getChildInodeByName(Inode parent, String name) {
@@ -51,19 +54,18 @@ class ObjectFsOps extends AbstractLowlevelOps {
         return inode_table.get(ino);
     }
 
-
     private void removeInode(Inode inode) {
         Inode parent = inode.getParent();
         
         parent.getChildren().remove(inode);
+        parent.getStat().setNlink(parent.getStat().getNlink() - 1);
         inode.setParent(null);
         inode_table.remove(inode);
     }
         
-        
-    
-    private void mkdirnod(FuseReq req, long parentIno, String name, short fullMode) {
-        Inode parent = inode_table.get(parentIno);
+    private void mkdirnod(FuseReq req, long parentIno, String name,
+                          short fullMode, long nlink) {
+        Inode parent = getInodeByIno(parentIno);
 
         if (parent != null) {            
             Inode inode = new Inode(parent, name);
@@ -71,7 +73,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
             stat s = new stat();
             s.setIno(inode.getIno());
-            s.setNlink(1L);
+            s.setNlink(nlink);
             s.setMode(fullMode);
             s.setUid(0);
             s.setGid(0);
@@ -89,15 +91,20 @@ class ObjectFsOps extends AbstractLowlevelOps {
             fuse.fuse_reply_err(req, fuseConstants.EPERM);
         }
     }
+
+
+    // public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
         
+    // }
+    
 
     public void mkdir(FuseReq req, long parent, String name, short mode) {
-        mkdirnod(req, parent, name, (short)(fuseConstants.S_IFDIR | mode));
+        mkdirnod(req, parent, name, (short)(fuseConstants.S_IFDIR | mode), 2);
     }
         
     public void mknod(FuseReq req, long parent, String name, short mode,
                       short rdev) {
-        mkdirnod(req, parent, name, (short)(fuseConstants.S_IFREG | mode));
+        mkdirnod(req, parent, name, (short)(fuseConstants.S_IFREG | mode), 1);
     }
 
     public void rmdir(FuseReq req, long parentIno, String name) {
@@ -117,19 +124,19 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }    
     
     public void readdir(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
-        Inode inode = inode_table.get(ino);
+        Inode inode = getInodeByIno(ino);
         dirbuf d = new dirbuf();
 
         fuse_extra.fuse_extra_dirbuf_add(req, d, ".", inode.getIno(),
-                                         fuseConstants.S_IFDIR | 0777);
+                                         inode.getStat().getMode());
         fuse_extra.fuse_extra_dirbuf_add(req, d, "..", inode.getParent().getIno(),
-                                         fuseConstants.S_IFDIR | 0777);
+                                         inode.getParent().getStat().getMode());
 
         for (Inode c: inode.getChildren()) {
             fuse_extra.fuse_extra_dirbuf_add(req, d,
                                              c.getName(),
                                              c.getIno(),
-                                             fuseConstants.S_IFDIR | 0777);
+                                             c.getStat().getMode());
         }
                 
         if (inode != null) {
@@ -145,7 +152,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
         if (parent != null) {
             Inode child = getChildInodeByName(parent, name);
-            
+            System.out.println(child);
             if (child != null) {
                 fuse_entry_param e = new fuse_entry_param();
                 e.setGeneration(23);
@@ -175,7 +182,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
 
     public void getattr(FuseReq req, long ino, fuse_file_info fi) {
-        Inode inode = inode_table.get(ino);
+        Inode inode = getInodeByIno(ino);
         
 	if (inode != null) {
             fuse.fuse_reply_attr(req, inode.getStat(), 0.0);
@@ -183,9 +190,43 @@ class ObjectFsOps extends AbstractLowlevelOps {
             fuse.fuse_reply_err(req, fuseConstants.ENOENT);
 	}
 
-    }   
+    }
+    
+    public void setattr(FuseReq req, long ino, stat stat, int to_set,
+                        fuse_file_info fi) {
+        Inode inode = getInodeByIno(ino);
+
+        if (inode == null) {
+            fuse.fuse_reply_err(req, fuseConstants.ENOENT);
+        }
+
+        stat s = inode.getStat();
+
+        switch(to_set) {
+        case fuseConstants.FUSE_SET_ATTR_MODE:
+            s.setMode(stat.getMode());
+            break;
+        case fuseConstants.FUSE_SET_ATTR_UID:
+            s.setUid(stat.getUid());
+            break;
+        case fuseConstants.FUSE_SET_ATTR_GID:
+            s.setGid(stat.getGid());
+            break;
+        case fuseConstants.FUSE_SET_ATTR_SIZE:
+            s.setSize(stat.getSize());
+            break;
+        case fuseConstants.FUSE_SET_ATTR_ATIME:
+        case fuseConstants.FUSE_SET_ATTR_ATIME_NOW:
+        case fuseConstants.FUSE_SET_ATTR_MTIME:
+        case fuseConstants.FUSE_SET_ATTR_MTIME_NOW:
+        default:
+            fuse.fuse_reply_err(req, fuseConstants.ENOSYS);
+        }        
+        fuse.fuse_reply_attr(req, inode.getStat(), 0.0);
+    }
+
+    public void access(FuseReq req, long ino, int mask) {
+        fuse.fuse_reply_err(req, 0);
+    }
+
 }
-
-
-
-
