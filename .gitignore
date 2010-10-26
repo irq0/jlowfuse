@@ -1,2 +1,3 @@
 build/
 dist/
+native/fuse_interface_wrap.c
