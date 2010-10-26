@@ -18,8 +18,10 @@ class ObjectFsOps extends AbstractLowlevelOps {
         Inode inode = inode_table.get(ino);
         dirbuf d = new dirbuf();
 
-        fuse_extra.fuse_extra_dirbuf_add(req, d, ".", ino);
-        fuse_extra.fuse_extra_dirbuf_add(req, d, "..", ino);
+        fuse_extra.fuse_extra_dirbuf_add(req, d, ".", ino,
+                                         fuseConstants.S_IFDIR | 0777);
+        fuse_extra.fuse_extra_dirbuf_add(req, d, "..", ino,
+                                         fuseConstants.S_IFDIR | 0777);
 
         
         System.out.println(inode);

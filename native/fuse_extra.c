@@ -7,7 +7,7 @@
 #include "fuse_extra.h"
 
 void fuse_extra_dirbuf_add(fuse_req_t req, struct dirbuf *b, const char *name,
-                           fuse_ino_t ino)
+                           fuse_ino_t ino, mode_t mode)
 {
 	struct stat stbuf;
 	size_t oldsize = b->size;
@@ -19,6 +19,7 @@ void fuse_extra_dirbuf_add(fuse_req_t req, struct dirbuf *b, const char *name,
 	b->p = newp;
 	memset(&stbuf, 0, sizeof(stbuf));
 	stbuf.st_ino = ino;
+        stbuf.st_mode = mode;
 	fuse_add_direntry(req, b->p + oldsize, b->size - oldsize, name, &stbuf,
 			  b->size);
 }

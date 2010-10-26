@@ -7,7 +7,8 @@ typedef unsigned long fuse_ino_t;
 %apply unsigned long long int { __fsfilcnt64_t }
 %apply unsigned long long int { __off64_t }
 %apply unsigned long long int { __dev_t }
-%apply unsigned int { __mode_t }
+%apply unsigned int { __mode_t}
+%apply unsigned int { mode_t }
 %apply unsigned int { __uid_t }
 %apply unsigned int { __gid_t }
 %apply unsigned int { __nlink_t }

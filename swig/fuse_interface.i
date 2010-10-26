@@ -89,9 +89,9 @@ struct statvfs {
         %rename(favail) f_favail;
         __fsfilcnt64_t f_favail;
         /* man statfs: "Nobody knows what f_fsid is supposed to contain" */
-//        %rename(fsid) f_fsid; 
-//        unsigned long int f_fsid;
-//        //    int __f_unused;
+        %rename(fsid) f_fsid; 
+        unsigned long int f_fsid;
+        int __f_unused;
         %rename(flag) f_flag;
         unsigned long int f_flag;
         %rename(namemax) f_namemax;
@@ -136,7 +136,7 @@ struct fuse_file_info {
 struct stat {
         %rename(dev) st_dev;
         __dev_t st_dev;
-//          unsigned short int __pad1;
+          unsigned short int __pad1;
         %rename(_ino) __st_ino;
         __ino_t __st_ino;
         %rename(mode) st_mode;
@@ -149,7 +149,7 @@ struct stat {
         __gid_t st_gid;
         %rename(rdev) st_rdev;
         __dev_t st_rdev;
-//        unsigned short int __pad2;
+        unsigned short int __pad2;
         %rename(size) st_size;
         __off64_t st_size;
         %rename(blksize) st_blksize;
