@@ -22,7 +22,7 @@
     <mkdir dir="${swig-dst}"/>
   </target>
 
-  <target name="compile" depends="init,swig" 
+  <target name="compile" depends="init,swig,swig-extra" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false" />
   </target>
@@ -49,26 +49,14 @@
       <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->      
 
       <fileset dir="${native-src}">
-	<include name="${swig-input}_wrap.c"/>
 	<include name="jlowfuse.c"/>
-	<include name="jlowfuse_java_LowlevelOpsProxy.c"/>
+	<include name="${swig-input}_wrap.c"/>
 	<include name="jlowfuse_ops.c"/>
 	<include name="fuse_extra.c"/>
+	<include name="${swig-input}_extra_wrap.c"/>
+	<include name="jlowfuse_java_LowlevelOpsProxy.c"/>
       </fileset>
     </cpptasks:cc>
-  </target>
-
-  <target name="java2c" depends="init,compile,swig,swig-extra"
-	  description="Generate C - Java bindings to easily access methodIDs
-		       jclasss and jobjects in c code">
-    <java classname="java2c.CAPIGenerator">
-      <classpath>
-	<pathelement location="${build}/java"/>
-      </classpath>
-      <arg value="${build}/java_api.h"/>
-      <arg value="${build}/java_api.c"/>
-      <arg value="jlowfuse.h"/>
-    </java>
   </target>
 
   <target name="swig-extra" depends="init" 
