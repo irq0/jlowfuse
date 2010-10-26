@@ -4,13 +4,10 @@
 #include <stdlib.h>
 #include <err.h>
 
-struct dirbuf {
-	void *p;
-	size_t size;
-};
+#include "fuse_extra.h"
 
 void fuse_extra_dirbuf_add(fuse_req_t req, struct dirbuf *b, const char *name,
-		       fuse_ino_t ino)
+                           fuse_ino_t ino)
 {
 	struct stat stbuf;
 	size_t oldsize = b->size;
@@ -29,7 +26,7 @@ void fuse_extra_dirbuf_add(fuse_req_t req, struct dirbuf *b, const char *name,
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
 int fuse_extra_reply_buf_limited(fuse_req_t req, const char *buf, size_t bufsize,
-			     off_t off, size_t maxsize)
+                                 off_t off, size_t maxsize)
 {
 	if (off < bufsize)
 		return fuse_reply_buf(req, buf + off,

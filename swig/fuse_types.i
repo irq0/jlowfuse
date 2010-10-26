@@ -17,5 +17,6 @@ typedef unsigned long fuse_ino_t;
 %apply fuse_ino_t { __ino_t }
 %apply fuse_ino_t { __ino64_t }
 %apply unsigned long { fuse_ino_t } 
+%apply unsigned long { off_t}
 
 %apply long int { __time_t }
