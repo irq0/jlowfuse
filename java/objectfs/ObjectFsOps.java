@@ -51,6 +51,10 @@ class ObjectFsOps extends AbstractLowlevelOps {
         return null;
     }
 
+    private void updateSize(Inode inode) {
+        inode.getStat().setSize(BigInteger.valueOf(inode.getData().capacity()));            
+    }
+    
     private Inode getInodeByIno(long ino) {
         return inode_table.get(ino);
     }
@@ -106,6 +110,36 @@ class ObjectFsOps extends AbstractLowlevelOps {
         
         Reply.replyByteBuffer(req, buf, off, size);
     }
+
+
+    public void write(FuseReq req, long ino, ByteBuffer src, int off,
+                      fuse_file_info fi) {
+        Inode inode = getInodeByIno(ino);
+        ByteBuffer dst = inode.getData();
+
+        System.out.println(dst);
+        
+        if (dst == null) { // uninitialized
+            ByteBuffer buf = ByteBuffer.allocateDirect(src.capacity() + off);
+            buf.position(off);
+            buf.put(src);
+            inode.setData(buf);
+        } else if (dst.capacity() < (src.capacity() + off)) { // to small
+            ByteBuffer buf = ByteBuffer.allocateDirect(dst.capacity() +
+                                                       src.capacity() + off);
+            buf.put(dst);
+            buf.position(off);
+            buf.put(src);
+            inode.setData(buf);
+        } else {                        
+            dst.position(off);
+            dst.put(src);
+        }
+
+        //   updateSize(inode);
+        fuse.fuse_reply_write(req, src.capacity());
+    }
+
     
 
     public void mkdir(FuseReq req, long parent, String name, short mode) {
