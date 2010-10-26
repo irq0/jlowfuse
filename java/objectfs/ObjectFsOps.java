@@ -16,13 +16,18 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
     public void readdir(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
         Inode inode = inode_table.get(ino);
-        Directory dir = new Directory();
+        dirbuf d = new dirbuf();
 
+        fuse_extra.fuse_extra_dirbuf_add(req, d, ".", ino);
+        fuse_extra.fuse_extra_dirbuf_add(req, d, "..", ino);
+
+        
         System.out.println(inode);
-        dir.add(req, 1, ".");
         
         if (inode != null) {
-            fuse.fuse_reply_buf(req, dir, size);
+            fuse_extra.fuse_extra_reply_buf_limited(req, d.getP(), d.getSize(),
+                                                    off, size);
+            //            fuse.fuse_reply_buf(req, dir, size);
 
         } else {
             fuse.fuse_reply_err(req, fuseConstants.ENOTDIR);
