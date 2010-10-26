@@ -172,3 +172,35 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_FuseArgs_makeFuseArgs
 
         return (long)args;        
 }
+
+#define min(x, y) ((x) < (y) ? (x) : (y))
+
+JNIEXPORT jint JNICALL Java_jlowfuse_Reply_jniReplyByteBuffer
+(JNIEnv *env, jclass cls, jlong jreq, jobject jbuf, jlong joff, jlong jmaxsize)
+{
+        void *buf;
+        jlong bufsize;
+        fuse_req_t req;
+        fuse_req_t *reqp;
+        unsigned long off = joff;
+        unsigned long maxsize = jmaxsize;
+
+        assert(off >= 0);
+
+        bufsize = (*env)->GetDirectBufferCapacity(env, jbuf);
+        if (bufsize <= 0) 
+                errx(16, "GetDirectbufferCapacity failed");
+        
+        buf = (*env)->GetDirectBufferAddress(env, jbuf);
+        if (buf == NULL) 
+                errx(16, "GetDirectBufferAddress failed");
+
+        reqp = *(fuse_req_t**)&jreq;
+        req = *reqp;
+
+        if (off < bufsize)
+		return fuse_reply_buf(req, buf + off,
+				      min(bufsize - off, maxsize));
+	else
+                return fuse_reply_buf(req, NULL, 0);        
+}
