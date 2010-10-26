@@ -3,7 +3,8 @@ package objectfs;
 import fuse.*;
 import jlowfuse.*;
 import java.math.BigInteger;
-import java.util.Hashtable;
+import java.nio.*;
+import java.util.*;
 
 class ObjectFsOps extends AbstractLowlevelOps {
     Inode root;
@@ -77,6 +78,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
             s.setMode(fullMode);
             s.setUid(0);
             s.setGid(0);
+            s.setSize(new BigInteger("4096"));
             inode.setStat(s);
             
             fuse_entry_param e = new fuse_entry_param();
@@ -93,9 +95,17 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
 
 
-    // public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
+    public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
+        Inode inode = getInodeByIno(ino);
+        ByteBuffer buf = ByteBuffer.allocateDirect(size);
+
+        System.out.println("size=" + size + "cap=" + buf.capacity());
+
+        CharBuffer cbuf = buf.asCharBuffer();
+        cbuf.put("TEST2342\n");
         
-    // }
+        Reply.replyByteBuffer(req, buf, off, size);
+    }
     
 
     public void mkdir(FuseReq req, long parent, String name, short mode) {
