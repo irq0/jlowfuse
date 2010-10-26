@@ -27,7 +27,7 @@
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false" />
   </target>
 
-  <target name="compile-native" depends="init,swig">
+  <target name="compile-native" depends="init,swig,swig-extra">
     <cpptasks:cc link="shared" outtype="shared" 
 		 runtime="static"
 		 outfile="${build}/jlowfuse" objdir="${build}/native"
@@ -53,11 +53,12 @@
 	<include name="jlowfuse.c"/>
 	<include name="jlowfuse_java_LowlevelOpsProxy.c"/>
 	<include name="jlowfuse_ops.c"/>
+	<include name="fuse_extra.c"/>
       </fileset>
     </cpptasks:cc>
   </target>
 
-  <target name="java2c" depends="init,compile,swig"
+  <target name="java2c" depends="init,compile,swig,swig-extra"
 	  description="Generate C - Java bindings to easily access methodIDs
 		       jclasss and jobjects in c code">
     <java classname="java2c.CAPIGenerator">
@@ -69,10 +70,24 @@
       <arg value="jlowfuse.h"/>
     </java>
   </target>
-  
-		       
-		       
-  <target name="swig" depends="init">
+
+  <target name="swig-extra" depends="init" 
+	  description="Generate SWIG wrappers for fuse extras which are not part 
+		       of fuse"> 
+    <exec executable="swig">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="-I${native-src}"/>
+      <arg value="${swig-src}/${swig-input}_extra.i"/>
+    </exec>
+    <move file="${swig-src}/${swig-input}_extra_wrap.c" todir="${native-src}"/>
+  </target>
+  		      		       
+  <target name="swig" depends="init" 
+	  description="Generate SWIG wrappers for the fuse api">
     <exec executable="swig">
       <arg value="-java"/>
       <arg value="-package"/>
@@ -105,8 +120,6 @@
 	<attribute name="Main-Class" value="objectfs.ObjectFs"/>
       </manifest>
     </jar>      
-
-
   </target>
 
   <target name="clean">
