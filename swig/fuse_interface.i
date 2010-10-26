@@ -207,16 +207,39 @@ struct fuse_entry_param {
 };
 
 
+/* FUSE: Buffer Flags */
+enum fuse_buf_flags {
+        FUSE_BUF_IS_FD          = (1 << 1),
+        FUSE_BUF_FD_SEEK        = (1 << 2),
+        FUSE_BUF_FD_RETRY       = (1 << 3),
+};
 
+enum fuse_buf_copy_flags {
+        FUSE_BUF_NO_SPLICE       = (1 << 1),
+        FUSE_BUF_FORCE_SPLICE    = (1 << 2),
+        FUSE_BUF_SPLICE_MOVE     = (1 << 2),
+        FUSE_BUF_SPLICE_NONBLOCK = (1 << 3),
+};
 
+/* FUSE */
+#define FUSE_ROOT_ID 1
 
+/* FUSE: `to_set` flags in setattr */
+#define FUSE_SET_ATTR_MODE      (1 << 0)
+#define FUSE_SET_ATTR_UID       (1 << 1)
+#define FUSE_SET_ATTR_GID       (1 << 2)
+#define FUSE_SET_ATTR_SIZE      (1 << 3)
+#define FUSE_SET_ATTR_ATIME     (1 << 4)
+#define FUSE_SET_ATTR_MTIME     (1 << 5)
+#define FUSE_SET_ATTR_ATIME_NOW (1 << 7)
+#define FUSE_SET_ATTR_MTIME_NOW (1 << 8)
 
-//extern void fuse_opt_free_args(struct fuse_args *args);
-//extern int fuse_opt_add_arg(struct fuse_args *args, const char *arg);
+/* FUSE Ioctl flags */
+#define FUSE_IOCTL_COMPAT       (1 << 0)
+#define FUSE_IOCTL_UNRESTRICTED (1 << 1)
+#define FUSE_IOCTL_RETRY        (1 << 2)
+#define FUSE_IOCTL_MAX_IOV      256
 
-//%apply char **STRING_ARRAY { char *mountpoint };
-//extern int fuse_parse_cmdline(struct fuse_args *args, char **mountpoint,
-//                              int *multithreaded, int *foreground);
 
 /* file mode bits from stat.h */
 #define S_IFDIR       0040000 /* Directory.  */
@@ -234,7 +257,6 @@ struct fuse_entry_param {
 #define S_IEXEC       0100    /* Execute by owner.  */
 
 /* errno.h (linux) [asm-generic/errno.h] */
-
 #define EPERM            1      /* Operation not permitted */
 #define ENOENT           2      /* No such file or directory */
 #define ESRCH            3      /* No such process */
