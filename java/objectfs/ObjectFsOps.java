@@ -119,15 +119,18 @@ class ObjectFsOps extends AbstractLowlevelOps {
         ByteBuffer dst = inode.getData();
 
         if (dst == null) { // uninitialized
-            ByteBuffer buf = ByteBuffer.allocateDirect(src.capacity() + off);
+            ByteBuffer buf = ByteBuffer.allocateDirect(Math.max(src.capacity() + off,
+                                                                4096));
             buf.position(off);
             buf.put(src);
 
             dst = buf;
             inode.setData(buf);
         } else if (dst.capacity() < (src.capacity() + off)) { // to small
-            ByteBuffer buf = ByteBuffer.allocateDirect(Math.max(dst.capacity(),
-                                                                src.capacity() + off));
+            System.out.println(dst  + "    "  + src);
+            ByteBuffer buf = ByteBuffer.allocateDirect(
+                                  Math.max(dst.capacity() + src.capacity() + off,
+                                           dst.capacity() + 1024*1024));
             buf.put(dst);
             buf.position(off);
             buf.put(src);
@@ -143,8 +146,6 @@ class ObjectFsOps extends AbstractLowlevelOps {
         updateSize(inode);
         fuse.fuse_reply_write(req, src.capacity());
     }
-
-    
 
     public void mkdir(FuseReq req, long parent, String name, short mode) {
         mkdirnod(req, parent, name, (short)(fuseConstants.S_IFDIR | mode), 2);
