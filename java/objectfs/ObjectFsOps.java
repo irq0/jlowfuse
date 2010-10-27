@@ -51,8 +51,8 @@ class ObjectFsOps extends AbstractLowlevelOps {
         return null;
     }
 
-    private void updateSize(Inode inode) {
-        inode.getStat().setSize(BigInteger.valueOf(inode.getData().capacity()));            
+    private void updateSize(Inode inode) {    
+        inode.getStat().setSize(BigInteger.valueOf(inode.getData().capacity()));
     }
     
     private Inode getInodeByIno(long ino) {
@@ -82,7 +82,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
             s.setMode(fullMode);
             s.setUid(0);
             s.setGid(0);
-            s.setSize(new BigInteger("4096"));
+            //            s.setSize();
             inode.setStat(s);
             
             fuse_entry_param e = new fuse_entry_param();
@@ -101,14 +101,15 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
     public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
         Inode inode = getInodeByIno(ino);
-        ByteBuffer buf = ByteBuffer.allocateDirect(size);
+        ByteBuffer buf = inode.getData();
 
-        System.out.println("size=" + size + "cap=" + buf.capacity());
-
-        CharBuffer cbuf = buf.asCharBuffer();
-        cbuf.put("TEST2342\n");
-        
-        Reply.replyByteBuffer(req, buf, off, size);
+        System.out.println("READ  " + buf + " off=" + off + " size=" + size);
+        if (buf != null) {        
+            Reply.replyByteBuffer(req, buf, off, size);
+        } else {
+            buf = ByteBuffer.allocateDirect(size);            
+            Reply.replyByteBuffer(req, buf, off, size);
+        }
     }
 
 
@@ -117,26 +118,29 @@ class ObjectFsOps extends AbstractLowlevelOps {
         Inode inode = getInodeByIno(ino);
         ByteBuffer dst = inode.getData();
 
-        System.out.println(dst);
-        
         if (dst == null) { // uninitialized
             ByteBuffer buf = ByteBuffer.allocateDirect(src.capacity() + off);
             buf.position(off);
             buf.put(src);
+
+            dst = buf;
             inode.setData(buf);
         } else if (dst.capacity() < (src.capacity() + off)) { // to small
-            ByteBuffer buf = ByteBuffer.allocateDirect(dst.capacity() +
-                                                       src.capacity() + off);
+            ByteBuffer buf = ByteBuffer.allocateDirect(Math.max(dst.capacity(),
+                                                                src.capacity() + off));
             buf.put(dst);
             buf.position(off);
             buf.put(src);
+
+            dst = buf;
             inode.setData(buf);
         } else {                        
             dst.position(off);
             dst.put(src);
         }
 
-        //   updateSize(inode);
+        dst.rewind();
+        updateSize(inode);
         fuse.fuse_reply_write(req, src.capacity());
     }
 
@@ -215,7 +219,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     public void statfs(FuseReq req, long ino) {
         statvfs s = new statvfs();
         
-        s.setBsize(1024);
+        s.setBsize(1);
 	s.setFrsize(1024);
 	s.setBfree(new BigInteger("19"));
 	s.setBlocks(new BigInteger("42"));

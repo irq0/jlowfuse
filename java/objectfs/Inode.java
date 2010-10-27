@@ -2,6 +2,7 @@ package objectfs;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.nio.ByteBuffer;
 
 import fuse.stat;
 
@@ -11,6 +12,7 @@ class Inode {
     private long ino;
     private String name;
     private stat stat;
+    private ByteBuffer data;
     
     private static long nextIno = 1;
     
@@ -27,6 +29,9 @@ class Inode {
     public Inode(Inode parent, String name) {
         this(Inode.getNextIno(), parent, name);
     }
+
+    public void setData(ByteBuffer data) { this.data = data; }
+    public ByteBuffer getData() { return this.data; }
     
     public void setParent(Inode parent) { this.parent = parent; }
     public Inode getParent() { return this.parent; }
