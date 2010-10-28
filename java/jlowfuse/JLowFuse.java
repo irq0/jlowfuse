@@ -22,8 +22,8 @@ public class JLowFuse {
         long ops_p = JLowFuse.setOps(proxy, tgroup);
         FuseLowlevelOps ops_f = new FuseLowlevelOps(ops_p);
 
-        return fuse.fuse_lowlevel_new(args,
-                                      ops_f, 144 , null); /* 144 = sizeof(fuse ops) */
+        return Fuse.lowlevelNew(args,
+                                ops_f, 144 , null); /* 144 = sizeof(fuse ops) */
     }
 
     /**
