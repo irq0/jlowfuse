@@ -1,6 +1,8 @@
 package jlowfuse;
 
 import fuse.FuseReply;
+import fuse.FuseExtra;
+import fuse.Dirbuf;
 import java.nio.ByteBuffer;
 
 public class Reply extends FuseReply {
@@ -11,4 +13,10 @@ public class Reply extends FuseReply {
                                  long off, long maxsize) {
 	    return jniReplyByteBuffer(req.getCPtr(), buf, off, maxsize);
     }
+
+	public static int dirBufLimited(FuseReq req, Dirbuf dir, long off, long maxsize) {
+		return FuseExtra.replyBufLimited(req, dir.getP(), dir.getSize(),
+		                                 off, maxsize);
+	}
+	
 }   
