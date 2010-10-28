@@ -9,9 +9,9 @@ package jlowfuse;
 
 import fuse.Stat;
 import fuse.StatVFS;
-import fuse.Reply;
 import fuse.FileInfo;
 import fuse.Errno;
+import jlowfuse.Reply;
 import java.nio.ByteBuffer;
 
 
