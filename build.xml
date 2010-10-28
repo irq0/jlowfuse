@@ -97,12 +97,6 @@
     <jar jarfile="${dist}/jlowfuse.jar" basedir="${build}/java"/>
 
     <!-- run with: java -jar testfs.jar -Djava.library.path=. -->
-    <jar jarfile="${dist}/testfs.jar" basedir="${build}/java">
-      <manifest>
-	<attribute name="Main-Class" value="jlowfuse.testfs.TestFs"/>
-      </manifest>
-    </jar>      
-
     <jar jarfile="${dist}/objectfs.jar" basedir="${build}/java">
       <manifest>
 	<attribute name="Main-Class" value="objectfs.ObjectFs"/>
