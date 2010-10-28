@@ -1,4 +1,4 @@
-%module fuse_extra
+%module FuseExtra
 %{
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>

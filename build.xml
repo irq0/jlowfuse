@@ -11,7 +11,6 @@
   <property name="swig-package" value="fuse"/>
   <property name="swig-dst" value="${java-src}/fuse"/>
   <property name="swig-src" value="swig"/>
-  <property name="swig-input" value="fuse_interface"/>
 
   <target name="init">
     <tstamp/>
@@ -22,12 +21,12 @@
     <mkdir dir="${swig-dst}"/>
   </target>
 
-  <target name="compile" depends="init,swig,swig-extra" 
+  <target name="compile" depends="init,swig" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false" />
   </target>
 
-  <target name="compile-native" depends="init,swig,swig-extra">
+  <target name="compile-native" depends="init,swig">
     <cpptasks:cc link="shared" outtype="shared" 
 		 runtime="static"
 		 outfile="${build}/jlowfuse" objdir="${build}/native"
@@ -59,9 +58,54 @@
     </cpptasks:cc>
   </target>
 
-  <target name="swig-extra" depends="init" 
-	  description="Generate SWIG wrappers for fuse extras which are not part 
-		       of fuse"> 
+  <target name="swig" depends="init" 
+	  description="Generate SWIG wrappers for the fuse api">
+
+    <exec executable="swig" failonerror="true">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="${swig-src}/constants.i"/>
+    </exec>
+
+    <exec executable="swig" failonerror="true">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="${swig-src}/fuse_reply.i"/>
+    </exec>
+
+    <exec executable="swig" failonerror="true">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="${swig-src}/fuse_session.i"/>
+    </exec>
+
+    <exec executable="swig" failonerror="true">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="${swig-src}/fuse_structs.i"/>
+    </exec>
+
+    <exec executable="swig" failonerror="true">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="${swig-src}/fuse.i"/>
+    </exec>
+
     <exec executable="swig">
       <arg value="-java"/>
       <arg value="-package"/>
@@ -69,22 +113,15 @@
       <arg value="-outdir"/>
       <arg value="${swig-dst}"/>
       <arg value="-I${native-src}"/>
-      <arg value="${swig-src}/${swig-input}_extra.i"/>
+      <arg value="${swig-src}/fuse_extra.i"/>
     </exec>
-    <move file="${swig-src}/${swig-input}_extra_wrap.c" todir="${native-src}"/>
-  </target>
-  		      		       
-  <target name="swig" depends="init" 
-	  description="Generate SWIG wrappers for the fuse api">
-    <exec executable="swig">
-      <arg value="-java"/>
-      <arg value="-package"/>
-      <arg value="${swig-package}"/>
-      <arg value="-outdir"/>
-      <arg value="${swig-dst}"/>
-      <arg value="${swig-src}/${swig-input}.i"/>
-    </exec>
-    <move file="${swig-src}/${swig-input}_wrap.c" todir="${native-src}"/>
+
+    <move file="${swig-src}/fuse_reply_wrap.c" todir="${native-src}"/>
+    <move file="${swig-src}/fuse_session_wrap.c" todir="${native-src}"/>
+    <move file="${swig-src}/fuse_structs_wrap.c" todir="${native-src}"/>
+    <move file="${swig-src}/fuse_wrap.c" todir="${native-src}"/>
+    <move file="${swig-src}/fuse_extra_wrap.c" todir="${native-src}"/>
+
   </target>
 
   <target name="dist" depends="compile,compile-native"
