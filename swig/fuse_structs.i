@@ -41,7 +41,9 @@ struct statvfs {
         unsigned long int f_flag;
         %rename(namemax) f_namemax;
         unsigned long int f_namemax;
-//    int __f_spare[6];
+	%immutable;
+        int __f_spare[6];
+	%mutable;
 };
   
 
