@@ -1,5 +1,4 @@
 build/
 dist/
-native/fuse_interface_wrap.c
-native/fuse_interface_extra_wrap.c
+native/*_wrap.c
 java/fuse
