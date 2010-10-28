@@ -2,3 +2,4 @@ build/
 dist/
 native/fuse_interface_wrap.c
 native/fuse_interface_extra_wrap.c
+java/fuse
