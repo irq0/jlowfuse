@@ -12,19 +12,19 @@ public class ObjectFs {
 
         JLowFuseArgs args = JLowFuseArgs.parseCommandline(strargs);
         
-        SWIGTYPE_p_fuse_chan chan = fuse.fuse_mount("/mnt1", args);
+        SWIGTYPE_p_fuse_chan chan = Fuse.mount("/mnt1", args);
         SWIGTYPE_p_fuse_session sess = JLowFuse.lowlevelNew(args, new ObjectFsOps());
 
-        fuse.fuse_session_add_chan(sess, chan);
-        fuse.fuse_session_loop(sess);
-        //        int err = fuse.fuse_session_loop_mt(sess);
+        Session.addChan(sess, chan);
+        Session.loopSingle(sess);
+        // Session.loopMulti(sess);
 
-        fuse.fuse_session_remove_chan(chan);
+        Session.removeChan(chan);
 
-        fuse.fuse_session_destroy(sess);
-        fuse.fuse_session_exit(sess);
+        Session.destroy(sess);
+        Session.exit(sess);
 
-        fuse.fuse_unmount("/mnt1", chan);
+        Fuse.unmount("/mnt1", chan);
         
     }
       
