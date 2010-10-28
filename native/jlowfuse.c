@@ -136,7 +136,7 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 }
 
 /* parse fuse commandline from java string array */
-JNIEXPORT jlong JNICALL Java_jlowfuse_FuseArgs_makeFuseArgs
+JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuseArgs_makeFuseArgs
 (JNIEnv *env, jclass cls, jobjectArray jstrarr)
 {
         jsize len;

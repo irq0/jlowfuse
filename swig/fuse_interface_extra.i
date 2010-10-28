@@ -13,6 +13,7 @@
 
 %include "fuse_types.i"
 
+%rename(Dirbuf) dirbuf;
 struct dirbuf {
 	void *p;
 	size_t size;

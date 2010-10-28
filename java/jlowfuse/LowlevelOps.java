@@ -6,8 +6,8 @@
 
 package jlowfuse;
 
-import fuse.stat;
-import fuse.fuse_file_info;
+import fuse.Stat;
+import fuse.FileInfo;
 import java.nio.ByteBuffer;
 
 public interface LowlevelOps {
@@ -15,8 +15,8 @@ public interface LowlevelOps {
     public void destroy();
     public void lookup(FuseReq req, long parent, String name);
     public void forget(FuseReq req, long ino, long nlookup);
-    public void getattr(FuseReq req, long ino, fuse_file_info fi);
-    public void setattr(FuseReq req, long ino, stat attr, int to_set, fuse_file_info fi);
+    public void getattr(FuseReq req, long ino, FileInfo fi);
+    public void setattr(FuseReq req, long ino, Stat attr, int to_set, FileInfo fi);
     public void readlink(FuseReq req, long ino);
     public void mknod(FuseReq req, long parent, String name, short mode, short rdev);
     public void mkdir(FuseReq req, long parent, String name, short mode);
@@ -26,16 +26,16 @@ public interface LowlevelOps {
     public void rename(FuseReq req, long parent, String name,
                 long newparent, String newname);
     public void link(FuseReq req, long ino, long newparent, String newname);
-    public void open(FuseReq req, long ino, fuse_file_info fi);
-    public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi);
-    public void write(FuseReq req, long ino, ByteBuffer buf, int off, fuse_file_info fi);
-    public void flush(FuseReq req, long ino, fuse_file_info fi);
-    public void release(FuseReq req, long ino, fuse_file_info fi);
-    public void fsync(FuseReq req, long ino, int datasync, fuse_file_info fi);
-    public void opendir(FuseReq req, long ino, fuse_file_info fi);
-    public void readdir(FuseReq req, long ino, int size, int off, fuse_file_info fi);
-    public void releasedir(FuseReq req, long ino, fuse_file_info fi);
-    public void fsyncdir(FuseReq req, long ino, int datasync, fuse_file_info fi);
+    public void open(FuseReq req, long ino, FileInfo fi);
+    public void read(FuseReq req, long ino, int size, int off, FileInfo fi);
+    public void write(FuseReq req, long ino, ByteBuffer buf, int off, FileInfo fi);
+    public void flush(FuseReq req, long ino, FileInfo fi);
+    public void release(FuseReq req, long ino, FileInfo fi);
+    public void fsync(FuseReq req, long ino, int datasync, FileInfo fi);
+    public void opendir(FuseReq req, long ino, FileInfo fi);
+    public void readdir(FuseReq req, long ino, int size, int off, FileInfo fi);
+    public void releasedir(FuseReq req, long ino, FileInfo fi);
+    public void fsyncdir(FuseReq req, long ino, int datasync, FileInfo fi);
     public void statfs(FuseReq req, long ino);
     public void setxattr(FuseReq req, long ino, String name,
                   ByteBuffer value, int flags);

@@ -9,8 +9,8 @@
 
 package jlowfuse;
 
-import fuse.stat;
-import fuse.fuse_file_info;
+import fuse.Stat;
+import fuse.FileInfo;
 import java.nio.ByteBuffer;
 
 public class LowlevelOpsProxy {
@@ -39,13 +39,13 @@ public class LowlevelOpsProxy {
     }
 
     public void getattr(long req, long ino, long fi) {
-        ops.getattr(new FuseReq(req), ino, new fuse_file_info(fi, false));
+        ops.getattr(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
     public void setattr(long req, long ino, long attr, int to_set, long fi) {
         ops.setattr(new FuseReq(req), ino,
-                    new stat(attr, false), to_set,
-                    new fuse_file_info(fi, false));
+                    new Stat(attr, false), to_set,
+                    new FileInfo(fi, false));
     }
 
     public void readlink(long req, long ino) {
@@ -82,48 +82,48 @@ public class LowlevelOpsProxy {
     }
 
     public void open(long req, long ino, long fi) {
-        ops.open(new FuseReq(req), ino, new fuse_file_info(fi, false));
+        ops.open(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
     public void read(long req, long ino, int size, int off, long fi) {
         ops.read(new FuseReq(req), ino, size, off,
-                 new fuse_file_info(fi, false));
+                 new FileInfo(fi, false));
     }
 
     public void write(long req, long ino, ByteBuffer buf, int size, int off, long fi) {
         ops.write(new FuseReq(req), ino, buf, off,
-                  new fuse_file_info(fi, false));
+                  new FileInfo(fi, false));
     }
 
     public void flush(long req, long ino, long fi) {
-        ops.flush(new FuseReq(req), ino, new fuse_file_info(fi, false));
+        ops.flush(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
     public void release(long req, long ino, long fi) {
-        ops.release(new FuseReq(req), ino, new fuse_file_info(fi, false));
+        ops.release(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
     public void fsync(long req, long ino, int datasync, long fi) {
         ops.fsync(new FuseReq(req), ino, datasync,
-                  new fuse_file_info(fi, false));
+                  new FileInfo(fi, false));
     }
 
     public void opendir(long req, long ino, long fi) {
-        ops.opendir(new FuseReq(req), ino, new fuse_file_info(fi, false));
+        ops.opendir(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
     public void readdir(long req, long ino, int size, int off, long fi) {
         ops.readdir(new FuseReq(req), ino, size, off,
-                    new fuse_file_info(fi, false));
+                    new FileInfo(fi, false));
     }
 
     public void releasedir(long req, long ino, long fi) {
-        ops.releasedir(new FuseReq(req), ino, new fuse_file_info(fi, false));
+        ops.releasedir(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
     public void fsyncdir(long req, long ino, int datasync, long fi) {
         ops.fsyncdir(new FuseReq(req), ino, datasync,
-                     new fuse_file_info(fi, false));
+                     new FileInfo(fi, false));
     }
 
     public void statfs(long req, long ino) {

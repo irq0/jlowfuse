@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.nio.ByteBuffer;
 
-import fuse.stat;
+import fuse.Stat;
 
 class Inode {
     private Inode parent;
     private LinkedList<Inode> children = new LinkedList<Inode>();
     private long ino;
     private String name;
-    private stat stat;
+    private Stat stat;
     private ByteBuffer data;
     
     private static long nextIno = 1;
@@ -39,8 +39,8 @@ class Inode {
     public long getIno() { return this.ino; }
     public String getName() { return this.name; }
 
-    public stat getStat() { return this.stat; }
-    public void setStat(stat stat) { this.stat = stat; }
+    public Stat getStat() { return this.stat; }
+    public void setStat(Stat stat) { this.stat = stat; }
     
     public List<Inode> getChildren() { return this.children; }
 

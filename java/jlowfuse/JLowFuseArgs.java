@@ -2,17 +2,17 @@ package jlowfuse;
 
 import fuse.*;
 
-public class FuseArgs extends fuse_args {
+public class JLowFuseArgs extends FuseArgs {
     private static native long makeFuseArgs(String[] args);
-    public static FuseArgs parseCommandline(String[] args) {
-        long args_l = FuseArgs.makeFuseArgs(args);
-        return new FuseArgs(args_l);
+    public static JLowFuseArgs parseCommandline(String[] args) {
+        long args_l = JLowFuseArgs.makeFuseArgs(args);
+        return new JLowFuseArgs(args_l);
     }
 
-    public FuseArgs(long ptr) {
+    public JLowFuseArgs(long ptr) {
         super(ptr, true);
     }
-    public FuseArgs() {
+    public JLowFuseArgs() {
         super();
     }
 

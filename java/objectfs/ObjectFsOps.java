@@ -14,7 +14,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
         root.setParent(root);
         inode_table.put(1L, root);
 
-        stat s = new stat();
+        Stat s = new Stat();
         s.setIno(root.getIno());
         s.setNlink(3L);
         s.setMode(fuseConstants.S_IFDIR | 0777);
@@ -25,7 +25,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
         Inode child = new Inode(root, "test");
         wireInode(child);
 
-        s = new stat();
+        s = new Stat();
         s.setIno(child.getIno());
         s.setNlink(2L);
         s.setMode(fuseConstants.S_IFREG | 0777);
@@ -76,7 +76,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
             Inode inode = new Inode(parent, name);
             wireInode(inode);
 
-            stat s = new stat();
+            Stat s = new Stat();
             s.setIno(inode.getIno());
             s.setNlink(nlink);
             s.setMode(fullMode);
@@ -85,7 +85,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
             //            s.setSize();
             inode.setStat(s);
             
-            fuse_entry_param e = new fuse_entry_param();
+            EntryParam e = new EntryParam();
             e.setGeneration(23);
             e.setIno(inode.getIno());
             e.setAttr_timeout(0.0);
@@ -99,7 +99,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
 
 
-    public void read(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
+    public void read(FuseReq req, long ino, int size, int off, FileInfo fi) {
         Inode inode = getInodeByIno(ino);
         ByteBuffer buf = inode.getData();
 
@@ -114,7 +114,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
 
     public void write(FuseReq req, long ino, ByteBuffer src, int off,
-                      fuse_file_info fi) {
+                      FileInfo fi) {
         Inode inode = getInodeByIno(ino);
         ByteBuffer dst = inode.getData();
 
@@ -172,9 +172,9 @@ class ObjectFsOps extends AbstractLowlevelOps {
         rmdir(req, parent, name);        
     }    
     
-    public void readdir(FuseReq req, long ino, int size, int off, fuse_file_info fi) {
+    public void readdir(FuseReq req, long ino, int size, int off, FileInfo fi) {
         Inode inode = getInodeByIno(ino);
-        dirbuf d = new dirbuf();
+        Dirbuf d = new Dirbuf();
 
         fuse_extra.fuse_extra_dirbuf_add(req, d, ".", inode.getIno(),
                                          inode.getStat().getMode());
@@ -203,7 +203,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
             Inode child = getChildInodeByName(parent, name);
             System.out.println(child);
             if (child != null) {
-                fuse_entry_param e = new fuse_entry_param();
+                EntryParam e = new EntryParam();
                 e.setGeneration(23);
                 e.setIno(child.getIno());
                 e.setAttr_timeout(0.0);
@@ -218,19 +218,19 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
             
     public void statfs(FuseReq req, long ino) {
-        statvfs s = new statvfs();
+        StatVFS s = new StatVFS();
         
         s.setBsize(1);
-	s.setFrsize(1024);
-	s.setBfree(new BigInteger("19"));
-	s.setBlocks(new BigInteger("42"));
-	s.setFiles(new BigInteger("23"));
-	s.setFavail(new BigInteger("5"));
+        s.setFrsize(1024);
+        s.setBfree(new BigInteger("19"));
+        s.setBlocks(new BigInteger("42"));
+        s.setFiles(new BigInteger("23"));
+        s.setFavail(new BigInteger("5"));
         
         fuse.fuse_reply_statfs(req, s);
     }
 
-    public void getattr(FuseReq req, long ino, fuse_file_info fi) {
+    public void getattr(FuseReq req, long ino, FileInfo fi) {
         Inode inode = getInodeByIno(ino);
         
 	if (inode != null) {
@@ -241,15 +241,15 @@ class ObjectFsOps extends AbstractLowlevelOps {
 
     }
     
-    public void setattr(FuseReq req, long ino, stat stat, int to_set,
-                        fuse_file_info fi) {
+    public void setattr(FuseReq req, long ino, Stat stat, int to_set,
+                        FileInfo fi) {
         Inode inode = getInodeByIno(ino);
 
         if (inode == null) {
             fuse.fuse_reply_err(req, fuseConstants.ENOENT);
         }
 
-        stat s = inode.getStat();
+        Stat s = inode.getStat();
 
         switch(to_set) {
         case fuseConstants.FUSE_SET_ATTR_MODE:

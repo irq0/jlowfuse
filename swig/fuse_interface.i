@@ -71,6 +71,7 @@ extern int fuse_reply_poll(fuse_req_t req, unsigned revents);
 
 
 /* statvfs (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/statvfs.h] */
+%rename(StatVFS) statvfs;
 struct statvfs {
         %rename(bsize) f_bsize;
         unsigned long int f_bsize;
@@ -119,6 +120,7 @@ enum {
 
 
 /* FUSE: fuse_file_info */
+%rename(FileInfo) fuse_file_info;
 struct fuse_file_info {
         int flags;
         unsigned long fh_old;
@@ -133,10 +135,13 @@ struct fuse_file_info {
 };
 
 /* stat (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/stat.h] */
+%rename(Stat) stat;
 struct stat {
         %rename(dev) st_dev;
         __dev_t st_dev;
-          unsigned short int __pad1;
+	%immutable;
+	unsigned short int __pad1;
+	%mutable;
         %rename(_ino) __st_ino;
         __ino_t __st_ino;
         %rename(mode) st_mode;
@@ -149,7 +154,9 @@ struct stat {
         __gid_t st_gid;
         %rename(rdev) st_rdev;
         __dev_t st_rdev;
+	%immutable;
         unsigned short int __pad2;
+	%mutable;
         %rename(size) st_size;
         __off64_t st_size;
         %rename(blksize) st_blksize;
@@ -167,6 +174,7 @@ struct stat {
 };
 
 /* timespect (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/time.h] */
+%rename(Timespec) timespec;
 struct timespec {
         %rename(sec) tv_sec;
         __time_t tv_sec;            /* Seconds.  */
@@ -185,7 +193,7 @@ struct iovec {
 };
 
 
-
+%rename(FuseArgs) fuse_args;
 struct fuse_args {
         /* Argument count */
         int argc;
@@ -198,6 +206,7 @@ struct fuse_args {
         int allocated;
 };
 
+%rename(EntryParam) fuse_entry_param;
 struct fuse_entry_param {
         fuse_ino_t ino;
         unsigned long generation;
@@ -208,12 +217,14 @@ struct fuse_entry_param {
 
 
 /* FUSE: Buffer Flags */
+%rename(BufFlags) fuse_buf_flags;
 enum fuse_buf_flags {
         FUSE_BUF_IS_FD          = (1 << 1),
         FUSE_BUF_FD_SEEK        = (1 << 2),
         FUSE_BUF_FD_RETRY       = (1 << 3),
 };
 
+%rename(BufCopyFlags) fuse_buf_copy_flags;
 enum fuse_buf_copy_flags {
         FUSE_BUF_NO_SPLICE       = (1 << 1),
         FUSE_BUF_FORCE_SPLICE    = (1 << 2),
