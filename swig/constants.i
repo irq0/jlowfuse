@@ -2,6 +2,9 @@
 
 %module Fuse
 %{
+#ifndef SWIG_CONSTANTS_I
+#define SWIG_CONSTANTS_I
+	
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -66,4 +69,7 @@ enum fuse_buf_copy_flags {
 #define FUSE_IOCTL_RETRY        (1 << 2)
 #define FUSE_IOCTL_MAX_IOV      256
 
+%{
+#endif
+%}
 

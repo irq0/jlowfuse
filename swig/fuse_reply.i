@@ -1,5 +1,8 @@
 %module FuseReply
 %{
+#ifndef SWIG_FUSE_REPLY_I
+#define SWIG_FUSE_REPLY_I
+
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -61,3 +64,6 @@ extern int fuse_reply_ioctl_iov(fuse_req_t req, int result, const struct iovec *
 			        int count);
 extern int fuse_reply_poll(fuse_req_t req, unsigned revents);
 
+%{
+#endif
+%}

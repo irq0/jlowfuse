@@ -61,14 +61,14 @@
 
       <fileset dir="${native-src}">
 	<include name="jlowfuse.c"/>
-	<include name="${swig-input}_wrap.c"/>
+	<include name="*_wrap.c"/>
 	<include name="jlowfuse_ops.c"/>
 	<include name="fuse_extra.c"/>
-	<include name="${swig-input}_extra_wrap.c"/>
 	<include name="jlowfuse_java_LowlevelOpsProxy.c"/>
       </fileset>
     </cpptasks:cc>
   </target>
+
 
   <target name="swig" depends="init" 
 	  description="Generate SWIG wrappers for the fuse api">
@@ -148,14 +148,12 @@
       <arg value="${swig-src}/fuse_statconstants.i"/>
     </exec>
 
-
     <move file="${swig-src}/fuse_reply_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_session_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_structs_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_extra_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_errno_wrap.c" todir="${native-src}"/>
-
   </target>
 
   <target name="dist" depends="compile,compile-native"

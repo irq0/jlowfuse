@@ -2,6 +2,9 @@
 
 %module Errno
 %{
+#ifndef SWIG_FUSE_ERRNO_I
+#define SWIG_FUSE_ERRNO_I
+	
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -148,3 +151,6 @@
 #define	ENOTRECOVERABLE	 131	/* State not recoverable */
 #define	ERFKILL		 132	/* Operation not possible due to RF-kill */
 
+%{
+#endif
+%}

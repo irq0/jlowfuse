@@ -1,5 +1,8 @@
-%module Fuse
+%module FuseStructs
 %{
+#ifndef SWIG_FUSE_STRUCTS_I
+#define SWIG_FUSE_STRUCTS_I
+
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -144,3 +147,7 @@ struct fuse_entry_param {
         double attr_timeout;
         double entry_timeout;
 };
+
+%{
+#endif
+%}

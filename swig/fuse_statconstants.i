@@ -1,6 +1,9 @@
 /* constants required by fuse */
 %module StatConstants
 %{
+#ifndef SWIG_FUSE_STATCONSTANTS_I
+#define SWIG_FUSE_STATCONSTANTS_I
+
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -30,3 +33,7 @@ enum {
 	IWRITE = 0200,          /* Write by owner.  */
 	IEXEC  = 0100,          /* Execute by owner.  */
 };
+
+%{
+#endif
+%}

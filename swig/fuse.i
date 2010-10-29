@@ -1,6 +1,9 @@
 /* FUSE common functions */
 %module Fuse
 %{
+#ifndef SWIG_FUSE_I
+#define SWIG_FUSE_I
+
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -35,4 +38,6 @@ extern int fuse_set_signal_handlers(struct fuse_session *se);
 extern void fuse_remove_signal_handlers(struct fuse_session *se);
 extern int fuse_version(void);
 
-
+%{
+#endif
+%}

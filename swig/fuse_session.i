@@ -1,6 +1,9 @@
 /* FUSE session functions */
 %module Session
 %{
+#ifndef SWIG_FUSE_SESSION_I
+#define SWIG_FUSE_SESSION_I
+
 #define FUSE_USE_VERSION 26
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
@@ -38,3 +41,7 @@ extern void fuse_session_reset(struct fuse_session *se);
 extern int fuse_session_exited(struct fuse_session *se);
 extern int fuse_session_loop(struct fuse_session *se);
 extern int fuse_session_loop_mt(struct fuse_session *se);
+
+%{
+#endif
+%}
