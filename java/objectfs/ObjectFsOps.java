@@ -2,7 +2,6 @@ package objectfs;
 
 import fuse.*;
 import jlowfuse.*;
-import java.math.BigInteger;
 import java.util.Hashtable;
 import java.nio.ByteBuffer;
 
@@ -52,7 +51,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
 
     private void updateSize(Inode inode) {    
-        inode.getStat().setSize(BigInteger.valueOf(inode.getData().capacity()));
+        inode.getStat().setSize(inode.getData().capacity());
     }
     
     private Inode getInodeByIno(long ino) {
@@ -221,10 +220,10 @@ class ObjectFsOps extends AbstractLowlevelOps {
         
         s.setBsize(1);
         s.setFrsize(1024);
-        s.setBfree(new BigInteger("19"));
-        s.setBlocks(new BigInteger("42"));
-        s.setFiles(new BigInteger("23"));
-        s.setFavail(new BigInteger("5"));
+        s.setBfree(19);
+        s.setBlocks(42);
+        s.setFiles(23);
+        s.setFavail(5);
         
         Reply.statfs(req, s);
     }
