@@ -21,7 +21,7 @@
     <mkdir dir="${swig-dst}"/>
   </target>
 
-  <target name="compile" depends="init,swig" 
+  <target name="javacompile" depends="init,swig" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false">
       <include name="fuse/**"/>
@@ -29,7 +29,7 @@
     </javac>
   </target>
 
-  <target name="compile-objectfs" depends="init,swig,compile" 
+  <target name="objectfs" depends="init,swig,javacompile" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" 
 	   includeAntRuntime="false">
@@ -156,7 +156,7 @@
     <move file="${swig-src}/fuse_errno_wrap.c" todir="${native-src}"/>
   </target>
 
-  <target name="dist" depends="compile,compile-native"
+  <target name="dist" depends="javacompile,compile-native,objectfs,swig"
 	  description="generate jar file">
 
     <copy todir="${dist}">
