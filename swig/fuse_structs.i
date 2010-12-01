@@ -32,7 +32,7 @@ struct statvfs {
         __fsblkcnt64_t f_bavail;
         %rename(files) f_files;
         __fsfilcnt64_t f_files;
-        %rename(ffree) f_ffress;
+        %rename(ffree) f_ffree;
         __fsfilcnt64_t f_ffree;
         %rename(favail) f_favail;
         __fsfilcnt64_t f_favail;
