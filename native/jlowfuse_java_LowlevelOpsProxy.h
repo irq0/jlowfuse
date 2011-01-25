@@ -29,7 +29,7 @@
 #define SIGNATURE_FLUSH       "(JJJ)V"
 #define SIGNATURE_LOOKUP      "(JJLjava/lang/String;)V"
 #define SIGNATURE_READ        "(JJIIJ)V"
-#define SIGNATURE_CREATE      "(JJLjava/lang/String;S)V"
+#define SIGNATURE_CREATE      "(JJLjava/lang/String;SJ)V"
 #define SIGNATURE_MKDIR       "(JJLjava/lang/String;S)V"
 #define SIGNATURE_RENAME      "(JJLjava/lang/String;JLjava/lang/String;)V"
 #define SIGNATURE_RELEASE     "(JJJ)V"

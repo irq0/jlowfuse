@@ -43,7 +43,7 @@ public interface LowlevelOps {
     public void listxattr(FuseReq req, long ino, int size);
     public void removexattr(FuseReq req, long ino, String name);
     public void access(FuseReq req, long ino, int mask);
-    public void create(FuseReq req, long parent, String name, short mode);
+	public void create(FuseReq req, long parent, String name, short mode, FileInfo fi);
     /*    
     public void getlk(long ino, Flock lock);
     public void setlk(long ino, Flock lock, int sleep);

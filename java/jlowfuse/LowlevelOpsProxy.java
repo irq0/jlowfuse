@@ -151,8 +151,8 @@ public class LowlevelOpsProxy {
         ops.access(new FuseReq(req), ino, mask);
     }
 
-    public void create(long req, long parent, String name, short mode) {
-        ops.create(new FuseReq(req), parent, name, mode);
+	public void create(long req, long parent, String name, short mode, long fi) {
+		ops.create(new FuseReq(req), parent, name, mode, new FileInfo(fi, false));
     }
 
     /*    

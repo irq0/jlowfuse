@@ -143,7 +143,7 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
         Reply.err(req, Errno.ENOSYS);
     }
 
-    public void create(FuseReq req, long parent, String name, short mode) {
+	public void create(FuseReq req, long parent, String name, short mode, FileInfo fi) {
         Reply.err(req, Errno.ENOSYS);
     }
 
