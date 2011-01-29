@@ -17,7 +17,10 @@ typedef unsigned long int fuse_ino_t;
 %apply unsigned int { __mode_t}
 %apply unsigned int { mode_t }
 %apply unsigned int { __uid_t }
+%apply unsigned int { uid_t }
 %apply unsigned int { __gid_t }
+%apply unsigned int { gid_t }
+%apply unsigned int { pid_t }
 %apply unsigned int { __nlink_t }
 %apply long int { __blksize_t }
 %apply long long int { __blkcnt64_t }

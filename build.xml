@@ -149,12 +149,23 @@
       <arg value="${swig-src}/fuse_statconstants.i"/>
     </exec>
 
+    <exec executable="swig">
+      <arg value="-java"/>
+      <arg value="-package"/>
+      <arg value="${swig-package}"/>
+      <arg value="-outdir"/>
+      <arg value="${swig-dst}"/>
+      <arg value="-I${native-src}"/>
+      <arg value="${swig-src}/fuse_request.i"/>
+    </exec>
+
     <move file="${swig-src}/fuse_reply_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_session_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_structs_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_extra_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_errno_wrap.c" todir="${native-src}"/>
+    <move file="${swig-src}/fuse_request_wrap.c" todir="${native-src}"/>
   </target>
 
   <target name="dist" depends="javacompile,compile-native,objectfs,swig"
