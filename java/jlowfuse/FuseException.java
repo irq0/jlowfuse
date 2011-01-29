@@ -9,7 +9,7 @@ public class FuseException extends Exception {
         this.errno = errno;
     }
     
-    public getErrno() {
+    public int getErrno() {
         return errno;
     }
 }

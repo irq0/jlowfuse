@@ -19,9 +19,10 @@
     <mkdir dir="${build}/native"/>
     <mkdir dir="${build}/java"/>
     <mkdir dir="${swig-dst}"/>
+    <mkdir dir="${java-src}/jlowfuse/exceptions"/>
   </target>
 
-  <target name="javacompile" depends="init,swig" 
+  <target name="javacompile" depends="init,swig,make-exception-classes" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false"
         debug="true" debuglevel="lines,vars,source">
@@ -168,6 +169,16 @@
     <move file="${swig-src}/fuse_request_wrap.c" todir="${native-src}"/>
   </target>
 
+  <target name="make-exception-classes" depends="swig"
+	  description="Make exception classes for ERRNO">
+    <exec executable="python">
+      <arg value="make_exception_classes.py"/>
+      <arg value="swig/fuse_errno.i"/>
+      <arg value="java/jlowfuse/exceptions/"/>
+    </exec>
+  </target>
+
+
   <target name="dist" depends="javacompile,compile-native,objectfs,swig"
 	  description="generate jar file">
 
@@ -190,5 +201,6 @@
     <delete dir="${dist}"/>
     <delete dir="${swig-dst}"/>
     <delete file="${native-src}/${swig-input}_wrap.c"/>
+    <delete dir="${java-src}/jlowfuse/exceptions"/>
   </target>
 </project>
