@@ -76,11 +76,11 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
         Reply.open(req, fi);
     }
 
-    public void read(FuseReq req, long ino, int size, int off, FileInfo fi) {
+    public void read(FuseReq req, long ino, long size, long off, FileInfo fi) {
         Reply.err(req, Errno.ENOSYS);
     }
 
-    public void write(FuseReq req, long ino, ByteBuffer buf, int off,
+    public void write(FuseReq req, long ino, ByteBuffer buf, long off,
                       FileInfo fi) {
         Reply.err(req, Errno.ENOSYS);
     }
@@ -101,7 +101,7 @@ public abstract class AbstractLowlevelOps implements LowlevelOps {
         Reply.open(req, fi);
     }
 
-    public void readdir(FuseReq req, long ino, int size, int off, FileInfo fi) {
+    public void readdir(FuseReq req, long ino, long size, long off, FileInfo fi) {
         Reply.err(req, Errno.ENOSYS);
     }
 

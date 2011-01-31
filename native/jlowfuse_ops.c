@@ -87,8 +87,8 @@ void exception_check(JNIEnv *env);
                                        cl_low_ops->method.operation,    \
                                        (jlong)&req,                     \
                                        (jlong)ino,                      \
-                                       (jint)size,                      \
-                                       (jint)off,                       \
+                                       (jlong)size,	  \
+                                       (jlong)off,                       \
                                        (jlong)fi);                      \
                                                                         \
                 exception_check(env);                                   \
@@ -350,8 +350,8 @@ void jlowfuse_write(fuse_req_t req, fuse_ino_t ino, const char *buf,
                                (jlong)&req,
                                (jlong)ino,
                                jbuf,
-                               (jint)size,
-                               (jint)off,
+                               (jlong)size,
+                               (jlong)off,
                                (jlong)fi);
         
         exception_check(env);
