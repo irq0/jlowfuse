@@ -27,13 +27,13 @@ public interface LowlevelOps {
                 long newparent, String newname);
     public void link(FuseReq req, long ino, long newparent, String newname);
     public void open(FuseReq req, long ino, FileInfo fi);
-    public void read(FuseReq req, long ino, int size, int off, FileInfo fi);
-    public void write(FuseReq req, long ino, ByteBuffer buf, int off, FileInfo fi);
+    public void read(FuseReq req, long ino, long size, long off, FileInfo fi);
+    public void write(FuseReq req, long ino, ByteBuffer buf, long off, FileInfo fi);
     public void flush(FuseReq req, long ino, FileInfo fi);
     public void release(FuseReq req, long ino, FileInfo fi);
     public void fsync(FuseReq req, long ino, int datasync, FileInfo fi);
     public void opendir(FuseReq req, long ino, FileInfo fi);
-    public void readdir(FuseReq req, long ino, int size, int off, FileInfo fi);
+    public void readdir(FuseReq req, long ino, long size, long off, FileInfo fi);
     public void releasedir(FuseReq req, long ino, FileInfo fi);
     public void fsyncdir(FuseReq req, long ino, int datasync, FileInfo fi);
     public void statfs(FuseReq req, long ino);

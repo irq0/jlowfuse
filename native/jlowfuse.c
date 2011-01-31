@@ -61,10 +61,12 @@ JNIEnv *attach_native_thread()
 /* detach native thread from java vm */
 void detach_native_thread()
 {
-        int res;
-        return;
+        int res = JNI_OK;
         res = (*jvm)->DetachCurrentThread(jvm);
-        assert(res == JNI_OK);
+
+        if (res != JNI_OK) {
+//	        errx(16, "Failed to detach current thread: %i", res);
+	}
 }        
 
 

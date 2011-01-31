@@ -85,12 +85,12 @@ public class LowlevelOpsProxy {
         ops.open(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
-    public void read(long req, long ino, int size, int off, long fi) {
+    public void read(long req, long ino, long size, long off, long fi) {
         ops.read(new FuseReq(req), ino, size, off,
                  new FileInfo(fi, false));
     }
 
-    public void write(long req, long ino, ByteBuffer buf, int size, int off, long fi) {
+    public void write(long req, long ino, ByteBuffer buf, long size, long off, long fi) {
         ops.write(new FuseReq(req), ino, buf, off,
                   new FileInfo(fi, false));
     }
@@ -112,7 +112,7 @@ public class LowlevelOpsProxy {
         ops.opendir(new FuseReq(req), ino, new FileInfo(fi, false));
     }
 
-    public void readdir(long req, long ino, int size, int off, long fi) {
+    public void readdir(long req, long ino, long size, long off, long fi) {
         ops.readdir(new FuseReq(req), ino, size, off,
                     new FileInfo(fi, false));
     }

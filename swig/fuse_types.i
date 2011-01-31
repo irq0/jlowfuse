@@ -14,8 +14,8 @@ typedef unsigned long int fuse_ino_t;
 %apply unsigned long int { __off64_t }
 %apply unsigned long int { __dev_t }
 
-%apply unsigned int { __mode_t}
-%apply unsigned int { mode_t }
+%apply unsigned short { __mode_t}
+%apply unsigned short { mode_t }
 %apply unsigned int { __uid_t }
 %apply unsigned int { uid_t }
 %apply unsigned int { __gid_t }
