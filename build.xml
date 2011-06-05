@@ -197,10 +197,17 @@
   </target>
 
   <target name="clean">
-    <delete dir="${build}"/>
-    <delete dir="${dist}"/>
-    <delete dir="${swig-dst}"/>
-    <delete file="${native-src}/${swig-input}_wrap.c"/>
-    <delete dir="${java-src}/jlowfuse/exceptions"/>
+    <delete>
+      <fileset dir="${build}"/>
+      <fileset dir="${dist}"/>
+      <fileset dir="${swig-dst}"/>
+      <fileset dir="${native-src}" includes="*_wrap.c"/>
+      <fileset dir="${java-src}/jlowfuse/exceptions"/>
+    </delete>
   </target>
 </project>
+
+
+
+
+
