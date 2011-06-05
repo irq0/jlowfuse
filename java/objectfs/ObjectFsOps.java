@@ -5,7 +5,7 @@ import jlowfuse.*;
 import java.util.Hashtable;
 import java.nio.ByteBuffer;
 
-class ObjectFsOps extends AbstractLowlevelOps {
+class ObjectFsOps extends AbstractLowlevelOps implements LowlevelOps{
     Inode root;
     Hashtable<Long, Inode> inode_table = new Hashtable<Long, Inode>();
     public void init() {
@@ -98,7 +98,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
     }
 
 
-    public void read(FuseReq req, long ino, int size, int off, FileInfo fi) {
+    public void read(FuseReq req, long ino, long size, long off, FileInfo fi) {
         Inode inode = getInodeByIno(ino);
         ByteBuffer buf = inode.getData();
 
@@ -106,21 +106,21 @@ class ObjectFsOps extends AbstractLowlevelOps {
         if (buf != null) {        
             Reply.byteBuffer(req, buf, off, size);
         } else {
-            buf = ByteBuffer.allocateDirect(size);            
+	        buf = ByteBuffer.allocateDirect((int)size);            
             Reply.byteBuffer(req, buf, off, size);
         }
     }
 
 
-    public void write(FuseReq req, long ino, ByteBuffer src, int off,
+    public void write(FuseReq req, long ino, ByteBuffer src, long off,
                       FileInfo fi) {
         Inode inode = getInodeByIno(ino);
         ByteBuffer dst = inode.getData();
 
         if (dst == null) { // uninitialized
-            ByteBuffer buf = ByteBuffer.allocateDirect(Math.max(src.capacity() + off,
+	        ByteBuffer buf = ByteBuffer.allocateDirect(Math.max(src.capacity() + (int)off,
                                                                 4096));
-            buf.position(off);
+	        buf.position((int)off);
             buf.put(src);
 
             dst = buf;
@@ -128,16 +128,16 @@ class ObjectFsOps extends AbstractLowlevelOps {
         } else if (dst.capacity() < (src.capacity() + off)) { // to small
             System.out.println(dst  + "    "  + src);
             ByteBuffer buf = ByteBuffer.allocateDirect(
-                                  Math.max(dst.capacity() + src.capacity() + off,
+                                                       Math.max(dst.capacity() + src.capacity() + (int)off,
                                            dst.capacity() + 1024*1024));
             buf.put(dst);
-            buf.position(off);
+            buf.position((int)off);
             buf.put(src);
 
             dst = buf;
             inode.setData(buf);
         } else {                        
-            dst.position(off);
+	        dst.position((int)off);
             dst.put(src);
         }
 
@@ -171,7 +171,7 @@ class ObjectFsOps extends AbstractLowlevelOps {
         rmdir(req, parent, name);        
     }    
     
-    public void readdir(FuseReq req, long ino, int size, int off, FileInfo fi) {
+    public void readdir(FuseReq req, long ino, long size, long off, FileInfo fi) {
         Inode inode = getInodeByIno(ino);
         Dirbuf d = new Dirbuf();
 

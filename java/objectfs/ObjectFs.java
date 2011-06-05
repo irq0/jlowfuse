@@ -8,11 +8,12 @@ public class ObjectFs {
         System.loadLibrary("jlowfuse");
     }
 
-    public static void main(String[] strargs) {
-
-        JLowFuseArgs args = JLowFuseArgs.parseCommandline(strargs);
+    public static void main(String[] strArgs) {
+	    String[] fuseArgs = {"-o foo,subtype=objfs", "-d"};
+	    String mountpoint = strArgs[0];	 
+        JLowFuseArgs args = JLowFuseArgs.parseCommandline(fuseArgs);
         
-        SWIGTYPE_p_fuse_chan chan = Fuse.mount("/mnt1", args);
+        SWIGTYPE_p_fuse_chan chan = Fuse.mount(mountpoint, args);
         SWIGTYPE_p_fuse_session sess = JLowFuse.lowlevelNew(args, new ObjectFsOps());
 
         Session.addChan(sess, chan);
@@ -24,9 +25,7 @@ public class ObjectFs {
         Session.destroy(sess);
         Session.exit(sess);
 
-        Fuse.unmount("/mnt1", chan);
-        
+        Fuse.unmount(mountpoint, chan);        
     }
       
 }
-

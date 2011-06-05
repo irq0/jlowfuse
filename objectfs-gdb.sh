@@ -1,12 +1,12 @@
 #!/bin/sh
 TMP=$(tempfile)
-
+$mountpoint=$1
 (
 gdb -x 
     cd build/java
     echo "Mounting..."
 
-    echo "set args -Djava.library.path=.. objectfs/ObjectFs -osubtype=bla -d" > $TMP
+    echo "set args -Djava.library.path=.. objectfs/ObjectFs $mountpoint" > $TMP
     echo "run" >> $TMP
     
 
@@ -16,6 +16,6 @@ gdb -x
     echo
     echo "Return code: $ret"
     echo "... umounting"
-    sudo umount /mnt1
+    fusermount -u $mountpoint
 
 )

@@ -1,12 +1,14 @@
 #!/bin/sh
+mountpoint=$1
+
 (
     cd dist
     echo "Mounting..."
-    java -Djava.library.path=. -jar objectfs.jar -osubtype=bla -d
+    java -Djava.library.path=. -jar objectfs.jar $mountpoint
     ret=$?
     echo
     echo "Return code: $ret"
     echo "... umounting"
-    sudo umount /mnt1
+    fusermount -u $mountpoint
 
 )
