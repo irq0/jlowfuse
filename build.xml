@@ -49,6 +49,8 @@
 		 outfile="${build}/jlowfuse" objdir="${build}/native"
 		 outputfileproperty="libjlowfuse">
       <includepath>
+	<path path="/usr/lib/jvm/java-6-sun/include/"/>
+	<path path="/usr/lib/jvm/java-6-sun/include/linux/"/>
 	<path path="/usr/include/fuse"/>
 	<path path="/lib"/>
       </includepath>
