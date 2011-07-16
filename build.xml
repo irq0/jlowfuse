@@ -202,6 +202,7 @@
       <fileset dir="${dist}"/>
       <fileset dir="${swig-dst}"/>
       <fileset dir="${native-src}" includes="*_wrap.c"/>
+      <fileset dir="${native-src}" includes="*_wrap.o"/>
       <fileset dir="${java-src}/jlowfuse/exceptions"/>
     </delete>
   </target>
