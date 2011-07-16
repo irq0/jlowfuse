@@ -27,6 +27,9 @@
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false"
         debug="true" debuglevel="lines,vars,source">
       <include name="fuse/**"/>
+    </javac>
+    <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false"
+        debug="true" debuglevel="lines,vars,source">
       <include name="jlowfuse/**"/>
     </javac>
   </target>
