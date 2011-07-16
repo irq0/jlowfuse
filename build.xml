@@ -165,6 +165,8 @@
       <arg value="${swig-src}/fuse_request.i"/>
     </exec>
 
+    <move file="${swig-src}/fuse_statconstants_wrap.c" todir="${native-src}"/>
+    <move file="${swig-src}/constants_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_reply_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_session_wrap.c" todir="${native-src}"/>
     <move file="${swig-src}/fuse_structs_wrap.c" todir="${native-src}"/>
