@@ -13,7 +13,7 @@ import fuse.Stat;
 import fuse.FileInfo;
 import java.nio.ByteBuffer;
 
-public class LowlevelOpsProxy {
+public class LowlevelOpsProxy implements OpsProxy {
     private LowlevelOps ops = null;
     
     public void register(LowlevelOps ops) {
@@ -43,7 +43,7 @@ public class LowlevelOpsProxy {
     }
 
     public void setattr(long req, long ino, long attr, int to_set, long fi) {
-        ops.setattr(new FuseReq(req), ino,
+	    ops.setattr(new FuseReq(req), ino,
                     new Stat(attr, false), to_set,
                     new FileInfo(fi, false));
     }
