@@ -14,7 +14,7 @@ import fuse.FileInfo;
 import java.nio.ByteBuffer;
 
 public class LowlevelOpsProxy implements OpsProxy {
-    private LowlevelOps ops = null;
+	private LowlevelOps ops = null;
     
     public void register(LowlevelOps ops) {
         this.ops = ops;

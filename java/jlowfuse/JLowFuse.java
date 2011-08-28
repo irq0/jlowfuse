@@ -35,11 +35,28 @@ public class JLowFuse {
      * @return Opaque pointer to fuse_session type
      */
     public static SWIGTYPE_p_fuse_session lowlevelNew(FuseArgs args, LowlevelOps ops) {
-        return lowlevelNew(args, ops, null);
+        return lowlevelNew(args, opull);
+    }
+    
+    /**
+     * Create new lowlevel session using the concurrency api.
+     *
+     * @param args Fuse Args eg. Commandline
+     * @param executor handles Tasks
+     * @return Opaque pointer to fuse_session type
+     */
+    public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, LowlevelOps ops) {
+	    
+
+
+
+
     }
     
     static {
         System.loadLibrary("jlowfuse");
     }
-    
+
+
+	
 } 
