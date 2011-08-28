@@ -1,6 +1,8 @@
 package jlowfuse;
 
 import fuse.*;
+import java.util.concurrent.ExecutorService;
+import jlowfuse.async.TaskImplementations;
 
 public class JLowFuse {
     public native int init(Object opts);
@@ -35,7 +37,7 @@ public class JLowFuse {
      * @return Opaque pointer to fuse_session type
      */
     public static SWIGTYPE_p_fuse_session lowlevelNew(FuseArgs args, LowlevelOps ops) {
-        return lowlevelNew(args, opull);
+	    return lowlevelNew(args, ops, null);
     }
     
     /**
@@ -45,18 +47,11 @@ public class JLowFuse {
      * @param executor handles Tasks
      * @return Opaque pointer to fuse_session type
      */
-    public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, LowlevelOps ops) {
-	    
-
-
-
-
+	public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, TaskImplementations impls, ExecutorService service) {
+	    return null;
     }
     
     static {
         System.loadLibrary("jlowfuse");
-    }
-
-
-	
+    }	
 } 

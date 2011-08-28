@@ -5,10 +5,13 @@
  *
  */
 
-package jlowfuse.tasks;
+package jlowfuse.async.tasks;
 
 import java.util.concurrent.FutureTask;
 
-public class JLowFuseTask extends FutureTask<?> {
+public class JLowFuseTask implements RunnableFuture<Object> {
+	public JLowFuseTask() {
+		
+	}
 	
 }

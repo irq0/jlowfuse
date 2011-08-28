@@ -9,9 +9,12 @@
 
 package jlowfuse;
 
+import java.nio.ByteBuffer;
+
 import fuse.Stat;
 import fuse.FileInfo;
-import java.nio.ByteBuffer;
+import jlowfuse.OpsProxy;
+
 
 public class LowlevelOpsProxy implements OpsProxy {
 	private LowlevelOps ops = null;
