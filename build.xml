@@ -49,6 +49,14 @@
     </javac>
   </target>
 
+  <target name="objectfs" depends="init,swig,javacompile" 
+	  description="compile all java source">
+    <javac srcdir="${java-src}" destdir="${build}/java" 
+	   includeAntRuntime="false">
+      <include name="objectfs/**"/>
+    </javac>
+  </target>
+
 
   <target name="compile-native" depends="init,swig">
     <cpptasks:cc link="shared" outtype="shared" 
