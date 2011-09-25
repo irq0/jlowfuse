@@ -11,6 +11,7 @@ import fuse.Stat;
 import fuse.StatVFS;
 import fuse.FileInfo;
 import fuse.Errno;
+import jlowfuse.FuseReq;
 import jlowfuse.LowlevelOps;
 import jlowfuse.Reply;
 import java.nio.ByteBuffer;
