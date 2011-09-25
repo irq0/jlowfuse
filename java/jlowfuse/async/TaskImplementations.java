@@ -8,38 +8,38 @@ package jlowfuse.async;
 import jlowfuse.async.tasks.*;
 
 public class TaskImplementations {
-	Class<Init> initImpl;
-	Class destroyImpl;
-	Class lookupImpl;
-	Class forgetImpl;
-	Class getattrImpl;
-	Class setattrImpl;
-	Class readlinkImpl;
-	Class mknodImpl;
-	Class mkdirImpl;
-	Class unlinkImpl;
-	Class rmdirImpl;
-	Class symlinkImpl;
-	Class renameImpl;
-	Class linkImpl;
-	Class openImpl;
-	Class readImpl;
-	Class writeImpl;
-	Class flushImpl;
-	Class releaseImpl;
-	Class fsyncImpl;
-	Class opendirImpl;
-	Class readdirImpl;
-	Class releasedirImpl;
-	Class fsyncdirImpl;
-	Class statfsImpl;
-	Class setxattrImpl;
-	Class getxattrImpl;
-	Class listxattrImpl;
-	Class removexattrImpl;
-	Class accessImpl;
-	Class createImpl;
-	Class bmapImpl;
+	Class<JLowFuseTask> initImpl;
+	Class<JLowFuseTask> destroyImpl;
+	Class<JLowFuseTask> lookupImpl;
+	Class<JLowFuseTask> forgetImpl;
+	Class<JLowFuseTask> getattrImpl;
+	Class<JLowFuseTask> setattrImpl;
+	Class<JLowFuseTask> readlinkImpl;
+	Class<JLowFuseTask> mknodImpl;
+	Class<JLowFuseTask> mkdirImpl;
+	Class<JLowFuseTask> unlinkImpl;
+	Class<JLowFuseTask> rmdirImpl;
+	Class<JLowFuseTask> symlinkImpl;
+	Class<JLowFuseTask> renameImpl;
+	Class<JLowFuseTask> linkImpl;
+	Class<JLowFuseTask> openImpl;
+	Class<JLowFuseTask> readImpl;
+	Class<JLowFuseTask> writeImpl;
+	Class<JLowFuseTask> flushImpl;
+	Class<JLowFuseTask> releaseImpl;
+	Class<JLowFuseTask> fsyncImpl;
+	Class<JLowFuseTask> opendirImpl;
+	Class<JLowFuseTask> readdirImpl;
+	Class<JLowFuseTask> releasedirImpl;
+	Class<JLowFuseTask> fsyncdirImpl;
+	Class<JLowFuseTask> statfsImpl;
+	Class<JLowFuseTask> setxattrImpl;
+	Class<JLowFuseTask> getxattrImpl;
+	Class<JLowFuseTask> listxattrImpl;
+	Class<JLowFuseTask> removexattrImpl;
+	Class<JLowFuseTask> accessImpl;
+	Class<JLowFuseTask> createImpl;
+	Class<JLowFuseTask> bmapImpl;
 
 	private boolean taskImplsInterface(Class impl,  Class intf) {
 		for (Class i : impl.getInterfaces()) {
@@ -72,9 +72,22 @@ public class TaskImplementations {
 	}
 	
 	
-	public void setInit(Class impl) {
+	public void setInit(Class<JLowFuseTask> impl) {
 		throwExceptionIfNotImplsInterface(impl, taskIntfByName("Init"));
 		this.initImpl = impl;
+	}
+	
+	public JLowFuseTask createInstanceOfInit() {
+		try {
+	        return initImpl.newInstance();
+        } catch (InstantiationException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        } catch (IllegalAccessException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }
+		return null;
 	}
 }
 

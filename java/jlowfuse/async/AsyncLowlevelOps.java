@@ -7,23 +7,29 @@
 package jlowfuse.async;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.ExecutorService;
 
 import fuse.FileInfo;
 import fuse.Stat;
 import jlowfuse.FuseReq;
 import jlowfuse.LowlevelOps;
+import jlowfuse.async.tasks.Init;
+import jlowfuse.async.tasks.JLowFuseTask;
 
 public class AsyncLowlevelOps implements LowlevelOps {
 	protected TaskImplementations taskImplementations;
+	protected ExecutorService executor;
 	
-	public AsyncLowlevelOps(TaskImplementations taskImplementations) {
+	public AsyncLowlevelOps(TaskImplementations taskImplementations, ExecutorService executor) {
 		this.taskImplementations = taskImplementations; 
+		this.executor = executor;
 	}
 	
 	@Override
     public void init() {
-	    // TODO Auto-generated method stub
-	    
+		JLowFuseTask task = taskImplementations.createInstanceOfInit();
+		((Init)task).parameters();
+		executor.submit(task);
     }
 
 	@Override

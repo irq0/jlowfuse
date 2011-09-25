@@ -48,13 +48,14 @@ public class JLowFuse {
      *
      * @param args Fuse Args eg. Commandline
      * @param executor handles Tasks
+     * @param taskImplementations class with all the implementations for the operations
      * @return Opaque pointer to fuse_session type
      */
 	public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, 
 			TaskImplementations taskImplementations, ExecutorService service) {
 		
 		LowlevelOpsProxy proxy = new LowlevelOpsProxy();		
-		AsyncLowlevelOps ops = new AsyncLowlevelOps(taskImplementations);		
+		AsyncLowlevelOps ops = new AsyncLowlevelOps(taskImplementations, service);		
 		
 		proxy.register(ops);
 		

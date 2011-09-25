@@ -1,6 +1,6 @@
 /**
  * Interface for proxy classes. This methods are expected by the underlying
- * native code
+ * native code.
  * 
  * The comments in this files are basically forwarded from fuse_lowlevel_ops
  *
