@@ -4,8 +4,8 @@ import fuse.FileInfo;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Flush extends JLowFuseTask implements jlowfuse.async.tasks.Flush {
-	public void setFlushAttributes(FuseReq req, long ino, FileInfo fi) {
+public class Flush extends JLowFuseTask {
+	public Flush(FuseReq req, long ino, FileInfo fi) {
 	}
 
     public void run() {

@@ -12,7 +12,15 @@ import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import jlowfuse.FuseReq;
+
 public class JLowFuseTask implements RunnableFuture<Object> {
+	protected FuseReq req;
+
+	public JLowFuseTask(FuseReq req) {
+		this.req = req;
+	}
+	
 	public JLowFuseTask() {
 		
 	}

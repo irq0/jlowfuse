@@ -3,8 +3,9 @@ package jlowfuse.async.tasks.defaultImpl;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Bmap extends JLowFuseTask implements jlowfuse.async.tasks.Bmap {
-	public void setBmapAttributes(FuseReq req, long ino, int blocksize, long idx) {
+public class Bmap extends JLowFuseTask {
+	protected FuseReq req;
+	public Bmap(FuseReq req, long ino, int blocksize, long idx) {
 	}
 
     public void run() {

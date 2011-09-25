@@ -4,8 +4,8 @@ import fuse.FileInfo;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Fsync extends JLowFuseTask implements jlowfuse.async.tasks.Fsync {
-	public void setFsyncAttributes(FuseReq req, long ino, int datasync, FileInfo fi) {
+public class Fsync extends JLowFuseTask {
+	public Fsync(FuseReq req, long ino, int datasync, FileInfo fi) {
 	}
 
     public void run() {

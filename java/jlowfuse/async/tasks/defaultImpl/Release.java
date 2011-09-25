@@ -4,8 +4,8 @@ import fuse.FileInfo;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Release extends JLowFuseTask implements jlowfuse.async.tasks.Release {
-	public void setReleaseAttributes(FuseReq req, long ino, FileInfo fi) {
+public class Release extends JLowFuseTask {
+	public Release(FuseReq req, long ino, FileInfo fi) {
 	    
     }
 	

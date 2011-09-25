@@ -5,8 +5,8 @@ import fuse.Stat;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Setattr extends JLowFuseTask implements jlowfuse.async.tasks.Setattr {
-	public void setSetattrAttributes(FuseReq req, long ino, Stat attr, int to_set, FileInfo fi) {
+public class Setattr extends JLowFuseTask {
+	public Setattr(FuseReq req, long ino, Stat attr, int to_set, FileInfo fi) {
 	}
 
     public void run() {

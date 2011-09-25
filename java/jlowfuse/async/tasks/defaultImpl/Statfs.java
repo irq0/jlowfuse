@@ -3,8 +3,8 @@ package jlowfuse.async.tasks.defaultImpl;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Statfs extends JLowFuseTask implements jlowfuse.async.tasks.Statfs {
-	public void setStatfsAttributes(FuseReq req, long ino) {
+public class Statfs extends JLowFuseTask {
+	public Statfs(FuseReq req, long ino) {
 	}
 
     public void run() {

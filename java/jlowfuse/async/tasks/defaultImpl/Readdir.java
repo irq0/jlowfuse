@@ -4,8 +4,8 @@ import fuse.FileInfo;
 import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Readdir extends JLowFuseTask implements jlowfuse.async.tasks.Readdir {
-	public void setReaddirAttributes(FuseReq req, long ino, long size, long off, FileInfo fi) {
+public class Readdir extends JLowFuseTask {
+	public Readdir(FuseReq req, long ino, long size, long off, FileInfo fi) {
 	}
 
     public void run() {
