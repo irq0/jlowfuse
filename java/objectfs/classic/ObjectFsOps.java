@@ -1,11 +1,13 @@
-package objectfs;
+package objectfs.classic;
 
 import fuse.*;
 import jlowfuse.*;
 import java.util.Hashtable;
 import java.nio.ByteBuffer;
 
-class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
+import objectfs.Inode;
+
+public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
     Inode root;
     Hashtable<Long, Inode> inode_table = new Hashtable<Long, Inode>();
     public void init() {

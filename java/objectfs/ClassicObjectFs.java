@@ -1,9 +1,10 @@
 package objectfs;
 
+import objectfs.classic.ObjectFsOps;
 import fuse.*;
 import jlowfuse.*;
 
-public class ObjectFs {
+public class ClassicObjectFs {
     static {
         System.loadLibrary("jlowfuse");
     }

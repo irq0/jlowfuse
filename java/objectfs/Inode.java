@@ -6,7 +6,7 @@ import java.nio.ByteBuffer;
 
 import fuse.Stat;
 
-class Inode {
+public class Inode {
     private Inode parent;
     private LinkedList<Inode> children = new LinkedList<Inode>();
     private long ino;
