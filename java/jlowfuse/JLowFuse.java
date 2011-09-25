@@ -2,11 +2,15 @@ package jlowfuse;
 
 import fuse.*;
 import java.util.concurrent.ExecutorService;
+
+import jlowfuse.async.AsyncLowlevelOps;
+import jlowfuse.async.AsyncTasksOpsProxy;
 import jlowfuse.async.TaskImplementations;
+import jlowfuse.classic.*;
 
 public class JLowFuse {
     public native int init(Object opts);
-    private static native long setOps(LowlevelOpsProxy ops, ThreadGroup tgroup);
+    private static native long setOps(OpsProxy ops, ThreadGroup tgroup);
 
     /**
      * Establish new lowlevel session.  Registers `LowlevelOps` in
@@ -24,8 +28,7 @@ public class JLowFuse {
         long ops_p = JLowFuse.setOps(proxy, tgroup);
         FuseLowlevelOps ops_f = new FuseLowlevelOps(ops_p);
 
-        return Fuse.lowlevelNew(args,
-                                ops_f, 144 , null); /* 144 = sizeof(fuse ops) */
+        return Fuse.lowlevelNew(args, ops_f, 144 , null); /* 144 = sizeof(fuse ops) */
     }
 
     /**
@@ -47,8 +50,18 @@ public class JLowFuse {
      * @param executor handles Tasks
      * @return Opaque pointer to fuse_session type
      */
-	public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, TaskImplementations impls, ExecutorService service) {
-	    return null;
+	public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, 
+			TaskImplementations taskImplementations, ExecutorService service) {
+		
+		LowlevelOpsProxy proxy = new LowlevelOpsProxy();		
+		AsyncLowlevelOps ops = new AsyncLowlevelOps(taskImplementations);		
+		
+		proxy.register(ops);
+		
+		long ops_p = JLowFuse.setOps(proxy, null);
+		FuseLowlevelOps ops_f = new FuseLowlevelOps(ops_p);
+		
+	    return Fuse.lowlevelNew(args, ops_f, 144, null);
     }
     
     static {

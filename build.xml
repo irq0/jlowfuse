@@ -1,4 +1,5 @@
-<project name="jlowfuse" default="dist" basedir="." 
+<project name="jlowfuse" default="dist" basedir="."
+	 xmlns:antcontrib="antlib:net.sf.antcontrib"
 	 xmlns:cpptasks="antlib:net.sf.antcontrib.cpptasks">
   <description>
     Java wrapper for the FUSE lowlevel API
@@ -11,7 +12,8 @@
   <property name="swig-package" value="fuse"/>
   <property name="swig-dst" value="${java-src}/fuse"/>
   <property name="swig-src" value="swig"/>
-
+  <property name="server.port" value ="12345"/>
+	
   <target name="init">
     <tstamp/>
     <mkdir dir="${build}"/>
@@ -22,6 +24,19 @@
     <mkdir dir="${java-src}/jlowfuse/exceptions"/>
   </target>
 
+  <target name="start-server">
+  	<echo>Starting ANT Server on port ${server.port}</echo>
+  	<antcontrib:antserver port="${server.port}"/>		
+  </target>
+
+  <target name="remote-build">
+	<antcontrib:remoteant machine="${server.host}" port="${server.port}">
+		<antcontrib:runtarget target="clean"/>
+<!--  		<antcontrib:runtarget target="dist"/> -->
+  	</antcontrib:remoteant>
+  </target>
+  	
+  	
   <target name="javacompile" depends="init,swig,make-exception-classes" 
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false"

@@ -1,4 +1,4 @@
-package jlowfuse;
+package jlowfuse.classic;
 
 import fuse.*;
 

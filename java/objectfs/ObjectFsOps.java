@@ -5,7 +5,7 @@ import jlowfuse.*;
 import java.util.Hashtable;
 import java.nio.ByteBuffer;
 
-class ObjectFsOps extends AbstractLowlevelOps implements LowlevelOps{
+class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
     Inode root;
     Hashtable<Long, Inode> inode_table = new Hashtable<Long, Inode>();
     public void init() {

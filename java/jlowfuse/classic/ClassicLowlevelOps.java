@@ -5,17 +5,18 @@
  * 
  */ 
 
-package jlowfuse;
+package jlowfuse.classic;
 
 import fuse.Stat;
 import fuse.StatVFS;
 import fuse.FileInfo;
 import fuse.Errno;
+import jlowfuse.LowlevelOps;
 import jlowfuse.Reply;
 import java.nio.ByteBuffer;
 
 
-public abstract class AbstractLowlevelOps implements LowlevelOps {
+public abstract class ClassicLowlevelOps implements LowlevelOps {
     public void init() {
     }
 
