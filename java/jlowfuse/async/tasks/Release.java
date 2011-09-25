@@ -1,6 +1,7 @@
 
 package jlowfuse.async.tasks;
 
+import fuse.FileInfo;
 import jlowfuse.FuseReq;
 
 public interface Release {

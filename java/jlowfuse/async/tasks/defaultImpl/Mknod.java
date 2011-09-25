@@ -1,5 +1,6 @@
 package jlowfuse.async.tasks.defaultImpl;
 
+import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Mknod extends JLowFuseTask implements jlowfuse.async.tasks.Mknod {

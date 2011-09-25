@@ -1,5 +1,7 @@
 package jlowfuse.async.tasks.defaultImpl;
 
+import fuse.FileInfo;
+import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Fsyncdir extends JLowFuseTask implements jlowfuse.async.tasks.Fsyncdir {

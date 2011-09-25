@@ -1,5 +1,8 @@
 package jlowfuse.async.tasks.defaultImpl;
 
+import fuse.FileInfo;
+import fuse.Stat;
+import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Setattr extends JLowFuseTask implements jlowfuse.async.tasks.Setattr {
