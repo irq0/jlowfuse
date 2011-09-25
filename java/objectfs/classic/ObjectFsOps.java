@@ -2,6 +2,7 @@ package objectfs.classic;
 
 import fuse.*;
 import jlowfuse.*;
+import jlowfuse.classic.*;
 import java.util.Hashtable;
 import java.nio.ByteBuffer;
 

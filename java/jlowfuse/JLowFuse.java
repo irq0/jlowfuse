@@ -4,7 +4,6 @@ import fuse.*;
 import java.util.concurrent.ExecutorService;
 
 import jlowfuse.async.AsyncLowlevelOps;
-import jlowfuse.async.AsyncTasksOpsProxy;
 import jlowfuse.async.DefaultTaskImplementations;
 import jlowfuse.classic.*;
 

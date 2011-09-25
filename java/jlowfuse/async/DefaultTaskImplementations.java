@@ -7,8 +7,8 @@ package jlowfuse.async;
 
 import jlowfuse.async.tasks.*;
 
-public class DefaultTaskImplementations implements TaskImplementations{
-	public Class<Init> initImpl = Init.class;
+public class DefaultTaskImplementations {
+	public Class<?> initImpl = Init.class;
 	public Class<Destroy> destroyImpl = Destroy.class;
 	public Class<Lookup> lookupImpl = Lookup.class;
 	public Class<Forget> forgetImpl = Forget.class;
