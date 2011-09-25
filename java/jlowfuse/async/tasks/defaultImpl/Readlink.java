@@ -4,10 +4,10 @@ import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Readlink extends JLowFuseTask {
-	public Readlink(FuseReq req, long ino) {
-	}
+	protected long ino;
 
-    public void run() {
-	    super.run();
-    }	
+	public Readlink(FuseReq req, long ino) {
+		super(req);
+		this.ino = ino;
+	}
 }

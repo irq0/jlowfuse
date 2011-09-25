@@ -2,13 +2,20 @@ package jlowfuse.async.tasks.defaultImpl;
 
 import fuse.FileInfo;
 import jlowfuse.FuseReq;
+import jlowfuse.Reply;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Open extends JLowFuseTask {
+	protected long ino;
+	protected FileInfo fi;
+	
 	public Open(FuseReq req, long ino, FileInfo fi) {
+		super(req);
+		this.ino = ino;
+		this.fi = fi;
 	}
 
     public void run() {
-	    super.run();
+    	Reply.open(req, fi);
     }	
 }

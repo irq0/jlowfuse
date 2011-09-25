@@ -14,9 +14,4 @@ public class Access extends JLowFuseTask {
 		this.ino = ino;
 		this.mask = mask;
 	}
-
-    public void run() {
-	    super.run();
-        Reply.err(req, Errno.ENOSYS);
-    }	
 }

@@ -5,10 +5,12 @@ import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Getattr extends JLowFuseTask {
-	public Getattr(FuseReq req, long ino, FileInfo fi) {
-	}
+	protected long ino;
+	protected FileInfo fi;
 
-    public void run() {
-	    super.run();
-    }	
+	public Getattr(FuseReq req, long ino, FileInfo fi) {
+		super(req);
+		this.ino = ino;
+		this.fi = fi;
+	}
 }
