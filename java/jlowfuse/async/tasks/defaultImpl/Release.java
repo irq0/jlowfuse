@@ -5,7 +5,7 @@ import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Release extends JLowFuseTask implements jlowfuse.async.tasks.Release {
-	public void attributes(FuseReq req, long ino, FileInfo fi) {
+	public void setReleaseAttributes(FuseReq req, long ino, FileInfo fi) {
 	    
     }
 	

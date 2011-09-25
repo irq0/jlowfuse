@@ -28,7 +28,8 @@ public class AsyncLowlevelOps implements LowlevelOps {
 	@Override
     public void init() {
 		JLowFuseTask task = taskImplementations.createInstanceOfInit();
-		((Init)task).parameters();
+		
+		((Init)task).setInitAttributes();
 		executor.submit(task);
     }
 

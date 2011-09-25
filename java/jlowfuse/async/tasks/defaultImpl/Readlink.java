@@ -4,7 +4,7 @@ import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Readlink extends JLowFuseTask implements jlowfuse.async.tasks.Readlink {
-	public void attributes(FuseReq req, long ino) {
+	public void setReadlinkAttributes(FuseReq req, long ino) {
 	}
 
     public void run() {

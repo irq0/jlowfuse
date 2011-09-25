@@ -6,5 +6,5 @@ import fuse.Stat;
 import jlowfuse.FuseReq;
 
 public interface Setattr {
-	public void attributes(FuseReq req, long ino, Stat attr, int to_set, FileInfo fi);
+	public void setSetattrAttributes(FuseReq req, long ino, Stat attr, int to_set, FileInfo fi);
 }

@@ -5,5 +5,5 @@ import fuse.FileInfo;
 import jlowfuse.FuseReq;
 
 public interface Read {
-	public void attributes(FuseReq req, long ino, long size, long off, FileInfo fi);
+	public void setReadAttributes(FuseReq req, long ino, long size, long off, FileInfo fi);
 }

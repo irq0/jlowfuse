@@ -5,7 +5,7 @@ import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class Create extends JLowFuseTask implements jlowfuse.async.tasks.Create {
-	public void attributes(FuseReq req, long parent, String name, short mode, FileInfo fi) {
+	public void setCreateAttributes(FuseReq req, long parent, String name, short mode, FileInfo fi) {
 	}
 
     public void run() {

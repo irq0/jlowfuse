@@ -4,5 +4,5 @@ package jlowfuse.async.tasks;
 import jlowfuse.FuseReq;
 
 public interface Statfs {
-	public void attributes(FuseReq req, long ino);
+	public void setStatfsAttributes(FuseReq req, long ino);
 }

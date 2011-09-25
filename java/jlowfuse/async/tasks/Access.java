@@ -4,5 +4,5 @@ package jlowfuse.async.tasks;
 import jlowfuse.FuseReq;
 
 public interface Access {
-	public void attributes(FuseReq req, long ino, int mask);
+	public void setAccessAttributes(FuseReq req, long ino, int mask);
 }
