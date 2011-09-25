@@ -7,60 +7,39 @@ package jlowfuse.async;
 
 import jlowfuse.async.tasks.*;
 
-public class TaskImplementations {
-	Class<JLowFuseTask> initImpl;
-	Class<JLowFuseTask> destroyImpl;
-	Class<JLowFuseTask> lookupImpl;
-	Class<JLowFuseTask> forgetImpl;
-	Class<JLowFuseTask> getattrImpl;
-	Class<JLowFuseTask> setattrImpl;
-	Class<JLowFuseTask> readlinkImpl;
-	Class<JLowFuseTask> mknodImpl;
-	Class<JLowFuseTask> mkdirImpl;
-	Class<JLowFuseTask> unlinkImpl;
-	Class<JLowFuseTask> rmdirImpl;
-	Class<JLowFuseTask> symlinkImpl;
-	Class<JLowFuseTask> renameImpl;
-	Class<JLowFuseTask> linkImpl;
-	Class<JLowFuseTask> openImpl;
-	Class<JLowFuseTask> readImpl;
-	Class<JLowFuseTask> writeImpl;
-	Class<JLowFuseTask> flushImpl;
-	Class<JLowFuseTask> releaseImpl;
-	Class<JLowFuseTask> fsyncImpl;
-	Class<JLowFuseTask> opendirImpl;
-	Class<JLowFuseTask> readdirImpl;
-	Class<JLowFuseTask> releasedirImpl;
-	Class<JLowFuseTask> fsyncdirImpl;
-	Class<JLowFuseTask> statfsImpl;
-	Class<JLowFuseTask> setxattrImpl;
-	Class<JLowFuseTask> getxattrImpl;
-	Class<JLowFuseTask> listxattrImpl;
-	Class<JLowFuseTask> removexattrImpl;
-	Class<JLowFuseTask> accessImpl;
-	Class<JLowFuseTask> createImpl;
-	Class<JLowFuseTask> bmapImpl;
-
-	private boolean taskImplsInterface(Class impl,  Class intf) {
-		for (Class i : impl.getInterfaces()) {
-			if (intf.equals(i))
-				return true;
-		}
-		return false;
-	}
-
-	private void throwExceptionIfNotImplsInterface(Class impl, Class intf) {
-		if (! taskImplsInterface(impl, intf)) {
-			StringBuilder s = new StringBuilder();
-			s.append("Class >>");
-			s.append(impl.getName());
-			s.append("<<");
-			s.append(" does not implement interface ");
-			s.append(intf.getName());
-
-			throw new IllegalArgumentException(s.toString());
-		}
-	}
+public class DefaultTaskImplementations implements TaskImplementations{
+	public Class<Init> initImpl = Init.class;
+	public Class<Destroy> destroyImpl = Destroy.class;
+	public Class<Lookup> lookupImpl = Lookup.class;
+	public Class<Forget> forgetImpl = Forget.class;
+	public Class<Getattr> getattrImpl = Getattr.class;
+	public Class<Setattr> setattrImpl = Setattr.class;
+	public Class<Readlink> readlinkImpl = Readlink.class;
+	public Class<Mknod> mknodImpl = Mknod.class;
+	public Class<Mkdir> mkdirImpl = Mkdir.class;
+	public Class<Unlink> unlinkImpl = Unlink.class;
+	public Class<Rmdir> rmdirImpl = Rmdir.class;
+	public Class<Symlink> symlinkImpl = Symlink.class;
+	public Class<Rename> renameImpl = Rename.class;
+	public Class<Link> linkImpl = Link.class;
+	public Class<Open> openImpl = Open.class;
+	public Class<Read> readImpl = Read.class;
+	public Class<Write> writeImpl = Write.class;
+	public Class<Flush> flushImpl = Flush.class;
+	public Class<Release> releaseImpl = Release.class;
+	public Class<Fsync> fsyncImpl = Fsync.class;
+	public Class<Opendir> opendirImpl = Opendir.class;
+	public Class<Readdir> readdirImpl = Readdir.class;
+	public Class<Releasedir> releasedirImpl = Releasedir.class;
+	public Class<Fsyncdir> fsyncdirImpl = Fsyncdir.class;
+	public Class<Statfs> statfsImpl = Statfs.class;
+	public Class<Setxattr> setxattrImpl = Setxattr.class;
+	public Class<Getxattr> getxattrImpl = Getxattr.class;
+	public Class<Listxattr> listxattrImpl = Listxattr.class;
+	public Class<Removexattr> removexattrImpl = Removexattr.class;
+	public Class<Access> accessImpl = Access.class;
+	public Class<Create> createImpl = Create.class;
+	public Class<Bmap> bmapImpl = Bmap.class;
 
 	private Class taskIntfByName(String name) {
 		try {
@@ -69,27 +48,5 @@ public class TaskImplementations {
 		} catch (ClassNotFoundException e) {
 			throw new RuntimeException(e); /* should not happen */
 		}
-	}
-	
-	
-	public void setInit(Class<JLowFuseTask> impl) {
-		throwExceptionIfNotImplsInterface(impl, taskIntfByName("Init"));
-		this.initImpl = impl;
-	}
-	
-	public JLowFuseTask createInstanceOfInit() {
-		try {
-	        return initImpl.newInstance();
-        } catch (InstantiationException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        } catch (IllegalAccessException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
-        }
-		return null;
-	}
+	}	
 }
-
-
-

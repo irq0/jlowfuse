@@ -5,7 +5,7 @@ import java.util.concurrent.ExecutorService;
 
 import jlowfuse.async.AsyncLowlevelOps;
 import jlowfuse.async.AsyncTasksOpsProxy;
-import jlowfuse.async.TaskImplementations;
+import jlowfuse.async.DefaultTaskImplementations;
 import jlowfuse.classic.*;
 
 public class JLowFuse {
@@ -52,7 +52,7 @@ public class JLowFuse {
      * @return Opaque pointer to fuse_session type
      */
 	public static SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, 
-			TaskImplementations taskImplementations, ExecutorService service) {
+			DefaultTaskImplementations taskImplementations, ExecutorService service) {
 		
 		LowlevelOpsProxy proxy = new LowlevelOpsProxy();		
 		AsyncLowlevelOps ops = new AsyncLowlevelOps(taskImplementations, service);		

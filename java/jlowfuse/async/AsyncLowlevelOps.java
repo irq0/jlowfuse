@@ -17,20 +17,27 @@ import jlowfuse.async.tasks.Init;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class AsyncLowlevelOps implements LowlevelOps {
-	protected TaskImplementations taskImplementations;
+	protected DefaultTaskImplementations taskImplementations;
 	protected ExecutorService executor;
 	
-	public AsyncLowlevelOps(TaskImplementations taskImplementations, ExecutorService executor) {
+	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor) {
 		this.taskImplementations = taskImplementations; 
 		this.executor = executor;
 	}
 	
 	@Override
     public void init() {
-		JLowFuseTask task = taskImplementations.createInstanceOfInit();
-		
-		((Init)task).setInitAttributes();
-		executor.submit(task);
+		JLowFuseTask task;
+        try {
+	        task = taskImplementations.initImpl.newInstance();
+	        executor.submit(task);
+        } catch (InstantiationException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        } catch (IllegalAccessException e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+        }		
     }
 
 	@Override

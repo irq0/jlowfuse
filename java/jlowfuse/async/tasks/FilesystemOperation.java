@@ -4,7 +4,7 @@ import jlowfuse.FuseReq;
 import jlowfuse.Reply;
 import fuse.Errno;
 
-public class FilesystemOperation extends BaseOperation {
+public class FilesystemOperation extends JLowFuseTask {
 	protected FuseReq req;
 	
 	public FilesystemOperation(FuseReq req) {

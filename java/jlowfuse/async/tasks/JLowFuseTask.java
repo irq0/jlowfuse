@@ -14,8 +14,8 @@ import java.util.concurrent.TimeoutException;
 
 
 
-public class BaseOperation implements RunnableFuture<Object> {
-	public BaseOperation() {
+public class JLowFuseTask implements RunnableFuture<Object> {
+	public JLowFuseTask() {
 	}
 	
     public boolean cancel(boolean arg0) {

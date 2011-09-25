@@ -1,7 +1,7 @@
 package jlowfuse.async.tasks;
 
 
-public class Init extends BaseOperation {
+public class Init extends JLowFuseTask {
 	public Init() {
 	}
 
