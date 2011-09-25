@@ -2,8 +2,8 @@ package jlowfuse.async.tasks.defaultImpl;
 
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class Init extends JLowFuseTask implements jlowfuse.async.tasks.Init {
-	public void attributes() {
+public class Readlink extends JLowFuseTask implements jlowfuse.async.tasks.Readlink {
+	public void attributes(FuseReq req, long ino) {
 	}
 
     public void run() {
