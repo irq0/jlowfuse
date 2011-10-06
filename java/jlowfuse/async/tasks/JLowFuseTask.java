@@ -14,10 +14,8 @@ import java.util.concurrent.TimeoutException;
 
 import jlowfuse.async.Context;
 
-
-
 public class JLowFuseTask implements RunnableFuture<Object> {
-	Context context;
+	protected Context context;
 	
 	public void initContext(Context context) {
 		this.context = context;
