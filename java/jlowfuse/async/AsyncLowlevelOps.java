@@ -23,9 +23,10 @@ public class AsyncLowlevelOps implements LowlevelOps {
 	protected ExecutorService executor;
 	protected Context context;
 	
-	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor) {
+	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor, Context context) {
 		this.taskImplementations = taskImplementations; 
 		this.executor = executor;
+		this.context = context;
 	}
 	
 	/** Get constructor for the given task implementation */
