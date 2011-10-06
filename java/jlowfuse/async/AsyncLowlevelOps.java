@@ -7,7 +7,6 @@
 package jlowfuse.async;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 
@@ -15,31 +14,17 @@ import fuse.FileInfo;
 import fuse.Stat;
 import jlowfuse.FuseReq;
 import jlowfuse.LowlevelOps;
-import jlowfuse.async.tasks.Init;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
-	protected DefaultTaskImplementations taskImplementations;
+	protected TaskImplementations<CTX> taskImplementations;
 	protected ExecutorService executor;
 	protected CTX context;
 	
-	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor, CTX context) {
+	public AsyncLowlevelOps(TaskImplementations<CTX> taskImplementations, ExecutorService executor, CTX context) {
 		this.taskImplementations = taskImplementations; 
 		this.executor = executor;
 		this.context = context;
-	}
-	
-	/** Get constructor for the given task implementation */
-	private Constructor<? extends JLowFuseTask<CTX>> getTaskConstructor(Class<? extends JLowFuseTask<CTX>> impl) {
-		Constructor<? extends JLowFuseTask<CTX>>[] c = 
-			(Constructor<? extends JLowFuseTask<CTX>>[]) impl.getConstructors();
-		
-		if (c.length > 1)
-			throw new RuntimeException(String.format("Tasks %s may only have one constructur", impl.getName()));
-		else if (c.length == 0)
-			throw new RuntimeException(String.format("Task %s has no constructor ?!", impl.getName()));
-		
-		return c[0];
 	}
 	
 	/** submit task to executor */
@@ -47,31 +32,10 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 		executor.submit(task);
 	}
 	
-	/** Create instance of task object */ 
-	private JLowFuseTask<CTX> instantiateTask(Constructor<? extends JLowFuseTask<CTX>> constructor, Object ... arguments) {
-		try {
-	        JLowFuseTask<CTX> task = (JLowFuseTask<CTX>)(constructor.newInstance(arguments));
-	        return task;
-	        
-        } catch (IllegalArgumentException e) { /* should only happen if this class is implemented wrongly */
-        	e.printStackTrace();
-        	throw new RuntimeException(String.format("Incorrect constructor call in %s for class %s", this.getClass().getName(), constructor.getName()));
-        } catch (InstantiationException e) {
-        	e.printStackTrace();
-        	throw new RuntimeException("Should not happen " + e.getMessage());
-        } catch (IllegalAccessException e) {
-	        e.printStackTrace();
-	        throw new RuntimeException("Should not happen " + e.getMessage());
-        } catch (InvocationTargetException e) {
-	        e.printStackTrace();
-	        throw new RuntimeException("Should not happen " + e.getMessage());
-        }
-	}
-	
 	/** Create, Initialize and Submit new Task */
 	private void createAndSubmitTask(Class<? extends JLowFuseTask<CTX>> impl, Object ... arguments) {
-    	Constructor<? extends JLowFuseTask<CTX>> c = getTaskConstructor(impl);
-    	JLowFuseTask<CTX> task = instantiateTask(c, arguments);
+    	Constructor<? extends JLowFuseTask<CTX>> c = TaskImplementations.getTaskConstructor(impl);
+    	JLowFuseTask<CTX> task = TaskImplementations.instantiateTask(c, arguments);
         task.initContext(this.context);
         submitTask(task);			
 	}
@@ -87,7 +51,7 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
     }
 
     public void lookup(FuseReq req, long parent, String name) {
-	  	createAndSubmitTask(taskImplementations.destroyImpl, req, parent, name);	    
+	  	createAndSubmitTask(taskImplementations.lookupImpl, req, parent, name);	    
     }
 
     public void forget(FuseReq req, long ino, long nlookup) {
