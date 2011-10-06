@@ -4,7 +4,6 @@ import java.util.Hashtable;
 
 import fuse.Stat;
 import fuse.StatConstants;
-import fuse.StatConstantsConstants;
 
 public class ObjectFS {
 	private Inode rootInode;
@@ -19,7 +18,7 @@ public class ObjectFS {
 		Stat s = new Stat();
 		s.setIno(rootInode.getIno());
 		s.setNlink(3L);
-		s.setMode(StatConstantsConstants.IFDIR | 0777);
+		s.setMode(StatConstants.IFDIR | 0777);
 		s.setUid(0);
 		s.setGid(0);
 		rootInode.setStat(s);
