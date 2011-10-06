@@ -12,9 +12,17 @@ import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import jlowfuse.async.Context;
+
 
 
 public class JLowFuseTask implements RunnableFuture<Object> {
+	Context context;
+	
+	public void initContext(Context context) {
+		this.context = context;
+	}
+	
 	public JLowFuseTask() {
 	}
 	
