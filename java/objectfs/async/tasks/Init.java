@@ -1,10 +1,15 @@
 package objectfs.async.tasks;
 
-public class Init extends jlowfuse.async.tasks.Init {
+import objectfs.ObjectFS;
+import objectfs.async.ObjectFsContext;
+
+public class Init extends jlowfuse.async.tasks.Init<ObjectFsContext> {
 
     public void run() {
 	    super.run();
-	    System.out.println("Hello World!");
+	    
+	    ObjectFS fs = new ObjectFS();
+	    context.fs = fs;
     }
 
 }
