@@ -6,6 +6,8 @@
 
 package jlowfuse.async;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 
@@ -19,210 +21,212 @@ import jlowfuse.async.tasks.JLowFuseTask;
 public class AsyncLowlevelOps implements LowlevelOps {
 	protected DefaultTaskImplementations taskImplementations;
 	protected ExecutorService executor;
+	protected Context context;
 	
-	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor) {
+	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor, Context context) {
 		this.taskImplementations = taskImplementations; 
 		this.executor = executor;
+		this.context = context;
 	}
 	
-    public void init() {
-		Init task;
-        try {
-	        task = (Init) taskImplementations.initImpl.newInstance();
-	        executor.submit(task);
+	/** Get constructor for the given task implementation */
+	private Constructor<?> getTaskConstructor(Class<?> impl) {
+		Constructor<?>[] c = impl.getConstructors();
+		
+		if (c.length > 1)
+			throw new RuntimeException(String.format("Tasks %s may only have one constructur", impl.getName()));
+		else if (c.length == 0)
+			throw new RuntimeException(String.format("Task %s has no constructor ?!", impl.getName()));
+		
+		return c[0];
+	}
+	
+	/** submit task to executor */
+	private void submitTask(JLowFuseTask task) {
+		executor.submit(task);
+	}
+	
+	/** Create instance of task object */ 
+	private JLowFuseTask instantiateTask(Constructor<?> constructor, Object ... arguments) {
+		try {
+	        JLowFuseTask task = (JLowFuseTask) constructor.newInstance(arguments);
+	        return task;
+	        
+        } catch (IllegalArgumentException e) { /* should only happen if this class is implemented wrongly */
+        	e.printStackTrace();
+        	throw new RuntimeException(String.format("Incorrect constructor call in %s for class %s", this.getClass().getName(), constructor.getName()));
         } catch (InstantiationException e) {
-	        // TODO Auto-generated catch block
-	        e.printStackTrace();
+        	e.printStackTrace();
+        	throw new RuntimeException("Should not happen " + e.getMessage());
         } catch (IllegalAccessException e) {
-	        // TODO Auto-generated catch block
 	        e.printStackTrace();
-        }		
+	        throw new RuntimeException("Should not happen " + e.getMessage());
+        } catch (InvocationTargetException e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("Should not happen " + e.getMessage());
+        }
+	}
+	
+	/** Create, Initialize and Submit new Task */
+	private void createAndSubmitTask(Class<?> impl, Object ... arguments) {
+    	Constructor<?> c = getTaskConstructor(impl);
+    	JLowFuseTask task = (Init) instantiateTask(c);
+        task.initContext(this.context);
+        submitTask(task);			
+	}
+	
+	/* to many lines of booooring method-call to task object conversion code follows */
+	
+    public void init() {
+    	createAndSubmitTask(taskImplementations.initImpl);
     }
 
     public void destroy() {
-	    // TODO Auto-generated method stub
-	    
+	  	createAndSubmitTask(taskImplementations.destroyImpl);	    
     }
 
     public void lookup(FuseReq req, long parent, String name) {
-	    // TODO Auto-generated method stub
-	    
+	  	createAndSubmitTask(taskImplementations.destroyImpl, req, parent, name);	    
     }
 
     public void forget(FuseReq req, long ino, long nlookup) {
-	    // TODO Auto-generated method stub
-	    
+	  	createAndSubmitTask(taskImplementations.forgetImpl, req, ino, nlookup);	    
     }
 
     public void getattr(FuseReq req, long ino, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.getattrImpl, req, ino, fi);
     }
 
-    public void setattr(FuseReq req, long ino, Stat attr, int to_set,
-            FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    public void setattr(FuseReq req, long ino, Stat attr, int to_set, FileInfo fi) {
+    	createAndSubmitTask(taskImplementations.setattrImpl, req, ino, attr, to_set, fi);
     }
 
     public void readlink(FuseReq req, long ino) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.readlinkImpl, req, ino);
     }
-
 	
-    public void mknod(FuseReq req, long parent, String name, short mode,
-            short rdev) {
-	    // TODO Auto-generated method stub
-	    
+    public void mknod(FuseReq req, long parent, String name, short mode, short rdev) {
+    	createAndSubmitTask(taskImplementations.mknodImpl, req, parent, name, mode, rdev);    
     }
 
 	
     public void mkdir(FuseReq req, long parent, String name, short mode) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.mkdirImpl, req, parent, name, mode);
     }
 
 	
     public void unlink(FuseReq req, long parent, String name) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.unlinkImpl, req, parent, name);
     }
 
 	
     public void rmdir(FuseReq req, long parent, String name) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.rmdirImpl, req, parent, name);
     }
 
 	
     public void symlink(FuseReq req, String link, long parent, String name) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.symlinkImpl, req, link, parent, name);
     }
 
 	
-    public void rename(FuseReq req, long parent, String name, long newparent,
-            String newname) {
-	    // TODO Auto-generated method stub
-	    
+    public void rename(FuseReq req, long parent, String name, long newparent, String newname) {
+    	createAndSubmitTask(taskImplementations.renameImpl, req, parent, name, newparent, newname);
     }
 
 	
     public void link(FuseReq req, long ino, long newparent, String newname) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.linkImpl, req, ino, newparent, newname);
     }
 
 	
     public void open(FuseReq req, long ino, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.openImpl, req, ino, fi);
     }
 
 	
     public void read(FuseReq req, long ino, long size, long off, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.readImpl, ino, size, off, fi);
     }
 
 	
-    public void write(FuseReq req, long ino, ByteBuffer buf, long off,
-            FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    public void write(FuseReq req, long ino, ByteBuffer buf, long off, FileInfo fi) {
+    	createAndSubmitTask(taskImplementations.writeImpl, req, ino, buf, off, fi);
     }
 
 	
     public void flush(FuseReq req, long ino, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.flushImpl, req, ino, fi);
     }
 
 	
     public void release(FuseReq req, long ino, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.releaseImpl, req, ino, fi);
     }
 
 	
     public void fsync(FuseReq req, long ino, int datasync, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.fsyncImpl, req, ino, datasync, fi);
     }
 
 	
     public void opendir(FuseReq req, long ino, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.opendirImpl, req, ino, fi);
     }
 
 	
     public void readdir(FuseReq req, long ino, long size, long off, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.readdirImpl, req, ino, size, off, fi);
     }
 
 	
     public void releasedir(FuseReq req, long ino, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.releasedirImpl, req, ino, fi);
     }
 
 	
     public void fsyncdir(FuseReq req, long ino, int datasync, FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.fsyncdirImpl, req, ino, datasync, fi);
     }
 
 	
     public void statfs(FuseReq req, long ino) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.statfsImpl, req, ino);
     }
 
 	
-    public void setxattr(FuseReq req, long ino, String name, ByteBuffer value,
-            int flags) {
-	    // TODO Auto-generated method stub
-	    
+    public void setxattr(FuseReq req, long ino, String name, ByteBuffer value, int flags) {
+    	createAndSubmitTask(taskImplementations.setxattrImpl, req, ino, name, value, flags);
     }
 
 	
     public void getxattr(FuseReq req, long ino, String name, int size) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.getxattrImpl, req, ino, name, size);
     }
 
 	
     public void listxattr(FuseReq req, long ino, int size) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.listxattrImpl, req, ino, size);
     }
 
 	
     public void removexattr(FuseReq req, long ino, String name) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.removexattrImpl, req, ino, name);
     }
 
 	
     public void access(FuseReq req, long ino, int mask) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.accessImpl, req, ino, mask);
     }
 
 	
-    public void create(FuseReq req, long parent, String name, short mode,
-            FileInfo fi) {
-	    // TODO Auto-generated method stub
-	    
+    public void create(FuseReq req, long parent, String name, short mode, FileInfo fi) {
+    	createAndSubmitTask(taskImplementations.createImpl, req, parent, name, mode, fi);
     }
 
 	
     public void bmap(FuseReq req, long ino, int blocksize, long idx) {
-	    // TODO Auto-generated method stub
-	    
+    	createAndSubmitTask(taskImplementations.bmapImpl, req, ino, blocksize, idx);
     }
 }
 
