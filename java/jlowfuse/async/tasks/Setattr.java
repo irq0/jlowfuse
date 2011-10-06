@@ -3,8 +3,9 @@ package jlowfuse.async.tasks;
 import fuse.FileInfo;
 import fuse.Stat;
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Setattr extends FilesystemOperation {
+public class Setattr<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected Stat attr;
 	protected int to_set;

@@ -1,8 +1,9 @@
 package jlowfuse.async.tasks;
 
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Symlink extends FilesystemOperation {
+public class Symlink<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected String link;
 	protected long parent;
 	protected String name;

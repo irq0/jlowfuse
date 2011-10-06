@@ -4,8 +4,9 @@ import java.nio.ByteBuffer;
 
 import fuse.FileInfo;
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Write extends FilesystemOperation {
+public class Write <CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected ByteBuffer buf;
 	protected long off;

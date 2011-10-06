@@ -1,8 +1,9 @@
 package jlowfuse.async.tasks;
 
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Readlink extends FilesystemOperation {
+public class Readlink<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 
 	public Readlink(FuseReq req, long ino) {

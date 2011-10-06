@@ -18,20 +18,21 @@ import jlowfuse.LowlevelOps;
 import jlowfuse.async.tasks.Init;
 import jlowfuse.async.tasks.JLowFuseTask;
 
-public class AsyncLowlevelOps implements LowlevelOps {
+public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 	protected DefaultTaskImplementations taskImplementations;
 	protected ExecutorService executor;
-	protected Context context;
+	protected CTX context;
 	
-	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor, Context context) {
+	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor, CTX context) {
 		this.taskImplementations = taskImplementations; 
 		this.executor = executor;
 		this.context = context;
 	}
 	
 	/** Get constructor for the given task implementation */
-	private Constructor<?> getTaskConstructor(Class<?> impl) {
-		Constructor<?>[] c = impl.getConstructors();
+	private Constructor<? extends JLowFuseTask<CTX>> getTaskConstructor(Class<? extends JLowFuseTask<CTX>> impl) {
+		Constructor<? extends JLowFuseTask<CTX>>[] c = 
+			(Constructor<? extends JLowFuseTask<CTX>>[]) impl.getConstructors();
 		
 		if (c.length > 1)
 			throw new RuntimeException(String.format("Tasks %s may only have one constructur", impl.getName()));
@@ -42,14 +43,14 @@ public class AsyncLowlevelOps implements LowlevelOps {
 	}
 	
 	/** submit task to executor */
-	private void submitTask(JLowFuseTask task) {
+	private void submitTask(JLowFuseTask<CTX> task) {
 		executor.submit(task);
 	}
 	
 	/** Create instance of task object */ 
-	private JLowFuseTask instantiateTask(Constructor<?> constructor, Object ... arguments) {
+	private JLowFuseTask<CTX> instantiateTask(Constructor<? extends JLowFuseTask<CTX>> constructor, Object ... arguments) {
 		try {
-	        JLowFuseTask task = (JLowFuseTask) constructor.newInstance(arguments);
+	        JLowFuseTask<CTX> task = (JLowFuseTask<CTX>)(constructor.newInstance(arguments));
 	        return task;
 	        
         } catch (IllegalArgumentException e) { /* should only happen if this class is implemented wrongly */
@@ -68,9 +69,9 @@ public class AsyncLowlevelOps implements LowlevelOps {
 	}
 	
 	/** Create, Initialize and Submit new Task */
-	private void createAndSubmitTask(Class<?> impl, Object ... arguments) {
-    	Constructor<?> c = getTaskConstructor(impl);
-    	JLowFuseTask task = (Init) instantiateTask(c);
+	private void createAndSubmitTask(Class<? extends JLowFuseTask<CTX>> impl, Object ... arguments) {
+    	Constructor<? extends JLowFuseTask<CTX>> c = getTaskConstructor(impl);
+    	JLowFuseTask<CTX> task = instantiateTask(c, arguments);
         task.initContext(this.context);
         submitTask(task);			
 	}

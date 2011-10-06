@@ -3,8 +3,9 @@ package jlowfuse.async.tasks;
 import java.nio.ByteBuffer;
 
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Setxattr extends FilesystemOperation {
+public class Setxattr <CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected String name;
 	protected ByteBuffer value;
