@@ -8,7 +8,7 @@ package jlowfuse.async;
 import jlowfuse.async.tasks.*;
 
 public class DefaultTaskImplementations {
-	public Class<? extends Init> initImpl = Init.class;
+	public Class<? extends Init> initImpl = Init.class; 
 	public Class<? extends Destroy> destroyImpl = Destroy.class;
 	public Class<? extends Lookup> lookupImpl = Lookup.class;
 	public Class<? extends Forget> forgetImpl = Forget.class;
@@ -40,13 +40,4 @@ public class DefaultTaskImplementations {
 	public Class<? extends Access> accessImpl = Access.class;
 	public Class<? extends Create> createImpl = Create.class;
 	public Class<? extends Bmap> bmapImpl = Bmap.class;
-
-	private Class taskIntfByName(String name) {
-		try {
-			Class result = Class.forName("jlowfuse.async.tasks." + name);
-			return result;
-		} catch (ClassNotFoundException e) {
-			throw new RuntimeException(e); /* should not happen */
-		}
-	}	
 }
