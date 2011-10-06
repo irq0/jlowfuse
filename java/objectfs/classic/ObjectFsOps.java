@@ -3,98 +3,37 @@ package objectfs.classic;
 import fuse.*;
 import jlowfuse.*;
 import jlowfuse.classic.*;
-import java.util.Hashtable;
 import java.nio.ByteBuffer;
 
 import objectfs.Inode;
+import objectfs.ObjectFS;
 
 public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
-    Inode root;
-    Hashtable<Long, Inode> inode_table = new Hashtable<Long, Inode>();
+	ObjectFS fs;
+	
     public void init() {
-        root = new Inode(null, "");
-        root.setParent(root);
-        inode_table.put(1L, root);
-
-        Stat s = new Stat();
-        s.setIno(root.getIno());
-        s.setNlink(3L);
-        s.setMode(StatConstants.IFDIR | 0777);
-        s.setUid(0);
-        s.setGid(0);
-        root.setStat(s);
-        
-        Inode child = new Inode(root, "test");
-        wireInode(child);
-
-        s = new Stat();
-        s.setIno(child.getIno());
-        s.setNlink(2L);
-        s.setMode(StatConstants.IFREG | 0777);
-        s.setUid(0);
-        s.setGid(0);
-        child.setStat(s);        
-    }
-
-    private void wireInode(Inode inode) {
-        inode_table.put(inode.getIno(), inode);
-
-        Inode p = inode.getParent();
-        p.addChild(inode);
-        p.getStat().setNlink(p.getStat().getNlink() + 1);
-    }
-
-    private Inode getChildInodeByName(Inode parent, String name) {
-        for (Inode i: parent.getChildren()) {
-            if (name.equals(i.getName())) {
-                return i;
-            }
-        }
-        return null;
-    }
-
-    private void updateSize(Inode inode) {    
-        inode.getStat().setSize(inode.getData().capacity());
+    	fs = new ObjectFS();
+    	
     }
     
-    private Inode getInodeByIno(long ino) {
-        return inode_table.get(ino);
-    }
-
-    private void removeInode(Inode inode) {
-        Inode parent = inode.getParent();
-        
-        parent.getChildren().remove(inode);
-        parent.getStat().setNlink(parent.getStat().getNlink() - 1);
-        inode.setParent(null);
-        inode_table.remove(inode);
-    }
-        
     private void mkdirnod(FuseReq req, long parentIno, String name,
                           short fullMode, long nlink) {
-        Inode parent = getInodeByIno(parentIno);
+        Inode parent = fs.getInodeByIno(parentIno);
 
         if (parent != null) {            
-            Inode inode = new Inode(parent, name);
-            wireInode(inode);
-
+            Inode inode = fs.createAndWireNewInode(parent, name);
+            
             Stat s = new Stat();
             s.setIno(inode.getIno());
             s.setNlink(nlink);
             s.setMode(fullMode);
             s.setUid(0);
             s.setGid(0);
-            //            s.setSize();
             inode.setStat(s);
-            
-            EntryParam e = new EntryParam();
-            e.setGeneration(23);
-            e.setIno(inode.getIno());
-            e.setAttr_timeout(0.0);
-            e.setEntry_timeout(0.0);
-            e.setAttr(s);
+        
 
-            Reply.entry(req, e);
+
+            Reply.entry(req, inode.getEntryParam());
         } else {
             Reply.err(req, Errno.EPERM);
         }
@@ -102,7 +41,7 @@ public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
 
 
     public void read(FuseReq req, long ino, long size, long off, FileInfo fi) {
-        Inode inode = getInodeByIno(ino);
+        Inode inode = fs.getInodeByIno(ino);
         ByteBuffer buf = inode.getData();
 
         System.out.println("READ  " + buf + " off=" + off + " size=" + size);
@@ -117,36 +56,9 @@ public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
 
     public void write(FuseReq req, long ino, ByteBuffer src, long off,
                       FileInfo fi) {
-        Inode inode = getInodeByIno(ino);
-        ByteBuffer dst = inode.getData();
-
-        if (dst == null) { // uninitialized
-	        ByteBuffer buf = ByteBuffer.allocateDirect(Math.max(src.capacity() + (int)off,
-                                                                4096));
-	        buf.position((int)off);
-            buf.put(src);
-
-            dst = buf;
-            inode.setData(buf);
-        } else if (dst.capacity() < (src.capacity() + off)) { // to small
-            System.out.println(dst  + "    "  + src);
-            ByteBuffer buf = ByteBuffer.allocateDirect(
-                                                       Math.max(dst.capacity() + src.capacity() + (int)off,
-                                           dst.capacity() + 1024*1024));
-            buf.put(dst);
-            buf.position((int)off);
-            buf.put(src);
-
-            dst = buf;
-            inode.setData(buf);
-        } else {                        
-	        dst.position((int)off);
-            dst.put(src);
-        }
-
-        dst.rewind();
-        updateSize(inode);
-        Reply.write(req, src.capacity());
+        Inode inode = fs.getInodeByIno(ino);
+        long written = inode.writeData(src, off);
+        Reply.write(req, written);
     }
 
     public void mkdir(FuseReq req, long parent, String name, short mode) {
@@ -159,11 +71,11 @@ public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
     }
 
     public void rmdir(FuseReq req, long parentIno, String name) {
-        Inode parent = getInodeByIno(parentIno);
-        Inode child = getChildInodeByName(parent, name);
+        Inode parent = fs.getInodeByIno(parentIno);
+        Inode child = fs.getChildInodeByName(parent, name);
 
         if (child != null) {
-            removeInode(child);            
+            fs.removeInode(child);            
             Reply.err(req, 0);
         } else {
             Reply.err(req, Errno.ENOENT);
@@ -175,7 +87,7 @@ public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
     }    
     
     public void readdir(FuseReq req, long ino, long size, long off, FileInfo fi) {
-        Inode inode = getInodeByIno(ino);
+        Inode inode = fs.getInodeByIno(ino);
         Dirbuf d = new Dirbuf();
 
         FuseExtra.dirbufAdd(req, d, ".", inode.getIno(),
@@ -198,20 +110,13 @@ public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
     }
 
     public void lookup(FuseReq req, long ino, String name) {
-        Inode parent = inode_table.get(ino);
+        Inode parent = fs.getInodeByIno(ino);
 
         if (parent != null) {
-            Inode child = getChildInodeByName(parent, name);
+            Inode child = fs.getChildInodeByName(parent, name);
             System.out.println(child);
             if (child != null) {
-                EntryParam e = new EntryParam();
-                e.setGeneration(23);
-                e.setIno(child.getIno());
-                e.setAttr_timeout(0.0);
-                e.setEntry_timeout(0.0);
-                e.setAttr(child.getStat());
-
-                Reply.entry(req, e);
+                Reply.entry(req, child.getEntryParam());
             } else {
                 Reply.err(req, Errno.ENOENT);
             }
@@ -232,19 +137,19 @@ public class ObjectFsOps extends ClassicLowlevelOps implements LowlevelOps{
     }
 
     public void getattr(FuseReq req, long ino, FileInfo fi) {
-        Inode inode = getInodeByIno(ino);
+        Inode inode = fs.getInodeByIno(ino);
         
-	if (inode != null) {
-            Reply.attr(req, inode.getStat(), 0.0);
-	} else {
-            Reply.err(req, Errno.ENOENT);
-	}
+        if (inode != null) {
+        	Reply.attr(req, inode.getStat(), 0.0);
+        } else {
+        	Reply.err(req, Errno.ENOENT);
+        }
 
     }
     
     public void setattr(FuseReq req, long ino, Stat stat, int to_set,
                         FileInfo fi) {
-        Inode inode = getInodeByIno(ino);
+        Inode inode = fs.getInodeByIno(ino);
 
         if (inode == null) {
             Reply.err(req, Errno.ENOENT);
