@@ -2,8 +2,9 @@ package jlowfuse.async.tasks;
 
 import fuse.FileInfo;
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Fsyncdir extends FilesystemOperation {
+public class Fsyncdir <CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected int datasync;
 	protected FileInfo fi;

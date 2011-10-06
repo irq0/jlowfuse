@@ -1,8 +1,9 @@
 package jlowfuse.async.tasks;
 
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 
-public class Rename extends FilesystemOperation {
+public class Rename <CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long parent;
 	protected String name;
 	protected long newparent;

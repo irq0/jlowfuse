@@ -1,10 +1,9 @@
 package jlowfuse.async.tasks;
 
-import fuse.Errno;
 import jlowfuse.FuseReq;
-import jlowfuse.Reply;
+import jlowfuse.async.Context;
 
-public class Access extends FilesystemOperation {
+public class Access<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected long mask;
 	

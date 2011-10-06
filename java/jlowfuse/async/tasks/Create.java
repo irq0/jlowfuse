@@ -1,9 +1,10 @@
 package jlowfuse.async.tasks;
 
 import jlowfuse.FuseReq;
+import jlowfuse.async.Context;
 import fuse.FileInfo;
 
-public class Create extends FilesystemOperation {
+public class Create<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long parent;
 	protected String name;
 	protected short mode;

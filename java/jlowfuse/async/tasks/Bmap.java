@@ -1,10 +1,9 @@
 package jlowfuse.async.tasks;
 
-import fuse.Errno;
 import jlowfuse.FuseReq;
-import jlowfuse.Reply;
+import jlowfuse.async.Context;
 
-public class Bmap extends FilesystemOperation {
+public class Bmap<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected int blocksize;
 	protected long idx;

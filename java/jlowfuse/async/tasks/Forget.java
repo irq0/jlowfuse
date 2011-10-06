@@ -2,8 +2,9 @@ package jlowfuse.async.tasks;
 
 import jlowfuse.FuseReq;
 import jlowfuse.Reply;
+import jlowfuse.async.Context;
 
-public class Forget extends FilesystemOperation {
+public class Forget<CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected long nlookup;
 	

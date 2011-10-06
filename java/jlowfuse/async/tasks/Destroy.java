@@ -1,7 +1,9 @@
 package jlowfuse.async.tasks;
 
+import jlowfuse.async.Context;
 
-public class Destroy extends JLowFuseTask {
+
+public class Destroy<CTX extends Context> extends JLowFuseTask<CTX> {
 	public Destroy() {
 		super();
 	}

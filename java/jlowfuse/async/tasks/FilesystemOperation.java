@@ -2,9 +2,10 @@ package jlowfuse.async.tasks;
 
 import jlowfuse.FuseReq;
 import jlowfuse.Reply;
+import jlowfuse.async.Context;
 import fuse.Errno;
 
-public class FilesystemOperation extends JLowFuseTask {
+public class FilesystemOperation<CTX extends Context> extends JLowFuseTask<CTX> {
 	protected FuseReq req;
 	
 	public FilesystemOperation(FuseReq req) {
