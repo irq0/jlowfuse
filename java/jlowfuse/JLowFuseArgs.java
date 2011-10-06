@@ -1,27 +1,30 @@
 package jlowfuse;
 
-import fuse.*;
+import fuse.FuseArgs;
 
 public class JLowFuseArgs extends FuseArgs {
-    private static native long makeFuseArgs(String[] args);
-    public static JLowFuseArgs parseCommandline(String[] args) {
-        long args_l = JLowFuseArgs.makeFuseArgs(args);
-        return new JLowFuseArgs(args_l);
-    }
+	private static native long makeFuseArgs(String[] args);
 
-    public JLowFuseArgs(long ptr) {
-        super(ptr, true);
-    }
-    public JLowFuseArgs() {
-        super();
-    }
+	public static JLowFuseArgs parseCommandline(String[] args) {
+		long args_l = JLowFuseArgs.makeFuseArgs(args);
+		return new JLowFuseArgs(args_l);
+	}
 
-    public String toString() {
-        return "lowlevel args ptr:" + super.getCPtr(this);
-    }
+	public JLowFuseArgs(long ptr) {
+		super(ptr, true);
+	}
 
-    static {
-        System.loadLibrary("jlowfuse");
-    }
+	public JLowFuseArgs() {
+		super();
+	}
+
+	@Override
+	public String toString() {
+		return "lowlevel args ptr:" + super.getCPtr(this);
+	}
+
+	static {
+		System.loadLibrary("jlowfuse");
+	}
 
 }
