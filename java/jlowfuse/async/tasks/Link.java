@@ -3,7 +3,7 @@ package jlowfuse.async.tasks;
 import jlowfuse.FuseReq;
 import jlowfuse.async.Context;
 
-public class Link extends<CTX extends Context> extends FilesystemOperation<CTX> {
+public class Link <CTX extends Context> extends FilesystemOperation<CTX> {
 	protected long ino;
 	protected long newparent;
 	protected String newname;
