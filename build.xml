@@ -213,9 +213,15 @@
     <!-- run with: java -jar testfs.jar -Djava.library.path=. -->
     <jar jarfile="${dist}/objectfs.jar" basedir="${build}/java">
       <manifest>
-	<attribute name="Main-Class" value="objectfs.ObjectFs"/>
+		<attribute name="Main-Class" value="objectfs.ClassicObjectFs"/>
       </manifest>
-    </jar>      
+    </jar>
+  	
+    <jar jarfile="${dist}/objectfs-async.jar" basedir="${build}/java">
+      <manifest>
+		<attribute name="Main-Class" value="objectfs.AsyncObjectFs"/>
+      </manifest>
+    </jar>        	
   </target>
 
   <target name="clean">
