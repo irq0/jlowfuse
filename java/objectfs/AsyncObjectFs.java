@@ -9,6 +9,7 @@ import jlowfuse.JLowFuse;
 import jlowfuse.JLowFuseArgs;
 import jlowfuse.async.DefaultTaskImplementations;
 import objectfs.async.tasks.Init;
+import objectfs.async.ObjectFsContext;
 import fuse.Fuse;
 import fuse.SWIGTYPE_p_fuse_chan;
 import fuse.SWIGTYPE_p_fuse_session;
@@ -30,10 +31,12 @@ public class AsyncObjectFs {
 		impls.initImpl = Init.class;
 
 		ExecutorService service = new ThreadPoolExecutor(10, 20, 5,
-				TimeUnit.SECONDS, new ArrayBlockingQueue(100));
+				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
 
+		ObjectFsContext context = new ObjectFsContext();
+		
 		SWIGTYPE_p_fuse_session sess = JLowFuse.asyncTasksNew(args, impls,
-				service);
+				service, context);
 
 		Session.addChan(sess, chan);
 		Session.loopSingle(sess);
