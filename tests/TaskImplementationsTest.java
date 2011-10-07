@@ -4,6 +4,7 @@ import org.junit.*;
 
 import static org.junit.Assert.*;
 
+import jlowfuse.FuseReq;
 import jlowfuse.async.tasks.*;
 import jlowfuse.async.Context;
 import jlowfuse.async.DefaultTaskImplementations;
@@ -89,12 +90,147 @@ public class TaskImplementationsTest {
 		assertTrue(impls.createImpl == Create.class);
 		assertTrue(impls.bmapImpl == Bmap.class);
 	}
+
+	// awk 'BEGIN { OFS="" } /.*Impl =/ { nam = substr($1, 0, index($1, "Impl") - 1); class = toupper(substr(nam,1,1)) substr(nam, 2); print "@Test public void getConstructorOf", class, "() {","\n", "    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.", nam, "Impl);","\n","    assertNotNull(constr);", "\n", "}"  ; }' < DefaultTaskImplementations.java
+	@Test public void getConstructorOfInit() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.initImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfDestroy() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.destroyImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfLookup() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.lookupImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfForget() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.forgetImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfGetattr() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.getattrImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfSetattr() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.setattrImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfReadlink() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.readlinkImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfMknod() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.mknodImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfMkdir() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.mkdirImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfUnlink() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.unlinkImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfRmdir() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.rmdirImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfSymlink() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.symlinkImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfRename() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.renameImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfLink() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.linkImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfOpen() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.openImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfRead() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.readImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfWrite() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.writeImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfFlush() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.flushImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfRelease() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.releaseImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfFsync() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.fsyncImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfOpendir() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.opendirImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfReaddir() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.readdirImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfReleasedir() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.releasedirImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfFsyncdir() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.fsyncdirImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfStatfs() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.statfsImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfSetxattr() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.setxattrImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfGetxattr() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.getxattrImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfListxattr() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.listxattrImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfRemovexattr() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.removexattrImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfAccess() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.accessImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfCreate() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.createImpl);
+	    assertNotNull(constr);
+	}
+	@Test public void getConstructorOfBmap() {
+	    Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(impls.bmapImpl);
+	    assertNotNull(constr);
+	}
 	
-	@Test public void getTaskConstructorOfInitImpl() {
-		Class<? extends JLowFuseTask<Context>> c = impls.initImpl;
-		
-    	Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(c);
+	/* FUSE is not connected so the reply functions do no good */
+	@Test(expected=java.lang.UnsatisfiedLinkError.class)
+	public void instantiateLookupTask() {
+		Class<? extends JLowFuseTask<Context>> cls = impls.lookupImpl;		
+    	Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(cls);
     	
-    	assertNotNull(constr);
+    	JLowFuseTask<Context> task = TaskImplementations.instantiateTask(constr, new FuseReq(1337), 1, "");
+
+		assertNotNull(task);
+		task.run();
+		// TODO add more tests when the exception handline from jext2 is ported ...
 	}
 }
