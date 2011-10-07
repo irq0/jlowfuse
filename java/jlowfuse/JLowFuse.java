@@ -65,7 +65,7 @@ public class JLowFuse {
 	 *            class with all the implementations for the operations
 	 * @return Opaque pointer to fuse_session type
 	 */
-	public static <CTX extends Context> SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, DefaultTaskImplementations taskImplementations, ExecutorService service, CTX context) {
+	public static <CTX extends Context> SWIGTYPE_p_fuse_session asyncTasksNew(FuseArgs args, DefaultTaskImplementations<CTX> taskImplementations, ExecutorService service, CTX context) {
 
 		LowlevelOpsProxy proxy = new LowlevelOpsProxy();
 		AsyncLowlevelOps<CTX> ops = new AsyncLowlevelOps<CTX>(taskImplementations, service, context);

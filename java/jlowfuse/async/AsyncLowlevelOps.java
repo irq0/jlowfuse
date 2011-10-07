@@ -15,21 +15,21 @@ import fuse.FileInfo;
 import fuse.Stat;
 import jlowfuse.FuseReq;
 import jlowfuse.LowlevelOps;
-import jlowfuse.async.tasks.Init;
 import jlowfuse.async.tasks.JLowFuseTask;
 
 public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
-	protected DefaultTaskImplementations taskImplementations;
+	protected DefaultTaskImplementations<CTX> taskImplementations;
 	protected ExecutorService executor;
 	protected CTX context;
 	
-	public AsyncLowlevelOps(DefaultTaskImplementations taskImplementations, ExecutorService executor, CTX context) {
+	public AsyncLowlevelOps(DefaultTaskImplementations<CTX> taskImplementations, ExecutorService executor, CTX context) {
 		this.taskImplementations = taskImplementations; 
 		this.executor = executor;
 		this.context = context;
 	}
 	
 	/** Get constructor for the given task implementation */
+	@SuppressWarnings("unchecked")
 	private Constructor<? extends JLowFuseTask<CTX>> getTaskConstructor(Class<? extends JLowFuseTask<CTX>> impl) {
 		Constructor<? extends JLowFuseTask<CTX>>[] c = 
 			(Constructor<? extends JLowFuseTask<CTX>>[]) impl.getConstructors();
