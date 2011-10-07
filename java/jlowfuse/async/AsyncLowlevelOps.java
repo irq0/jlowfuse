@@ -18,8 +18,8 @@ import jlowfuse.async.tasks.JLowFuseTask;
 
 public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 	protected TaskImplementations<CTX> taskImplementations;
-	protected ExecutorService executor;
-	protected CTX context;
+	public ExecutorService executor;
+	public CTX context;
 	
 	public AsyncLowlevelOps(TaskImplementations<CTX> taskImplementations, ExecutorService executor, CTX context) {
 		this.taskImplementations = taskImplementations; 
