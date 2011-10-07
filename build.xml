@@ -13,6 +13,8 @@
   <property name="swig-dst" value="${java-src}/fuse"/>
   <property name="swig-src" value="swig"/>
   <property name="server.port" value ="12345"/>
+  <property name="tests" value="tests"/>
+  <property name="reports" value="tests/reports"/>
 	
   <target name="init">
     <tstamp/>
@@ -20,6 +22,7 @@
     <mkdir dir="${dist}"/>
     <mkdir dir="${build}/native"/>
     <mkdir dir="${build}/java"/>
+    <mkdir dir="${build}/tests"/>
     <mkdir dir="${swig-dst}"/>
     <mkdir dir="${java-src}/jlowfuse/exceptions"/>
   </target>
@@ -233,6 +236,31 @@
       <fileset dir="${native-src}" includes="*_wrap.o"/>
       <fileset dir="${java-src}/jlowfuse/exceptions"/>
     </delete>
+  </target>
+
+  <target name="test" depends="dist">      
+    <javac srcdir="${tests}" destdir="${build}/tests" includeAntRuntime="false"
+           debug="true" debuglevel="lines,vars,source">
+      <classpath>
+        <pathelement path="/usr/share/java/junit.jar"/>
+        <pathelement path="${dist}/jlowfuse.jar"/>
+      </classpath>
+    </javac>
+
+    <junit haltonfailure="yes" fork="yes">
+      <formatter type="plain" usefile="false"/>
+      <sysproperty key="java.library.path" value="${dist}/"/>
+      <classpath>
+        <pathelement path="/usr/share/java/junit.jar"/>
+        <pathelement path="${dist}/jlowfuse.jar"/>
+        <pathelement path="${build}/tests"/>
+      </classpath>
+      <batchtest fork="yes" todir="${reports}">
+	<fileset dir="${tests}">
+	  <include name="**/*Test.java"/>
+	</fileset>
+      </batchtest>
+    </junit>
   </target>
 </project>
 
