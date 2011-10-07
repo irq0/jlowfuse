@@ -51,7 +51,7 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
     }
 
     public void lookup(FuseReq req, long parent, String name) {
-	  	createAndSubmitTask(taskImplementations.destroyImpl, req, parent, name);	    
+	  	createAndSubmitTask(taskImplementations.lookupImpl, req, parent, name);	    
     }
 
     public void forget(FuseReq req, long ino, long nlookup) {
