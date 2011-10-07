@@ -28,19 +28,7 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 		this.context = context;
 	}
 	
-	/** Get constructor for the given task implementation */
-	@SuppressWarnings("unchecked")
-	private Constructor<? extends JLowFuseTask<CTX>> getTaskConstructor(Class<? extends JLowFuseTask<CTX>> impl) {
-		Constructor<? extends JLowFuseTask<CTX>>[] c = 
-			(Constructor<? extends JLowFuseTask<CTX>>[]) impl.getConstructors();
-		
-		if (c.length > 1)
-			throw new RuntimeException(String.format("Tasks %s may only have one constructur", impl.getName()));
-		else if (c.length == 0)
-			throw new RuntimeException(String.format("Task %s has no constructor ?!", impl.getName()));
-		
-		return c[0];
-	}
+
 	
 	/** submit task to executor */
 	private void submitTask(JLowFuseTask<CTX> task) {
@@ -70,7 +58,7 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 	
 	/** Create, Initialize and Submit new Task */
 	private void createAndSubmitTask(Class<? extends JLowFuseTask<CTX>> impl, Object ... arguments) {
-    	Constructor<? extends JLowFuseTask<CTX>> c = getTaskConstructor(impl);
+    	Constructor<? extends JLowFuseTask<CTX>> c = TaskImplementations.getTaskConstructor(impl);
     	JLowFuseTask<CTX> task = instantiateTask(c, arguments);
         task.initContext(this.context);
         submitTask(task);			

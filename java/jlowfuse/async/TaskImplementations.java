@@ -1,5 +1,7 @@
 package jlowfuse.async;
 
+import java.lang.reflect.Constructor;
+
 import jlowfuse.async.tasks.*;
 
 public class TaskImplementations<CTX extends Context> {
@@ -63,5 +65,18 @@ public class TaskImplementations<CTX extends Context> {
 			e.printStackTrace();
 			throw new RuntimeException("Should not happen");
 		}				
+	}
+	/** Get constructor for the given task implementation */
+	@SuppressWarnings("unchecked")
+	public static <CTX extends Context> Constructor<? extends JLowFuseTask<CTX>> getTaskConstructor(Class<? extends JLowFuseTask<CTX>> impl) {
+		Constructor<? extends JLowFuseTask<CTX>>[] c = 
+			(Constructor<? extends JLowFuseTask<CTX>>[]) impl.getConstructors();
+		
+		if (c.length > 1)
+			throw new RuntimeException(String.format("Tasks %s may only have one constructur", impl.getName()));
+		else if (c.length == 0)
+			throw new RuntimeException(String.format("Task %s has no constructor ?!", impl.getName()));
+		
+		return c[0];
 	}
 }
