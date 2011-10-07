@@ -8,7 +8,6 @@ import java.util.concurrent.TimeUnit;
 import jlowfuse.JLowFuse;
 import jlowfuse.JLowFuseArgs;
 import jlowfuse.async.DefaultTaskImplementations;
-import objectfs.async.tasks.Init;
 import objectfs.async.ObjectFsContext;
 import fuse.Fuse;
 import fuse.SWIGTYPE_p_fuse_chan;
@@ -27,13 +26,15 @@ public class AsyncObjectFs {
 
 		SWIGTYPE_p_fuse_chan chan = Fuse.mount(mountpoint, args);
 
-		DefaultTaskImplementations impls = new DefaultTaskImplementations();
-		impls.initImpl = Init.class;
+		ObjectFsContext context = new ObjectFsContext();
+		DefaultTaskImplementations<ObjectFsContext> impls = 
+			new DefaultTaskImplementations<ObjectFsContext>();
+
+		//impls.initImpl
 
 		ExecutorService service = new ThreadPoolExecutor(10, 20, 5,
 				TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(100));
 
-		ObjectFsContext context = new ObjectFsContext();
 		
 		SWIGTYPE_p_fuse_session sess = JLowFuse.asyncTasksNew(args, impls,
 				service, context);
