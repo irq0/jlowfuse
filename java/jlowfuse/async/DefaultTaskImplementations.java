@@ -22,7 +22,7 @@ public class DefaultTaskImplementations<CTX extends Context> extends TaskImpleme
 	public Class<? extends Unlink<CTX>> unlinkImpl = getDefaultImpl("Unlink");
 	public Class<? extends Rmdir<CTX>> rmdirImpl = getDefaultImpl("Rmdir");
 	public Class<? extends Symlink<CTX>> symlinkImpl = getDefaultImpl("Symlink");
-	public Class<? extends Rename<CTX>> renameImpl = getDefaultImpl("Symlink");
+	public Class<? extends Rename<CTX>> renameImpl = getDefaultImpl("Rename");
 	public Class<? extends Link<CTX>> linkImpl = getDefaultImpl("Link");
 	public Class<? extends Open<CTX>> openImpl = getDefaultImpl("Open");
 	public Class<? extends Read<CTX>> readImpl = getDefaultImpl("Read");
