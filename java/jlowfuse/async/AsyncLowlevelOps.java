@@ -7,7 +7,6 @@
 package jlowfuse.async;
 
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.ExecutorService;
 
@@ -28,38 +27,15 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 		this.context = context;
 	}
 	
-
-	
 	/** submit task to executor */
 	private void submitTask(JLowFuseTask<CTX> task) {
 		executor.submit(task);
 	}
 	
-	/** Create instance of task object */ 
-	private JLowFuseTask<CTX> instantiateTask(Constructor<? extends JLowFuseTask<CTX>> constructor, Object ... arguments) {
-		try {
-	        JLowFuseTask<CTX> task = (JLowFuseTask<CTX>)(constructor.newInstance(arguments));
-	        return task;
-	        
-        } catch (IllegalArgumentException e) { /* should only happen if this class is implemented wrongly */
-        	e.printStackTrace();
-        	throw new RuntimeException(String.format("Incorrect constructor call in %s for class %s", this.getClass().getName(), constructor.getName()));
-        } catch (InstantiationException e) {
-        	e.printStackTrace();
-        	throw new RuntimeException("Should not happen " + e.getMessage());
-        } catch (IllegalAccessException e) {
-	        e.printStackTrace();
-	        throw new RuntimeException("Should not happen " + e.getMessage());
-        } catch (InvocationTargetException e) {
-	        e.printStackTrace();
-	        throw new RuntimeException("Should not happen " + e.getMessage());
-        }
-	}
-	
 	/** Create, Initialize and Submit new Task */
 	private void createAndSubmitTask(Class<? extends JLowFuseTask<CTX>> impl, Object ... arguments) {
     	Constructor<? extends JLowFuseTask<CTX>> c = TaskImplementations.getTaskConstructor(impl);
-    	JLowFuseTask<CTX> task = instantiateTask(c, arguments);
+    	JLowFuseTask<CTX> task = TaskImplementations.instantiateTask(c, arguments);
         task.initContext(this.context);
         submitTask(task);			
 	}

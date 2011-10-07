@@ -1,6 +1,7 @@
 package jlowfuse.async;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import jlowfuse.async.tasks.*;
 
@@ -38,24 +39,6 @@ public class TaskImplementations<CTX extends Context> {
 	public Class<? extends Create<CTX>> createImpl = null;
 	public Class<? extends Bmap<CTX>> bmapImpl = null;
 	
-	
-	/*
-	@SuppressWarnings("unchecked")
-	private static Class<? extends JLowFuseTask<? extends Context>> getImpl(String name) {	
-		try {
-			Class<JLowFuseTask<? extends Context>> base =
-				(Class<JLowFuseTask<? extends Context>>) Class.forName("jlowfuse.async.tasks.JLowFuseTask");
-
-			Class<? extends JLowFuseTask<? extends Context>> result = 
-				Class.forName(TASK_PACKAGE + "." + name).asSubclass(base);			
-			return result;
-		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Should not happen");
-		}				
-	}
-	*/
-	
 	@SuppressWarnings("unchecked")
 	public static <T extends JLowFuseTask<? extends Context>> Class<T> getImpl(String classname) {	
 		try {
@@ -66,6 +49,7 @@ public class TaskImplementations<CTX extends Context> {
 			throw new RuntimeException("Should not happen");
 		}				
 	}
+	
 	/** Get constructor for the given task implementation */
 	@SuppressWarnings("unchecked")
 	public static <CTX extends Context> Constructor<? extends JLowFuseTask<CTX>> getTaskConstructor(Class<? extends JLowFuseTask<CTX>> impl) {
@@ -78,5 +62,26 @@ public class TaskImplementations<CTX extends Context> {
 			throw new RuntimeException(String.format("Task %s has no constructor ?!", impl.getName()));
 		
 		return c[0];
+	}
+	
+	/** Create instance of task object */ 
+	public static <CTX extends Context> JLowFuseTask<CTX> instantiateTask(Constructor<? extends JLowFuseTask<CTX>> constructor, Object ... arguments) {
+		try {
+	        JLowFuseTask<CTX> task = (JLowFuseTask<CTX>)(constructor.newInstance(arguments));
+	        return task;
+	        
+	    } catch (IllegalArgumentException e) { /* should only happen if this class is implemented wrongly */
+	    	e.printStackTrace();
+	    	throw new RuntimeException(String.format("Incorrect constructor call for class %s", constructor.getName()));
+	    } catch (InstantiationException e) {
+	    	e.printStackTrace();
+	    	throw new RuntimeException("Should not happen " + e.getMessage());
+	    } catch (IllegalAccessException e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("Should not happen " + e.getMessage());
+	    } catch (InvocationTargetException e) {
+	        e.printStackTrace();
+	        throw new RuntimeException("Should not happen " + e.getMessage());
+	    }
 	}
 }
