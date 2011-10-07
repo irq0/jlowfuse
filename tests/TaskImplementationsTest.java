@@ -1,14 +1,24 @@
+import java.lang.reflect.Constructor;
+
 import org.junit.*;
+
 import static org.junit.Assert.*;
 
 import jlowfuse.async.tasks.*;
 import jlowfuse.async.Context;
 import jlowfuse.async.DefaultTaskImplementations;
+import jlowfuse.async.TaskImplementations;
 
-public class DefaultTaskImplementationsTest {
-
+public class TaskImplementationsTest {
+	TaskImplementations<Context> impls;
+	Context context;
+	
+	@Before public void setUp() { 
+		context = new Context();
+		impls = new DefaultTaskImplementations<Context>();
+	}
+	
 	@Test public void implsNotNull() {
-		DefaultTaskImplementations<Context> impls = new DefaultTaskImplementations<Context>();
 		//awk 'BEGIN { OFS="" } /.*Impl =/ { split($4, res, "<"); class = res[1]; print "assertNotNull(impls.", tolower(class),"Impl);"  }' < DefaultTaskImplementations.java 
 		assertNotNull(impls.initImpl);
 		assertNotNull(impls.destroyImpl);
@@ -45,7 +55,6 @@ public class DefaultTaskImplementationsTest {
 	}
 	
 	@Test public void correctRuntimeTypes() {
-		DefaultTaskImplementations<Context> impls = new DefaultTaskImplementations<Context>();
 		//awk 'BEGIN { OFS="" } /.*Impl =/ { split($4, res, "<"); class = res[1]; print "assertTrue(impls.", tolower(class),"Impl == ", class".class);"  }' < DefaultTaskImplementations.java 
 		assertTrue(impls.initImpl == Init.class);
 		assertTrue(impls.destroyImpl == Destroy.class);
@@ -79,5 +88,13 @@ public class DefaultTaskImplementationsTest {
 		assertTrue(impls.accessImpl == Access.class);
 		assertTrue(impls.createImpl == Create.class);
 		assertTrue(impls.bmapImpl == Bmap.class);
+	}
+	
+	@Test public void getTaskConstructorOfInitImpl() {
+		Class<? extends JLowFuseTask<Context>> c = impls.initImpl;
+		
+    	Constructor<? extends JLowFuseTask<Context>> constr = TaskImplementations.getTaskConstructor(c);
+    	
+    	assertNotNull(constr);
 	}
 }
