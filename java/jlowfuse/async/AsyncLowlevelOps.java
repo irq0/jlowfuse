@@ -111,7 +111,7 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 
 	
     public void read(FuseReq req, long ino, long size, long off, FileInfo fi) {
-    	createAndSubmitTask(taskImplementations.readImpl, ino, size, off, fi);
+    	createAndSubmitTask(taskImplementations.readImpl, req, ino, size, off, fi);
     }
 
 	
