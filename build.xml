@@ -69,6 +69,8 @@
       <includepath>
 	<path path="/usr/lib/jvm/java-6-sun/include/"/>
 	<path path="/usr/lib/jvm/java-6-sun/include/linux/"/>
+    <path path="/usr/lib/java/include/"/>
+    <path path="/usr/lib/java/include/linux/"/>
 	<path path="/usr/include/fuse"/>
 	<path path="/lib"/>
       </includepath>
