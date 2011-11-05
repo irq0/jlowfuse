@@ -15,4 +15,11 @@ public class Fsync<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.datasync = datasync;
 		this.fi = fi;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.toString();
+	}
 }

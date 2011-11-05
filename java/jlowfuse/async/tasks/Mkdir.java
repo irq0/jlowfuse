@@ -14,4 +14,15 @@ public class Mkdir<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.name = name;
 		this.mode = mode;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" parent=")
+			.append(parent)
+			.append(" parent=")
+			.append(parent)
+			.append(" mode=")
+			.append(mode)	
+			.toString();
+	}
 }

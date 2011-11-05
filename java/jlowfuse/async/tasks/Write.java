@@ -19,4 +19,15 @@ public class Write <CTX extends Context> extends FilesystemOperation<CTX> {
 		this.off = off;
 		this.fi = fi;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.append(" buf_length=")
+			.append(buf.capacity())
+			.append(" off=")
+			.append(off)	
+			.toString();
+	}
 }

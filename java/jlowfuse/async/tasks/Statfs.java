@@ -20,4 +20,11 @@ public class Statfs <CTX extends Context> extends FilesystemOperation<CTX> {
 
         Reply.statfs(req, stat);
     }	
+    
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.toString();
+	}
 }

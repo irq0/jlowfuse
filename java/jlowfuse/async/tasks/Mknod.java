@@ -16,4 +16,15 @@ public class Mknod<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.mode = mode;
 		this.rdev = rdev;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" parent=")
+			.append(parent)
+			.append(" parent=")
+			.append(parent)
+			.append(" mode=")
+			.append(mode)	
+			.toString();
+	}
 }

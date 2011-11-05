@@ -12,4 +12,12 @@ public class Access<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.ino = ino;
 		this.mask = mask;
 	}
-}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.append(" mask=")
+			.append(mask)	
+			.toString();
+	}}

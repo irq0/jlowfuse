@@ -18,4 +18,11 @@ public class Setattr<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.to_set = to_set;
 		this.fi = fi;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.toString();
+	}
 }

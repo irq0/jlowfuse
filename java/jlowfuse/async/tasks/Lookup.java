@@ -12,4 +12,13 @@ public class Lookup<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.parent = parent;
 		this.name = name;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" parent=")
+			.append(parent)
+			.append(" parent=")
+			.append(parent)
+			.toString();
+	}
 }

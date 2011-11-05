@@ -14,4 +14,14 @@ public class Link <CTX extends Context> extends FilesystemOperation<CTX> {
 		this.newparent = newparent;
 		this.newname = newname;
 	}
-}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.append(" newparent=")
+			.append(newparent)
+			.append(" newname=")
+			.append(newname)	
+			.toString();
+	}}

@@ -16,5 +16,14 @@ public class Forget<CTX extends Context> extends FilesystemOperation<CTX> {
 
     public void run() {
 	    Reply.none(req);
-    }	
+    }
+    
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.append(" nlookup=")
+			.append(nlookup)
+			.toString();
+	}
 }

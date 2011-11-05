@@ -12,4 +12,12 @@ public class Flush<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.ino = ino;
 		this.fi = fi;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.append(" size=")	
+			.toString();
+	}
 }

@@ -17,4 +17,15 @@ public class Create<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.mode = mode;
 		this.fi = fi;		
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" parent=")
+			.append(parent)
+			.append(" name=")
+			.append(name)
+			.append(" mode=")
+			.append(mode)	
+			.toString();
+	}
 }

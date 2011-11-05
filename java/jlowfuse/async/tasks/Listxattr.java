@@ -12,4 +12,13 @@ public class Listxattr<CTX extends Context> extends FilesystemOperation<CTX> {
 		this.ino = ino;
 		this.size = size;
 	}
+	
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" ino=")
+			.append(ino)
+			.append(" size=")
+			.append(size)
+			.toString();
+	}
 }

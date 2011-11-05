@@ -47,4 +47,10 @@ public class JLowFuseTask<CTX extends Context> implements RunnableFuture<Object>
 
     public void run() {
     }	
+    
+	public String toString() {
+		return new StringBuilder()
+			.append(this.getClass().getSimpleName())
+			.toString();
+	}
 }
