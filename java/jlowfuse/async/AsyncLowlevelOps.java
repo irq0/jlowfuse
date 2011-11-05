@@ -27,17 +27,19 @@ public class AsyncLowlevelOps<CTX extends Context> implements LowlevelOps {
 		this.context = context;
 	}
 	
-	/** submit task to executor */
+	/** submit task to executor 
+	 * @return */
 	private void submitTask(JLowFuseTask<CTX> task) {
-		executor.submit(task);
+		executor.execute(task);
 	}
 	
-	/** Create, Initialize and Submit new Task */
+	/** Create, Initialize and Submit new Task 
+	 * @return */
 	private void createAndSubmitTask(Class<? extends JLowFuseTask<CTX>> impl, Object ... arguments) {
     	Constructor<? extends JLowFuseTask<CTX>> c = TaskImplementations.getTaskConstructor(impl);
     	JLowFuseTask<CTX> task = TaskImplementations.instantiateTask(c, arguments);
         task.initContext(this.context);
-        submitTask(task);			
+        submitTask(task);
 	}
 	
 	/* to many lines of booooring method-call to task object conversion code follows */
