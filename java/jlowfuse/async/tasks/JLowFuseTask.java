@@ -11,10 +11,19 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.RunnableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import jlowfuse.async.Context;
 
 public class JLowFuseTask<CTX extends Context> implements RunnableFuture<Object> {
+	private static AtomicInteger idCounter = new AtomicInteger(0);
+	
+	private final int id = idCounter.incrementAndGet();
+	
+	public final int getId() {
+		return id;
+	}
+	
 	protected CTX context;
 	
 	public void initContext(CTX context) {
@@ -46,11 +55,13 @@ public class JLowFuseTask<CTX extends Context> implements RunnableFuture<Object>
     }
 
     public void run() {
-    }	
+    }
     
 	public String toString() {
 		return new StringBuilder()
 			.append(this.getClass().getSimpleName())
+			.append("#")
+			.append(this.id)
 			.toString();
 	}
 }
