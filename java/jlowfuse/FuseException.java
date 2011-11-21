@@ -1,4 +1,4 @@
-package jlowfuse.exceptions;
+package jlowfuse;
 
 public class FuseException extends Exception {
 	int errno = 0;

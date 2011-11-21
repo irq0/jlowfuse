@@ -4,9 +4,10 @@ import sys
 import os.path
 
 def errno_class(errno, name):
-    return """
+    return """\
 package jlowfuse.exceptions;
 
+import jlowfuse.FuseException;
 import fuse.Errno;
 
 public class %(name)s extends FuseException {
@@ -34,7 +35,7 @@ def main():
 
         errno_name = values[1]
         comment = values[4:-1]
-        
+
 
         descr = "".join(map(lambda x: x.capitalize(), comment))
         descr = descr.replace("-", "").replace("/","").replace("\\", "").replace(".","").replace(";","").replace(":","")
