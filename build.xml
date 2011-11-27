@@ -15,7 +15,7 @@
   <property name="server.port" value ="12345"/>
   <property name="tests" value="tests"/>
   <property name="reports" value="tests/reports"/>
-	
+
   <target name="init">
     <tstamp/>
     <mkdir dir="${build}"/>
@@ -29,7 +29,7 @@
 
   <target name="start-server">
   	<echo>Starting ANT Server on port ${server.port}</echo>
-  	<antcontrib:antserver port="${server.port}"/>		
+  	<antcontrib:antserver port="${server.port}"/>
   </target>
 
   <target name="remote-build">
@@ -38,9 +38,9 @@
 <!--  		<antcontrib:runtarget target="dist"/> -->
   	</antcontrib:remoteant>
   </target>
-  	
-  	
-  <target name="javacompile" depends="init,swig,make-exception-classes" 
+
+
+  <target name="javacompile" depends="init,swig,make-exception-classes"
 	  description="compile all java source">
     <javac srcdir="${java-src}" destdir="${build}/java" includeAntRuntime="false"
         debug="true" debuglevel="lines,vars,source">
@@ -52,9 +52,9 @@
     </javac>
   </target>
 
-  <target name="objectfs" depends="init,swig,javacompile" 
+  <target name="objectfs" depends="init,swig,javacompile"
 	  description="compile all java source">
-    <javac srcdir="${java-src}" destdir="${build}/java" 
+    <javac srcdir="${java-src}" destdir="${build}/java"
 	   includeAntRuntime="false">
       <include name="objectfs/**"/>
     </javac>
@@ -62,7 +62,7 @@
 
 
   <target name="compile-native" depends="init,swig">
-    <cpptasks:cc link="shared" outtype="shared" 
+    <cpptasks:cc link="shared" outtype="shared"
 		 runtime="static"
 		 outfile="${build}/jlowfuse" objdir="${build}/native"
 		 outputfileproperty="libjlowfuse">
@@ -80,11 +80,12 @@
       <linkerarg value="-ldl"/> <!-- fuse -->
       <linkerarg value="-lc"/>
 
+      <compilerarg value="-O0"/>
       <compilerarg value="-Wall"/>
-      <compilerarg value="-g"/>
+      <compilerarg value="-ggdb"/>
       <compilerarg value="-std=gnu99"/>
       <compilerarg value="-pthread"/> <!-- fuse -->
-      <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->      
+      <compilerarg value="-D_FILE_OFFSET_BITS=64"/> <!-- fuse -->
 
       <fileset dir="${native-src}">
 	<include name="jlowfuse.c"/>
@@ -97,7 +98,7 @@
   </target>
 
 
-  <target name="swig" depends="init" 
+  <target name="swig" depends="init"
 	  description="Generate SWIG wrappers for the fuse api">
 
     <exec executable="swig" failonerror="true">
@@ -211,7 +212,7 @@
 
     <copy todir="${dist}">
       <fileset file="${libjlowfuse}"/>
-    </copy>    
+    </copy>
 
     <jar jarfile="${dist}/jlowfuse.jar" basedir="${build}/java"/>
 
@@ -221,12 +222,12 @@
 		<attribute name="Main-Class" value="objectfs.ClassicObjectFs"/>
       </manifest>
     </jar>
-  	
+
     <jar jarfile="${dist}/objectfs-async.jar" basedir="${build}/java">
       <manifest>
 		<attribute name="Main-Class" value="objectfs.AsyncObjectFs"/>
       </manifest>
-    </jar>        	
+    </jar>
   </target>
 
   <target name="clean">
@@ -240,7 +241,7 @@
     </delete>
   </target>
 
-  <target name="test" depends="dist">      
+  <target name="test" depends="dist">
     <javac srcdir="${tests}" destdir="${build}/tests" includeAntRuntime="false"
            debug="true" debuglevel="lines,vars,source">
       <classpath>
