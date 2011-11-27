@@ -14,4 +14,11 @@ public class FilesystemOperation<CTX extends Context> extends JLowFuseTask<CTX> 
 	public void run() {
         Reply.err(req, Errno.ENOSYS);
 	}
+	public String toString() {
+		return new StringBuilder(super.toString())
+			.append(" [")
+			.append(req.toString())
+			.append("]")
+			.toString();
+	}
 }
