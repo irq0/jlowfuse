@@ -2,6 +2,8 @@
 typedef unsigned long int uint64_t;
 typedef unsigned long int fuse_ino_t;
 
+typedef struct fuse_req * fuse_req_t;
+
 // typedef unsigned long long int uint64_t;
 // %apply unsigned long long int { uint64_t }
 // %apply unsigned long long int { __fsblkcnt64_t }
@@ -27,7 +29,10 @@ typedef unsigned long int fuse_ino_t;
 
 %apply fuse_ino_t { __ino_t }
 %apply fuse_ino_t { __ino64_t }
-%apply unsigned long { fuse_ino_t } 
+%apply unsigned long { fuse_ino_t }
 %apply unsigned long { off_t}
 
 %apply long int { __time_t }
+
+
+

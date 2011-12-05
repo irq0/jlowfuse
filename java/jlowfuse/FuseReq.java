@@ -2,15 +2,15 @@ package jlowfuse;
 
 import fuse.FuseContext;
 import fuse.FuseRequest;
-import fuse.SWIGTYPE_p_fuse_req_t;
+import fuse.SWIGTYPE_p_fuse_req;
 
-public class FuseReq extends SWIGTYPE_p_fuse_req_t {
+public class FuseReq extends SWIGTYPE_p_fuse_req {
 	public FuseReq(long ptr) {
 		super(ptr, false);
 	}
 
 	long getCPtr() {
-		return SWIGTYPE_p_fuse_req_t.getCPtr(this);
+		return SWIGTYPE_p_fuse_req.getCPtr(this);
 	}
 
 	@Override

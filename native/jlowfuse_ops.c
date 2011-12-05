@@ -25,17 +25,18 @@ void exception_check(JNIEnv *env);
                                   struct fuse_file_info *fi)            \
         {                                                               \
                 JNIEnv *env = attach_native_thread();                   \
-                                                                        \
+									\
+                							\
                 (*env)->CallVoidMethod(env,                             \
                                        cl_low_ops->object,              \
                                        cl_low_ops->method.operation,    \
-                                       (jlong)&req,                     \
+                                       (jlong)req,                      \
                                        (jlong)ino,                      \
                                        (jlong)fi);                      \
                                                                         \
                 exception_check(env);                                   \
                 detach_native_thread();                                 \
-        }                                                               
+        }
 
 #define JLOWFUSE_OPERATION_REQ_INO_NAME(operation)                      \
         void jlowfuse_##operation(fuse_req_t req, fuse_ino_t parent,    \
@@ -43,16 +44,17 @@ void exception_check(JNIEnv *env);
         {                                                               \
                 JNIEnv *env = attach_native_thread();                   \
                 jstring jname;                                          \
-                                                                        \
+									\
+	  \
                 jname = (*env)->NewStringUTF(env, name);                \
                 if (jname == NULL) {                                    \
-                        errx(16, "##operation: Cannot allocate jstring"); \
+	                errx(16, "##operation: Cannot allocate jstring"); \
                 }                                                       \
                                                                         \
                 (*env)->CallVoidMethod(env,                             \
                                        cl_low_ops->object,              \
                                        cl_low_ops->method.operation,    \
-                                       (jlong)&req,                     \
+                                       (jlong)req,                      \
                                        (jlong)parent,                   \
                                        jname);                          \
                                                                         \
@@ -68,7 +70,7 @@ void exception_check(JNIEnv *env);
                 (*env)->CallVoidMethod(env,                             \
                                        cl_low_ops->object,              \
                                        cl_low_ops->method.operation,    \
-                                       (jlong)&req,                     \
+                                       (jlong)req,                      \
                                        (jlong)parent);                  \
                                                                         \
                 exception_check(env);                                   \
@@ -85,10 +87,10 @@ void exception_check(JNIEnv *env);
                 (*env)->CallVoidMethod(env,                             \
                                        cl_low_ops->object,              \
                                        cl_low_ops->method.operation,    \
-                                       (jlong)&req,                     \
+                                       (jlong)req,                      \
                                        (jlong)ino,                      \
-                                       (jlong)size,	  \
-                                       (jlong)off,                       \
+                                       (jlong)size,	                \
+                                       (jlong)off,                      \
                                        (jlong)fi);                      \
                                                                         \
                 exception_check(env);                                   \
@@ -105,14 +107,14 @@ void exception_check(JNIEnv *env);
                 (*env)->CallVoidMethod(env,                             \
                                        cl_low_ops->object,              \
                                        cl_low_ops->method.operation,    \
-                                       (jlong)&req,                     \
+                                       (jlong)req,                      \
                                        (jlong)ino,                      \
                                        (jint)datasync,                  \
                                        (jlong)fi);                      \
                                                                         \
                 exception_check(env);                                   \
                 detach_native_thread();                                 \
-        }                                                               
+        }
 
 
 JLOWFUSE_OPERATION_REQ_INO_FI(flush)
@@ -137,71 +139,71 @@ JLOWFUSE_OPERATION_REQ_INO_DATASYNC_FI(fsync)
 JLOWFUSE_OPERATION_REQ_INO_DATASYNC_FI(fsyncdir)
 
 void exception_check(JNIEnv *env)
-{ 
+{
         if ((*env)->ExceptionCheck(env)) {
                 (*env)->ExceptionDescribe(env);
                 (*env)->ExceptionClear(env);
         }
-}       
+}
 
 // TODO
-void jlowfuse_init(void *userdata, struct fuse_conn_info *conn) 
+void jlowfuse_init(void *userdata, struct fuse_conn_info *conn)
 {
 
         JNIEnv *env = attach_native_thread();
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.init);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
-void jlowfuse_destroy(void *userdata) 
+void jlowfuse_destroy(void *userdata)
 {
 
         JNIEnv *env = attach_native_thread();
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.destroy);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
 
-void jlowfuse_forget(fuse_req_t req, fuse_ino_t ino, unsigned long nlookup) 
+void jlowfuse_forget(fuse_req_t req, fuse_ino_t ino, unsigned long nlookup)
 {
         JNIEnv *env = attach_native_thread();
 
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.forget,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                (jlong)nlookup);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
 
 void jlowfuse_setattr(fuse_req_t req, fuse_ino_t ino, struct stat *attr,
-                      int to_set, struct fuse_file_info *fi) 
+                      int to_set, struct fuse_file_info *fi)
 {
         JNIEnv *env = attach_native_thread();
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.setattr,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                (jlong)attr,
                                (jint)to_set,
                                (jlong)fi);
-        
+
         exception_check(env);
         detach_native_thread();
 }
@@ -216,16 +218,16 @@ void jlowfuse_mknod(fuse_req_t req, fuse_ino_t parent, const char* name, mode_t 
         if (jname == NULL) {
                 errx(16, "mknod: Cannot allocate jstring");
         }
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.mknod,
-                               (jlong)&req,
-                               (jlong)parent,                               
+                               (jlong)req,
+                               (jlong)parent,
                                jname,
                                (jshort)mode,
                                (jshort)rdev);
-        
+
         exception_check(env);
         detach_native_thread();
 }
@@ -239,15 +241,15 @@ void jlowfuse_mkdir(fuse_req_t req, fuse_ino_t parent, const char* name, mode_t 
         if (jname == NULL) {
                 errx(16, "mkdir: Cannot allocate jstring");
         }
-        
-        (*env)->CallVoidMethod(env,
+
+       (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.mkdir,
-                               (jlong)&req,
-                               (jlong)parent,                               
+                               (jlong)req,
+                               (jlong)parent,
                                jname,
                                (jshort)mode);
-        
+
         exception_check(env);
         detach_native_thread();
 }
@@ -262,7 +264,7 @@ void jlowfuse_symlink(fuse_req_t req, const char *link, fuse_ino_t parent, const
         if (jlink == NULL) {
                 errx(16, "symlink: Cannot allocate jstring");
         }
-        
+
         jname = (*env)->NewStringUTF(env, name);
         if (jname == NULL) {
                 errx(16, "symlink: Cannot allocate jstring");
@@ -271,11 +273,11 @@ void jlowfuse_symlink(fuse_req_t req, const char *link, fuse_ino_t parent, const
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.symlink,
-                               (jlong)&req,
+                               (jlong)req,
                                jlink,
                                (jlong)parent,
                                jname);
-        
+
         exception_check(env);
         detach_native_thread();
 }
@@ -286,7 +288,7 @@ void jlowfuse_rename(fuse_req_t req, fuse_ino_t parent, const char* name,
         JNIEnv *env = attach_native_thread();
         jstring jname;
         jstring jnewname;
-        
+
         jname = (*env)->NewStringUTF(env, name);
         if (jname == NULL) {
                 errx(16, "rename: Cannot allocate jstring");
@@ -300,7 +302,7 @@ void jlowfuse_rename(fuse_req_t req, fuse_ino_t parent, const char* name,
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.rename,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)parent,
                                jname,
                                (jlong)newparent,
@@ -315,7 +317,7 @@ void jlowfuse_link(fuse_req_t req, fuse_ino_t ino,
 {
         JNIEnv *env = attach_native_thread();
         jstring jnewname;
-        
+
         jnewname = (*env)->NewStringUTF(env, newname);
         if (jnewname == NULL) {
                 errx(16, "link: Cannot allocate jstring");
@@ -324,7 +326,7 @@ void jlowfuse_link(fuse_req_t req, fuse_ino_t ino,
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.link,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                (jlong)newparent,
                                jnewname);
@@ -334,7 +336,7 @@ void jlowfuse_link(fuse_req_t req, fuse_ino_t ino,
 }
 
 void jlowfuse_write(fuse_req_t req, fuse_ino_t ino, const char *buf,
-                    size_t size, off_t off, struct fuse_file_info *fi) 
+                    size_t size, off_t off, struct fuse_file_info *fi)
 {
         jobject jbuf;
         JNIEnv *env = attach_native_thread();
@@ -343,52 +345,52 @@ void jlowfuse_write(fuse_req_t req, fuse_ino_t ino, const char *buf,
         if (jbuf == NULL) {
                 errx(16, "write: Cannot allocate ByteBuffer");
         }
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.write,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                jbuf,
                                (jlong)size,
                                (jlong)off,
                                (jlong)fi);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
 void jlowfuse_create(fuse_req_t req, fuse_ino_t parent, const char *name,
-                     mode_t mode, struct fuse_file_info *fi) 
+                     mode_t mode, struct fuse_file_info *fi)
 {
         JNIEnv *env = attach_native_thread();
         jstring jname;
-        
+
         jname = (*env)->NewStringUTF(env, name);
         if (jname == NULL) {
                 errx(16, "crate: Cannot allocate jstring");
         }
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.create,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)parent,
                                jname,
                                (jint)mode,
                                (jlong)fi);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
 void jlowfuse_setxattr(fuse_req_t req, fuse_ino_t ino, const char *name,
-                       const char *value, size_t size, int flags) 
+                       const char *value, size_t size, int flags)
 {
         JNIEnv *env = attach_native_thread();
         jobject jvalue;
         jstring jname;
-        
+
         jvalue = (*env)->NewDirectByteBuffer(env, (void*)value, size);
         if (jvalue == NULL) {
                 errx(16, "setxattr: Cannot allocate ByteBuffer");
@@ -399,86 +401,86 @@ void jlowfuse_setxattr(fuse_req_t req, fuse_ino_t ino, const char *name,
                 errx(16, "setxattr: Cannot allocate jstring");
         }
 
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.setxattr,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                jname,
                                jvalue,
                                (jint)size,
                                (jint)flags);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
 void jlowfuse_getxattr(fuse_req_t req, fuse_ino_t ino, const char *name,
-                       size_t size) 
+                       size_t size)
 {
         JNIEnv *env = attach_native_thread();
         jstring jname;
-        
+
         jname = (*env)->NewStringUTF(env, name);
         if (jname == NULL) {
                 errx(16, "getxattr: Cannot allocate jstring");
         }
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.getxattr,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                jname,
                                (jint)size);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
-void jlowfuse_listxattr(fuse_req_t req, fuse_ino_t ino, size_t size) 
+void jlowfuse_listxattr(fuse_req_t req, fuse_ino_t ino, size_t size)
 {
         JNIEnv *env = attach_native_thread();
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.listxattr,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                (jint)size);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
-void jlowfuse_access(fuse_req_t req, fuse_ino_t ino, int mask) 
+void jlowfuse_access(fuse_req_t req, fuse_ino_t ino, int mask)
 {
         JNIEnv *env = attach_native_thread();
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.access,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                (jint)mask);
-        
+
         exception_check(env);
         detach_native_thread();
 }
 
-void jlowfuse_bmap(fuse_req_t req, fuse_ino_t ino, size_t blocksize, uint64_t idx) 
+void jlowfuse_bmap(fuse_req_t req, fuse_ino_t ino, size_t blocksize, uint64_t idx)
 {
         JNIEnv *env = attach_native_thread();
-        
+
         (*env)->CallVoidMethod(env,
                                cl_low_ops->object,
                                cl_low_ops->method.bmap,
-                               (jlong)&req,
+                               (jlong)req,
                                (jlong)ino,
                                (jint)blocksize,
                                (jlong)idx);
-        
+
         exception_check(env);
         detach_native_thread();
 }
