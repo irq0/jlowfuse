@@ -3,7 +3,7 @@
  *
  * NOTE: this only works with a _single_ java thread.
  * No mapping of native to java threads
- * 
+ *
  */
 
 
@@ -40,7 +40,7 @@ JNIEnv *attach_native_thread()
 	JNIEnv *env;
 	JavaVMAttachArgs args;
         int res;
-                
+
 	args.version = JNI_VERSION_1_6;
 	args.name = NULL;
 	args.group = thread_group;
@@ -54,7 +54,7 @@ JNIEnv *attach_native_thread()
         } else if (res < JNI_OK) { /* should not happen */
                 errx(16, "should not happen.. GetEnv result: %i", res);
         }
-        
+
         return env;
 }
 
@@ -67,7 +67,7 @@ void detach_native_thread()
         if (res != JNI_OK) {
 //	        errx(16, "Failed to detach current thread: %i", res);
 	}
-}        
+}
 
 
 
@@ -75,7 +75,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
 {
         JNIEnv *env;
         int ret;
-        
+
         jvm = ljvm;
 
         ret = (*jvm)->GetEnv(jvm, (void **)&env, JNI_VERSION_1_2);
@@ -129,7 +129,7 @@ struct fuse_lowlevel_ops jlowfuse_ops = {
 JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuse_setOps
 (JNIEnv *env, jclass cls, jobject ops_obj, jobject tgroup)
 {
-        cl_low_ops = alloc_class_lowlevel_ops(env);        
+        cl_low_ops = alloc_class_lowlevel_ops(env);
         populate_class_lowlevel_ops(env, cl_low_ops, ops_obj);
 
         thread_group = tgroup;
@@ -143,16 +143,16 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuseArgs_makeFuseArgs
 {
         jsize len;
         jstring jstr;
-        
+
         int i;
         struct fuse_args *args;
         char *str;
         char *mount_point;
         int multi_threaded = -1;
         int foreground = -1;
-        
+
         args = calloc(1, sizeof(struct fuse_args));
-        
+
         len = (*env)->GetArrayLength(env, jstrarr);
 
         for(i=0; i<len; i++) {
@@ -164,7 +164,7 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuseArgs_makeFuseArgs
 
                 (*env)->ReleaseStringUTFChars(env, jstr, str);
                 (*env)->DeleteLocalRef(env, jstr);
-                
+
         }
 
         if (fuse_parse_cmdline(args, &mount_point,
@@ -172,7 +172,7 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuseArgs_makeFuseArgs
                 errx(2, "Commandline error");
         }
 
-        return (long)args;        
+        return (long)args;
 }
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
@@ -183,26 +183,24 @@ JNIEXPORT jint JNICALL Java_jlowfuse_Reply_jniReplyByteBuffer
         void *buf;
         jlong bufsize;
         fuse_req_t req;
-        fuse_req_t *reqp;
         unsigned long off = joff;
         unsigned long maxsize = jmaxsize;
 
         assert(off >= 0);
 
         bufsize = (*env)->GetDirectBufferCapacity(env, jbuf);
-        if (bufsize <= 0) 
+        if (bufsize <= 0)
                 errx(16, "GetDirectbufferCapacity failed");
-        
+
         buf = (*env)->GetDirectBufferAddress(env, jbuf);
-        if (buf == NULL) 
+        if (buf == NULL)
                 errx(16, "GetDirectBufferAddress failed");
 
-        reqp = *(fuse_req_t**)&jreq;
-        req = *reqp;
+        req = (fuse_req_t)jreq;
 
         if (off < bufsize)
 		return fuse_reply_buf(req, buf + off,
 				      min(bufsize - off, maxsize));
 	else
-                return fuse_reply_buf(req, NULL, 0);        
+                return fuse_reply_buf(req, NULL, 0);
 }
