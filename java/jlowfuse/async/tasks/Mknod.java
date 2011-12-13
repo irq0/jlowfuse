@@ -21,8 +21,8 @@ public class Mknod<CTX extends Context> extends FilesystemOperation<CTX> {
 		return new StringBuilder(super.toString())
 			.append(" parent=")
 			.append(parent)
-			.append(" parent=")
-			.append(parent)
+			.append(" name=")
+			.append(name)
 			.append(" mode=")
 			.append(mode)	
 			.toString();
