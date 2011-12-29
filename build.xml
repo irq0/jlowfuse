@@ -18,7 +18,7 @@
 
   <target name="init">
     <tstamp/>
-    <mkdir dir="${build}"/>
+   <mkdir dir="${build}"/>
     <mkdir dir="${dist}"/>
     <mkdir dir="${build}/native"/>
     <mkdir dir="${build}/java"/>
@@ -62,23 +62,24 @@
 
 
   <target name="compile-native" depends="init,swig">
-    <cpptasks:cc link="shared" outtype="shared"
-		 runtime="static"
+    <cpptasks:cc outtype="shared"
+		 runtime="dynamic"
 		 outfile="${build}/jlowfuse" objdir="${build}/native"
 		 outputfileproperty="libjlowfuse">
       <includepath>
 	<path path="/usr/lib/jvm/java-6-sun/include/"/>
 	<path path="/usr/lib/jvm/java-6-sun/include/linux/"/>
-    <path path="/usr/lib/java/include/"/>
-    <path path="/usr/lib/java/include/linux/"/>
-	<path path="/usr/include/fuse"/>
-	<path path="/lib"/>
+	<path path="/usr/lib/java/include/"/>
+ 	<path path="/usr/lib/java/include/linux/"/>
+	<path path="/usr/include/fuse/"/>
       </includepath>
 
-      <linkerarg value="-lfuse"/> <!-- fuse -->
-      <linkerarg value="-lrt"/> <!-- fuse -->
-      <linkerarg value="-ldl"/> <!-- fuse -->
-      <linkerarg value="-lc"/>
+      <linker name="ld">	
+        <linkerarg value="-lfuse"/> <!-- fuse -->
+        <linkerarg value="-lrt"/> <!-- fuse -->
+        <linkerarg value="-ldl"/> <!-- fuse -->
+        <linkerarg value="-lc"/>
+      </linker>
 
       <compilerarg value="-O0"/>
       <compilerarg value="-Wall"/>
