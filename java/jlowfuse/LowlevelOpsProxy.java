@@ -105,6 +105,7 @@ public class LowlevelOpsProxy implements OpsProxy {
 
 	
 	public void write(long req, long ino, ByteBuffer buf, long size, long off, long fi) {
+		buf.limit((int) size); // XXX remove cast in java 7
 		ops.write(new FuseReq(req), ino, buf, off, new FileInfo(fi, false));
 	}
 

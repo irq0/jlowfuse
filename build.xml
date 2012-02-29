@@ -74,7 +74,7 @@
 	<path path="/usr/include/fuse/"/>
       </includepath>
 
-      <linker name="ld">	
+      <linker name="ld">
         <linkerarg value="-lfuse"/> <!-- fuse -->
         <linkerarg value="-lrt"/> <!-- fuse -->
         <linkerarg value="-ldl"/> <!-- fuse -->
@@ -94,6 +94,7 @@
 	<include name="jlowfuse_ops.c"/>
 	<include name="fuse_extra.c"/>
 	<include name="jlowfuse_java_LowlevelOpsProxy.c"/>
+	<include name="jlowfuse_java_BufferManager.c"/>
       </fileset>
     </cpptasks:cc>
   </target>

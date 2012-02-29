@@ -9,13 +9,16 @@
 
 #include "jlowfuse.h"
 #include "jlowfuse_java_LowlevelOpsProxy.h"
+#include "jlowfuse_java_BufferManager.h"
 
 #include <jni.h>
 #include <fuse_lowlevel.h>
 #include <fuse_opt.h>
 #include <err.h>
+#include <string.h>
 
 extern struct class_lowlevel_ops *cl_low_ops;
+extern struct class_buffermanager *cl_bufman;
 
 void exception_check(JNIEnv *env);
 
@@ -137,14 +140,6 @@ JLOWFUSE_OPERATION_REQ_INO_SIZE_OFF_FI(readdir)
 
 JLOWFUSE_OPERATION_REQ_INO_DATASYNC_FI(fsync)
 JLOWFUSE_OPERATION_REQ_INO_DATASYNC_FI(fsyncdir)
-
-void exception_check(JNIEnv *env)
-{
-        if ((*env)->ExceptionCheck(env)) {
-                (*env)->ExceptionDescribe(env);
-                (*env)->ExceptionClear(env);
-        }
-}
 
 // TODO
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn)
@@ -341,7 +336,14 @@ void jlowfuse_write(fuse_req_t req, fuse_ino_t ino, const char *buf,
         jobject jbuf;
         JNIEnv *env = attach_native_thread();
 
-        jbuf = (*env)->NewDirectByteBuffer(env, (void*)buf, size);
+        if (use_buffermanager(cl_bufman)) {
+	        jbuf = buffermanager_take(env, cl_bufman);
+	        char *jbuf_ptr = (*env)->GetDirectBufferAddress(env, jbuf);
+	        memcpy(jbuf_ptr, buf, size);
+        } else {
+	        jbuf = (*env)->NewDirectByteBuffer(env, (void*)buf, size);
+        }
+
         if (jbuf == NULL) {
                 errx(16, "write: Cannot allocate ByteBuffer");
         }

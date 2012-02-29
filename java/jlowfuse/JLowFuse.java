@@ -14,11 +14,16 @@ public class JLowFuse {
 	public native int init(Object opts);
 
 	private static native long setOps(OpsProxy ops, ThreadGroup tgroup);
+	private static native void setBufferManager(BufferManager man);
+
+	public static void useBufferManager(BufferManager man) {
+		setBufferManager(man);
+	}
 
 	/**
 	 * Establish new lowlevel session. Registers `LowlevelOps` in fuse c api and
 	 * calles fuse_lowlevel_new
-	 * 
+	 *
 	 * @param args
 	 *            Fuse Args eg. Commandline
 	 * @param ops
@@ -43,7 +48,7 @@ public class JLowFuse {
 	/**
 	 * Establish new lowlevel session. Registers `LowlevelOps` in fuse c api and
 	 * calles fuse_lowlevel_new
-	 * 
+	 *
 	 * @param args
 	 *            Fuse Args eg. Commandline
 	 * @param ops
@@ -56,7 +61,7 @@ public class JLowFuse {
 
 	/**
 	 * Create new lowlevel session using the concurrency api.
-	 * 
+	 *
 	 * @param args
 	 *            Fuse Args eg. Commandline
 	 * @param executor

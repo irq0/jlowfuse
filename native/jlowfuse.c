@@ -11,6 +11,7 @@
 
 #include "jlowfuse.h"
 #include "jlowfuse_java_LowlevelOpsProxy.h"
+#include "jlowfuse_java_BufferManager.h"
 
 #include <jni.h>
 
@@ -33,6 +34,7 @@ jobject thread_group;  /* attached java threads */
 
 /* cached class, object, methodids */
 struct class_lowlevel_ops *cl_low_ops;
+struct class_buffermanager *cl_bufman;
 
 /* attach native thread to java vm */
 JNIEnv *attach_native_thread()
@@ -69,7 +71,13 @@ void detach_native_thread()
 	}
 }
 
-
+void exception_check(JNIEnv *env)
+{
+        if ((*env)->ExceptionCheck(env)) {
+                (*env)->ExceptionDescribe(env);
+                (*env)->ExceptionClear(env);
+        }
+}
 
 JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
 {
@@ -85,6 +93,7 @@ JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *ljvm, void *reserved)
 
         return JNI_VERSION_1_6;
 }
+
 
 struct fuse_lowlevel_ops jlowfuse_ops = {
           .init        = jlowfuse_init,
@@ -175,6 +184,14 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuseArgs_makeFuseArgs
         return (long)args;
 }
 
+/* register JLowFuseProxy methods */
+JNIEXPORT void JNICALL Java_jlowfuse_JLowFuse_setBufferManager
+(JNIEnv *env, jclass cls, jobject buffermanager_obj)
+{
+	cl_bufman = alloc_class_buffermanager(env);
+        populate_class_buffermanager(env, cl_bufman, buffermanager_obj);
+}
+
 #define min(x, y) ((x) < (y) ? (x) : (y))
 
 JNIEXPORT jint JNICALL Java_jlowfuse_Reply_jniReplyByteBuffer
@@ -185,6 +202,7 @@ JNIEXPORT jint JNICALL Java_jlowfuse_Reply_jniReplyByteBuffer
         fuse_req_t req;
         unsigned long off = joff;
         unsigned long maxsize = jmaxsize;
+        jint ret;
 
         assert(off >= 0);
 
@@ -199,8 +217,13 @@ JNIEXPORT jint JNICALL Java_jlowfuse_Reply_jniReplyByteBuffer
         req = (fuse_req_t)jreq;
 
         if (off < bufsize)
-		return fuse_reply_buf(req, buf + off,
+		ret = fuse_reply_buf(req, buf + off,
 				      min(bufsize - off, maxsize));
 	else
-                return fuse_reply_buf(req, NULL, 0);
+                ret = fuse_reply_buf(req, NULL, 0);
+
+        if (use_buffermanager(cl_bufman))
+	        buffermanager_free(env, cl_bufman, jbuf);
+
+        return ret;
 }

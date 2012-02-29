@@ -9,6 +9,7 @@
 
 JNIEnv *attach_native_thread();
 void detach_native_thread();
+void exception_check(JNIEnv *env);
 
 void jlowfuse_init(void *userdata, struct fuse_conn_info *conn);
 void jlowfuse_destroy(void *userdata);
@@ -43,5 +44,7 @@ void jlowfuse_listxattr(fuse_req_t req, fuse_ino_t ino, size_t size);
 void jlowfuse_access(fuse_req_t req, fuse_ino_t ino, int mask);
 void jlowfuse_bmap(fuse_req_t req, fuse_ino_t ino, size_t blocksize, uint64_t idx);
 
+jobject take_buffer();
+void free_buffer(jobject buf);
 
 #endif
