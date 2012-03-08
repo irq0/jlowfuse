@@ -17,9 +17,12 @@ struct class_buffermanager {
                 jmethodID free;
         } method;
 
+	jboolean use_for_read;
+	jboolean use_for_write;
 };
 
-#define use_buffermanager(class) ((class) != NULL)
+#define use_buffermanager_for_read(class) (((class) != NULL) && (class->use_for_read == JNI_TRUE))
+#define use_buffermanager_for_write(class) (((class) != NULL) && (class->use_for_write == JNI_TRUE))
 
 struct class_buffermanager *alloc_class_buffermanager(JNIEnv *env);
 void free_class_buffermanager(JNIEnv *env, struct class_buffermanager *ptr);

@@ -186,10 +186,13 @@ JNIEXPORT jlong JNICALL Java_jlowfuse_JLowFuseArgs_makeFuseArgs
 
 /* register JLowFuseProxy methods */
 JNIEXPORT void JNICALL Java_jlowfuse_JLowFuse_setBufferManager
-(JNIEnv *env, jclass cls, jobject buffermanager_obj)
+(JNIEnv *env, jclass cls, jobject buffermanager_obj, jboolean for_read, jboolean for_write)
 {
 	cl_bufman = alloc_class_buffermanager(env);
         populate_class_buffermanager(env, cl_bufman, buffermanager_obj);
+
+        cl_bufman->use_for_read = for_read;
+        cl_bufman->use_for_write = for_write;
 }
 
 #define min(x, y) ((x) < (y) ? (x) : (y))
@@ -222,7 +225,7 @@ JNIEXPORT jint JNICALL Java_jlowfuse_Reply_jniReplyByteBuffer
 	else
                 ret = fuse_reply_buf(req, NULL, 0);
 
-        if (use_buffermanager(cl_bufman))
+        if (use_buffermanager_for_read(cl_bufman))
 	        buffermanager_free(env, cl_bufman, jbuf);
 
         return ret;

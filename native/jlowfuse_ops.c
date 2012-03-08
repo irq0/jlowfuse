@@ -336,7 +336,7 @@ void jlowfuse_write(fuse_req_t req, fuse_ino_t ino, const char *buf,
         jobject jbuf;
         JNIEnv *env = attach_native_thread();
 
-        if (use_buffermanager(cl_bufman)) {
+        if (use_buffermanager_for_write(cl_bufman)) {
 	        jbuf = buffermanager_take(env, cl_bufman);
 	        char *jbuf_ptr = (*env)->GetDirectBufferAddress(env, jbuf);
 	        memcpy(jbuf_ptr, buf, size);

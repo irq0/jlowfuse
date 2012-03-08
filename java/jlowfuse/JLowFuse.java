@@ -14,10 +14,10 @@ public class JLowFuse {
 	public native int init(Object opts);
 
 	private static native long setOps(OpsProxy ops, ThreadGroup tgroup);
-	private static native void setBufferManager(BufferManager man);
+	private static native void setBufferManager(BufferManager man, boolean forRead, boolean forWrite);
 
-	public static void useBufferManager(BufferManager man) {
-		setBufferManager(man);
+	public static void useBufferManager(BufferManager man, boolean forRead, boolean forWrite) {
+		setBufferManager(man, forRead, forWrite);
 	}
 
 	/**
