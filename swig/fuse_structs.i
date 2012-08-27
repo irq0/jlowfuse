@@ -17,6 +17,10 @@
 %include "various.i"
 %include "buffers.i"
 
+SWIG_JAVABODY_TYPEWRAPPER(public, public, public, SWIGTYPE)
+SWIG_JAVABODY_PROXY(public, public, SWIGTYPE)
+
+
 /* statvfs (GNU C Library) [cpp -D_FILE_OFFSET_BITS=64 /usr/include/sys/statvfs.h] */
 %rename(StatVFS) statvfs;
 struct statvfs {
