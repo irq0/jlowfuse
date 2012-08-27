@@ -1,6 +1,8 @@
 * jlowfuse
 jlowfuse provides APIs to use FUSE (Filesystem in Userspace) from Java. It provides two kinds of APIs. The /classic/ and the /async/ API.
 
+** APIs
+
 ** classic API
 The classic API resembles closely the FUSE lowlevel C API. You basically subclass a special class that receives calls from FUSE. This is probably the one easier to use, as little additional code is needed. Every method in this class corresponds to a FUSE callback function like open, readdir, etc.
 
@@ -8,14 +10,14 @@ The classic API resembles closely the FUSE lowlevel C API. You basically subclas
 The async API is based on java asynchronous tasks. Every FUSE callback is converted to a Task object and scheduled on an ExecutorService.
 
 This way every FUSE Operation is a separate class. The API is intended for multi threaded environments as it is easy to schedule the incoming tasks on multiple CPUs.
-* Requirements
+** Requirements
 - SWIG >= 2.0.1
 - FUSE/libfuse >= 2.8.1
 - Apache Ant with cpptasks
 - Oracle JDK >= 1.6
 - Python
 
-** Debian GNU/Linux Packages for testing (> squeeze)
+*** Debian GNU/Linux Packages for testing (> squeeze)
 - ant
 - ant-contrib-cpptasks
 - sun-java6-jdk
@@ -23,10 +25,10 @@ This way every FUSE Operation is a separate class. The API is intended for multi
 - build-essential
 - libfuse-dev
 
-* Limitations
+** Limitations
  - GNU/Linux x86
 
-* Build Instructions
+** Build Instructions
 jlowfuse can be build using apache ant:
 
 =ant dist=
@@ -34,24 +36,24 @@ jlowfuse can be build using apache ant:
 This leaves you with the compiled ~jlowfuse.jar~ and ~libjlowfuse.so~ in the dist/
 directory.
 
-** Debian GNU/Linux testing (> squeeze)
+*** Debian GNU/Linux testing (> squeeze)
 It seams that debian's ant library path lacks the cpptasks.jar.
 Use the following instead:
 
 =ant -lib /usr/share/java/ant-contrib-cpptasks.jar dist=
 
-* Usage
+** Usage
 For an example how to use jlowfuse see the example filesystem ~objectfs~
 included. You can run it with ~objectfs.sh MOUNTPOINT~. It is not very
 feature rich and stores every byte into memory. But as a starting
 point it should be quite useful.
 
-** Native Library
+*** Native Library
 Place the compiled library ~libjlowfuse.so~ somewhere and add
 ~-Djava.library.path=somewhere~ to your java call
 
 
-** Java Development
+*** Java Development
 Development using jlowfuse is similar to other FUSE wrapper
 libraries. In C you would implement a set of function callbacks
 and add pointers to them to a lowlevel_ops struct. In jlowfuse this
@@ -79,6 +81,7 @@ The basic setup code for a filesystem looks like this:
 : Session.exit(sess);
 :
 : Fuse.unmount(mountpoint, chan);
+
 
 
 
