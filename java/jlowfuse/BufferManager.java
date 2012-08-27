@@ -53,15 +53,15 @@ public class BufferManager {
 	}
 
 	public void free(ByteBuffer buf) {
-		boolean put = false;
+		boolean freed = false;
 		do {
 			try {
 				available.put(buf);
-				put = true;
+				freed = true;
 			} catch (InterruptedException e) {
-				put = false;
+				freed = false;
 			}
-		} while (!put);
+		} while (!freed);
 	}
 
 	public String toString() {
