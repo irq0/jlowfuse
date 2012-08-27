@@ -1,0 +1,85 @@
+* jlowfuse
+jlowfuse provides APIs to use FUSE (Filesystem in Userspace) from Java. It provides two kinds of APIs. The /classic/ and the /async/ API.
+
+** classic API
+The classic API resembles closely the FUSE lowlevel C API. You basically subclass a special class that receives calls from FUSE. This is probably the one easier to use, as little additional code is needed. Every method in this class corresponds to a FUSE callback function like open, readdir, etc.
+
+** async API
+The async API is based on java asynchronous tasks. Every FUSE callback is converted to a Task object and scheduled on an ExecutorService.
+
+This way every FUSE Operation is a separate class. The API is intended for multi threaded environments as it is easy to schedule the incoming tasks on multiple CPUs.
+* Requirements
+- SWIG >= 2.0.1
+- FUSE/libfuse >= 2.8.1
+- Apache Ant with cpptasks
+- Oracle JDK >= 1.6
+- Python
+
+** Debian GNU/Linux Packages for testing (> squeeze)
+- ant
+- ant-contrib-cpptasks
+- sun-java6-jdk
+- swig2.0
+- build-essential
+- libfuse-dev
+
+* Limitations
+ - GNU/Linux x86
+
+* Build Instructions
+jlowfuse can be build using apache ant:
+
+=ant dist=
+
+This leaves you with the compiled ~jlowfuse.jar~ and ~libjlowfuse.so~ in the dist/
+directory.
+
+** Debian GNU/Linux testing (> squeeze)
+It seams that debian's ant library path lacks the cpptasks.jar.
+Use the following instead:
+
+=ant -lib /usr/share/java/ant-contrib-cpptasks.jar dist=
+
+* Usage
+For an example how to use jlowfuse see the example filesystem ~objectfs~
+included. You can run it with ~objectfs.sh MOUNTPOINT~. It is not very
+feature rich and stores every byte into memory. But as a starting
+point it should be quite useful.
+
+** Native Library
+Place the compiled library ~libjlowfuse.so~ somewhere and add
+~-Djava.library.path=somewhere~ to your java call
+
+
+** Java Development
+Development using jlowfuse is similar to other FUSE wrapper
+libraries. In C you would implement a set of function callbacks
+and add pointers to them to a lowlevel_ops struct. In jlowfuse this
+is done by sub-classing AbstractLowlevelOps.
+
+Almost all setup and helper functions in FUSE are available in
+jlowfuse, too.
+
+
+The basic setup code for a filesystem looks like this:
+
+: String[] fuseArgs = {"-o foo,subtype=objfs", "-d"};
+: String mountpoint = strArgs[0];
+: JLowFuseArgs args = JLowFuseArgs.parseCommandline(fuseArgs);
+:
+: SWIGTYPE_p_fuse_chan chan = Fuse.mount(mountpoint, args);
+: SWIGTYPE_p_fuse_session sess = JLowFuse.lowlevelNew(args, new ObjectFsOps());
+:
+: Session.addChan(sess, chan);
+: Session.loopSingle(sess);
+:
+: Session.removeChan(chan);
+:
+: Session.destroy(sess);
+: Session.exit(sess);
+:
+: Fuse.unmount(mountpoint, chan);
+
+
+
+
